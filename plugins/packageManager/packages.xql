@@ -22,10 +22,11 @@ declare
     %rest:path("/packages")
     %rest:query-param("format", "{$format}")
     %rest:query-param("plugins", "{$plugins}")
-function packages:get($format as xs:string?, $plugins as xs:string?) {
+    %rest:query-param("type", "{$type}")
+function packages:get($type as xs:string?, $format as xs:string?, $plugins as xs:string?) {
     let $apps := packages:default-apps($plugins) | packages:installed-apps($format)
-    let $apps := if ($format = "manager") then $apps | packages:public-repo-contents($apps) else $apps
-    let $log := util:log("WARN", $apps)
+    let $apps := 
+        if ($type = "local") then $apps else packages:public-repo-contents($apps)
     for $app in $apps
     return
        packages:display($packages:REPO, $app, $format)

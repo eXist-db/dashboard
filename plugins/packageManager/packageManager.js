@@ -120,7 +120,12 @@ function(registry,plugin, declare, lang, dom, domConstruct, on, topic, aspect, b
          * Handle toolbar actions like uninstall etc.
          */
         initToolbar: function(app) {
+            if (domClass.contains(app, "initialized")) {
+                return;
+            }
             var self = this;
+            domClass.add(app, "initialized");
+            
             on(app, "click", function() {
                 query("#packageList li").forEach(function (app) {
                     domClass.remove(app, "active");
@@ -206,14 +211,24 @@ function(registry,plugin, declare, lang, dom, domConstruct, on, topic, aspect, b
             aspect.after(anim, "onEnd", function() {
                 query("li", appListElement).remove(".package");
                 domStyle.set(appListElement, "display: none");
+                domConstruct.empty(appListElement);
                 dojo.xhrGet({
-                    url: "plugins/packageManager/packages/?format=manager",
+                    url: "plugins/packageManager/packages/?format=manager&type=local",
                     handleAs: "text",
                     load: function(data) {
                         domConstruct.place(data, appListElement, "only");
                         var anim = baseFx.fadeIn({node: appListElement, duration: 200});
                         anim.play();
                         self.initHandlers();
+                        
+                        dojo.xhrGet({
+                            url: "plugins/packageManager/packages/?format=manager&type=remote",
+                            handleAs: "text",
+                            load: function(data) {
+                                domConstruct.place(data, appListElement, "last");
+                                self.initHandlers();
+                            }
+                        });
                     }
                 });
             });

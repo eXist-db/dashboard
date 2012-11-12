@@ -158,7 +158,7 @@ require(["dijit/registry",
                 query("li", appListElement).remove(".package");
 
                 dojo.xhrGet({
-                    url: "plugins/packageManager/packages/?plugins=true&format=all",
+                    url: "plugins/packageManager/packages/?plugins=true&format=all&type=local",
                     handleAs: "text",
                     load: function(data) {
                         var last = query("li:last", appListElement);

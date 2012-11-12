@@ -24,6 +24,6 @@ declare function dash:list-apps($node as node(), $model as map(*)) {
     element { node-name($node) } {
         $node/@*,
         $node/*,
-        packages:get("manager", false())
+        packages:get("local", "manager", false())
     }
 };

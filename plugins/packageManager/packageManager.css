@@ -1,0 +1,148 @@
+#inlineAppArea .packageManager {
+  position: relative;
+}
+#inlineAppArea .packageManager #packageManagerToolbar {
+  height: 30px;
+  background: #6d6e70;
+  font-size: 0.7em;
+  color: #efefed;
+  text-align: center;
+}
+#inlineAppArea .packageManager #packageManagerToolbar div {
+  margin: 0 10px 0 0;
+}
+#inlineAppArea .packageManager #packageManagerToolbar div #uploadApp {
+  float: left;
+  border: none;
+  background: transparent;
+  margin: 0;
+}
+#inlineAppArea .packageManager #packageManagerToolbar div #uploadApp img {
+  margin: 0;
+}
+#inlineAppArea .packageManager #packageManagerToolbar div #details,
+#inlineAppArea .packageManager #packageManagerToolbar div #detailslabel {
+  float: right;
+}
+#inlineAppArea .packageManager #packageManagerToolbar div * {
+  margin: 5px;
+}
+#inlineAppArea .packageManager #listWrapper {
+  float: left;
+  overflow: auto;
+  height: 500px;
+  width: 100%;
+  /*ul li:focus{
+                .toolbar{
+                    display:inline-block;
+                    text-align:center;
+                    width:100%;
+
+                    .toobarBtn{
+                        img {
+                            width: 32px;
+                        }
+                    }
+                }
+            }*/
+
+}
+#inlineAppArea .packageManager #listWrapper ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+#inlineAppArea .packageManager #listWrapper ul .active .toolbar {
+  display: inline-block;
+}
+#inlineAppArea .packageManager #listWrapper ul li {
+  float: none;
+  margin: 5px 0 5px 5px;
+  position: relative;
+  -webkit-border-radius: 0px 20px 0px 0px;
+  -moz-border-radius: 0px 20px 0px 0px;
+  border-radius: 0px 20px 0px 0px;
+}
+#inlineAppArea .packageManager #listWrapper ul li .ribbon {
+  position: absolute;
+  right: 0;
+  width: 80px;
+  opacity: 0.4;
+}
+#inlineAppArea .packageManager #listWrapper ul li .toolbar {
+  display: none;
+  text-align: center;
+  width: 100%;
+}
+#inlineAppArea .packageManager #listWrapper ul li .toolbar .toobarBtn {
+  background: 0083c9;
+}
+#inlineAppArea .packageManager #listWrapper ul li .toolbar .toobarBtn img {
+  width: 32px;
+}
+#inlineAppArea .packageManager #listWrapper ul li.installed {
+  background-color: #cccccc;
+}
+#inlineAppArea .packageManager #listWrapper ul li.notInstalled {
+  background-color: #dddddd;
+}
+#inlineAppArea .packageManager #listWrapper table {
+  background: transparent;
+  padding-left: 30px;
+}
+#inlineAppArea .packageManager #listWrapper table th,
+#inlineAppArea .packageManager #listWrapper table td {
+  text-align: left;
+  font-size: 0.7em;
+  vertical-align: top;
+}
+#inlineAppArea .packageManager #listWrapper table ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+#inlineAppArea .packageManager #listWrapper table ul li {
+  margin: 0;
+}
+#inlineAppArea .packageManager #listWrapper .packageIconArea {
+  width: 150px;
+  float: left;
+  margin: 15px;
+  height: 80px;
+}
+#inlineAppArea .packageManager #listWrapper .packageIconArea img {
+  max-width: 128px;
+  height: 100%;
+}
+#inlineAppArea .packageManager #listWrapper .shortTitle h3 {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.5em;
+  font-weight: normal;
+}
+#inlineAppArea .packageManager #listWrapper .shortTitle p {
+  font-size: .75em;
+}
+#inlineAppArea .packageManager #listWrapper .shortTitle p.upgrade {
+  color: red;
+  font-weight: bold;
+}
+#inlineAppArea .packageManager #listWrapper .shortView table {
+  display: none;
+}
+#inlineAppArea .packageManager #listWrapper .shortView .shortTitle h3 {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.2em;
+  display: block;
+  margin-top: 5px;
+  src: local('Quicksand'), local('Quicksand'), url('sKd0EMYPAh5PYCRKSryvW7O3LdcAZYWl9Si6vvxL-qU.woff') format('truetype');
+}
+#inlineAppArea .packageManager #listWrapper .hideInstalled .installed {
+  display: none;
+}
+#inlineAppArea .packageManager #listWrapper .hideNotInstalled .notInstalled {
+  display: none;
+}
+#inlineAppArea .packageManager #listWrapper > ul > li {
+  border: thin solid #a0a1a3;
+  min-height: 120px;
+}

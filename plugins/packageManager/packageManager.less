@@ -1,0 +1,178 @@
+@import url("../../resources/css/base.less");
+
+// an area to embed inline app screens
+#inlineAppArea {
+
+    .packageManager{
+        position:relative;
+
+        #packageManagerToolbar{
+            height: 30px;
+            background: @lightGreyBase;
+            font-size: 0.7em;
+            color:#efefed;
+            text-align: center;
+
+            div {
+                margin:0 10px 0 0;
+
+                #uploadApp {
+                    float: left;
+                    border:none;
+                    background:transparent;
+                    margin: 0;
+                    img {
+                        margin: 0;
+                    }
+                }
+                #details, #detailslabel{
+                    float: right;
+                }
+            }
+
+            div * {
+                margin: 5px;
+            }
+        }
+
+        #listWrapper{
+            float:left;
+            overflow:auto;
+            height:@inlineAppHeight;
+            width:100%;
+
+            ul{
+                margin: 0;
+                padding: 0;
+                list-style-type: none;
+                .active .toolbar {
+                    display: inline-block;
+                }
+            }
+            ul li{
+                float: none;
+                margin: 5px 0 5px 5px;
+                position:relative;
+                .border-radius-custom(0px, 20px, 0px, 0px);
+
+                .ribbon{
+                    position:absolute;
+                    right: 0;
+                    width: 80px;
+                    opacity: 0.4;
+                }
+                .toolbar {
+                    display:none;
+                    text-align:center;
+                    width: 100%;
+                    .toobarBtn {
+                        background:0083c9;
+                        img {
+                            width: 32px;
+                        }
+                    }
+                }
+
+            }
+
+            /*ul li:focus{
+                .toolbar{
+                    display:inline-block;
+                    text-align:center;
+                    width:100%;
+
+                    .toobarBtn{
+                        img {
+                            width: 32px;
+                        }
+                    }
+                }
+            }*/
+            ul li.installed{
+                background-color:@installedColor ;
+            }
+            ul li.notInstalled{
+                background-color: @notInstalledColor;
+            }
+            table{
+                background: transparent;
+                padding-left:30px;
+
+                th,td{
+                    text-align: left;
+                    font-size:0.7em;
+                    vertical-align: top;
+                }
+
+                ul{
+                    margin: 0;
+                    padding: 0;
+                    list-style-type: none;
+
+                    li{
+                        margin: 0;
+                    }
+                }
+            }
+            .packageIconArea{
+                width:150px;
+                float: left;
+                margin: 15px;
+                height:80px;
+                img {
+                    max-width: 128px;
+                    height: 100%
+                }
+            }
+            .shortTitle {
+                h3 {
+                    font-family: @font-family-headings;
+                    font-size: 1.5em;
+                    font-weight: normal;
+                }
+                p {
+                    font-size: .75em;
+                }
+                p.upgrade {
+                    color: red;
+                    font-weight: bold;
+                }
+            }
+
+            .shortView{
+
+                table{
+                    display:none;
+                }
+                .shortTitle {
+                    h3 {
+                        font-family: @font-family-headings;
+                        font-size: 1.2em;
+                        display:block;
+                        margin-top: 5px;
+                        src: local('Quicksand'), local('Quicksand'), url('sKd0EMYPAh5PYCRKSryvW7O3LdcAZYWl9Si6vvxL-qU.woff') format('truetype');
+
+                    }
+                }
+            }
+
+            //for hiding installed apps
+            .hideInstalled .installed{
+                display:none;
+            }
+            //for hiding not installed apps
+            .hideNotInstalled .notInstalled{
+                display:none;
+            }
+        }
+        #listWrapper > ul > li{
+             border:thin solid @lighterGrey2;
+             min-height: 120px;
+        }
+
+
+    }
+}
+
+
+

@@ -1,0 +1,7 @@
+.backup .backup-list #backup-grid {
+  margin: 0 auto 10px auto;
+  height: 400px;
+}
+.backup .backup-list .toolbar img {
+  height: 24px;
+}

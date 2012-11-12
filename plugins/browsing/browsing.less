@@ -1,0 +1,49 @@
+@lightGreyBase:#6d6e70;//original existdb lighter gray
+@lighterGrey3:lighten(spin(@lightGreyBase, 20), 40%);
+
+#inlineApp .browsing{
+    margin:0 !important;
+}
+.browsing {
+    height: 100%;
+    
+    .browsing-container {
+        height: 100%;
+        
+        .collection {
+            background: #EEE;
+        }
+
+        #breadcrumb {
+            height: 20px;
+            width: 100%;
+            font-size: 0.85em;
+            padding: 2px 5px;
+        }
+
+        #browsing-grid-container {
+            height: 100%;
+        }
+        #browsing-grid { height: 300px; }
+    }
+    
+    #browsing-dialog {
+        width: 500px;
+        
+        .control-group {
+            label {
+                float: left;
+                display: block;
+                width: 120px;
+                text-align: right;
+                margin-right: 1em;
+            }
+        }
+    }
+}
+
+.dojoxUploaderFileList {
+    height: 300px;
+    width: 100%;
+    overflow: auto;
+}

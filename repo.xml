@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repo:meta xmlns="http://exist-db.org/xquery/repo" xmlns:repo="http://exist-db.org/xquery/repo">
+    <repo:description>eXist-db Dashboard</repo:description>
+    <repo:author>Joern Turner</repo:author>
+    <repo:author>Wolfgang Meier</repo:author>
+    <repo:website/>
+    <repo:status>alpha</repo:status>
+    <repo:license>GNU-LGPL</repo:license>
+    <repo:copyright>true</repo:copyright>
+    <repo:type>application</repo:type>
+    <repo:target>/db/dashboard</repo:target>
+    <repo:prepare>pre-install.xql</repo:prepare>
+    <repo:finish/>
+    <deployed>2012-11-08T23:53:16.04+01:00</deployed>
+</repo:meta>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<div xmlns:xf="http://www.w3.org/2002/xforms" class="userManager">
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.7.2/dojox/form/resources/CheckedMultiSelect.css"/>
+    <div class="messageBar">
+        <p class="message" style="opacity: 0;"/>
+    </div>
+    <div class="userManager-list">
+        <div class="toolbar" data-dojo-type="dijit.Toolbar">
+            <button class="refreshUsers" data-dojo-type="dijit.form.Button">Refresh</button>
+        </div>
+        <div id="userManager-grid-container"/>
+    </div>
+    <button class="editUser" data-dojo-type="dijit.form.Button">Edit selected user</button>
+    <button class="newUser" data-dojo-type="dijit.form.Button">Create new user</button>
+    
+    <!--
+    <div class="groupsManager-list">
+        <div class="toolbar" data-dojo-type="dijit.Toolbar">
+            <button class="refreshGroup" data-dojo-type="dijit.form.Button">Refresh</button>
+        </div>
+        <div id="groupsManager-grid-container"/>
+    </div>
+    
+    -->
+    <button class="newGroup" data-dojo-type="dijit.form.Button">Create new group</button>
+    <div id="editUserMask" style="display:none">
+        <form id="editUser-form" action="" data-dojo-type="dijit.form.Form">
+            <table>
+                <tr>
+                    <td>
+                        <label for="userName">Username:</label>
+                    </td>
+                    <td>
+                        <input type="text" name="userName" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="userName"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="userPassword">Password:</label>
+                    </td>
+                    <td>
+                        <input type="password" name="userPassword" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="userPassword"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="userPasswordRepeat">Password (Repeat):</label>
+                    </td>
+                    <td>
+                        <input type="password" name="userPasswordRepeat" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="userPasswordRepeat"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="userHome">Home-Collection:</label>
+                    </td>
+                    <td>
+                        <input type="text" name="userHome" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="userHome"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="userGroups">Groups:</label>
+                    </td>
+                    <td>
+                        <span id="userGroups" name="userGroups"/>
+                    </td>
+                </tr>
+            </table>
+            <div class="buttonRow">
+                <input type="hidden" name="action" value="save"/>
+                <button type="submit" class="saveUser" data-dojo-type="dijit.form.Button">Save user</button>
+                <button class="cancelUser" data-dojo-type="dijit.form.Button">Cancel</button>
+            </div>
+        </form>
+    </div>
+    <!--
+        <div id="test"/>
+    -->
+    <div id="editGroupMask" style="display:none">
+        <form id="editGroup-form" action="" data-dojo-type="dijit.form.Form">
+            <table>
+                <tr>
+                    <td>
+                        <label for="groupName">Group (name)</label>
+                    </td>
+                    <td>
+                        <input type="text" name="groupName" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="groupName"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="groupManager">Groupmanager (current user if empty)</label>
+                    </td>
+                    <td>
+                        <input type="text" name="groupManager" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="groupManager"/>
+                    </td>
+                </tr>
+            </table>
+            <div class="buttonRow">
+                <input type="hidden" name="action" value="save"/>
+                <button type="submit" class="saveGroup" data-dojo-type="dijit.form.Button">Save group</button>
+                <button class="cancelGroup" data-dojo-type="dijit.form.Button">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

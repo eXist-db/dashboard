@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<div class="inline-app browsing" style="opacity: 0">
+    <div class="browsing-container">
+        <div class="toolbar" data-dojo-type="dijit.Toolbar">
+            <button id="browsing-toolbar-reload" title="Refresh">
+                <img src="plugins/browsing/images/arrow_refresh.png"/>
+            </button>
+            <button id="browsing-toolbar-new" title="New collection">
+                <img src="plugins/browsing/images/folder_add.png"/>
+            </button>
+            <button id="browsing-toolbar-delete" title="Delete resources">
+                <img src="plugins/browsing/images/bin.png"/>
+            </button>
+            <button id="browsing-toolbar-properties" title="Edit owner, groups and permissions">
+                <img src="plugins/browsing/images/application_form_edit.png"/>
+            </button>
+            <button id="browsing-toolbar-copy" title="Copy selected resources">
+                <img src="plugins/browsing/images/page_copy.png"/>
+            </button>
+            <button id="browsing-toolbar-cut" title="Cut selected resources">
+                <img src="plugins/browsing/images/cut.png"/>
+            </button>
+            <button id="browsing-toolbar-paste" title="Paste resources">
+                <img src="plugins/browsing/images/page_paste.png"/>
+            </button>
+            <button id="browsing-toolbar-add" title="Upload resources">
+                <img src="plugins/browsing/images/database_add.png"/>
+            </button>
+        </div>
+        <div id="breadcrumb"/>
+        <div id="browsing-grid-container"/>
+    </div>
+    <div class="dijitHidden">
+        <div data-dojo-type="dijit.Dialog" style="width:600px;" data-dojo-props="title:'Properties'" id="browsing-dialog"/>
+        <div id="browsing-upload-dialog" data-dojo-type="dijit.Dialog" title="Upload Files">
+            <form method="post" action="plugins/browsing/upload.xql" id="upload-form" enctype="multipart/form-data">
+                <input id="browsing-uploader" name="uploadedfile" multiple="true" type="file" data-dojo-type="dojox.form.Uploader" label="Click to select file to upload"/>
+                <input id="browsing-upload-collection" name="collection" value="/db/abc" type="hidden"/>
+                <input type="submit" label="Submit" data-dojo-type="dijit.form.Button"/>
+                <div class="filelist" data-dojo-type="dojox.form.uploader.FileList" uploaderId="browsing-uploader"/>
+            </form>
+            <p>This window will close once all files haven been uploaded and stored.</p>
+        </div>
+    </div>
+</div>

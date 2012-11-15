@@ -51,10 +51,16 @@ declare %private function packages:installed-apps($format as xs:string?) as elem
                 let $icon := repo:get-resource($app, "icon.png")
                 let $app-url :=
                     if ($repoXML//repo:target) then
-                        concat(
-                            request:get-context-path(), "/apps",
-                            substring-after($repoXML//repo:target, "/db"), "/"
-                        )
+                        let $target := 
+                            if (starts-with($repoXML//repo:target, "/")) then
+                                replace($repoXML//repo:target, "^/.*/([^/]+)", "$1")
+                            else
+                                $repoXML//repo:target
+                        return
+                            replace(
+                                request:get-context-path() || "/" || request:get-attribute("$exist:prefix") || "/" || $target || "/",
+                                "/+", "/"
+                            )
                     else
                         ()
                 return

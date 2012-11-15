@@ -97,26 +97,49 @@ declare %private function apputil:download-and-install($uri as xs:anyURI, $serve
             let $package-mimetype := "application/xar"
             let $package-data := xs:base64Binary($http-response/httpclient:body/text())
             let $stored := xmldb:store($tempColl, $name, $package-data, $package-mimetype)
-            let $meta := 
-                compression:unzip(
-                    util:binary-doc($stored), apputil:entry-filter#3, 
-                    (),  apputil:entry-data#4, ()
-                )
-            let $dependencies := apputil:unresolved-dependencies($meta//expath:package)
-            return (
-                for $dep in $dependencies
-                return
-                    apputil:install-dependency($dep, $serverUri),
-                let $package := $meta//expath:package/string(@name)
-                let $type := $meta//repo:meta//repo:type/string()
-                let $remove := apputil:remove($package)
-                let $install :=
-                    repo:install-from-db($stored)
-                let $deploy :=
-                    repo:deploy($package)
-                return
-                    ()
-            )
+            let $meta :=
+                try {
+                    compression:unzip(
+                        util:binary-doc($stored), apputil:entry-filter#3, 
+                        (),  apputil:entry-data#4, ()
+                    )
+                } catch * {
+                    error($apputil:BAD_ARCHIVE, "Failed to unpack archive: " || $err:description)
+                }
+            return
+(:                if (apputil:check-package($meta)) then:)
+                    let $dependencies := apputil:unresolved-dependencies($meta//expath:package)
+                    return (
+                        for $dep in $dependencies
+                        return
+                            apputil:install-dependency($dep, $serverUri),
+                        let $package := $meta//expath:package/string(@name)
+                        let $type := $meta//repo:meta//repo:type/string()
+                        let $remove := apputil:remove($package)
+                        let $install :=
+                            repo:install-from-db($stored)
+                        let $deploy :=
+                            repo:deploy($package)
+                        return
+                            ()
+                    )
+(:                else:)
+(:                    ():)
+};
+
+declare %private function apputil:check-package($meta as document-node()*) {
+    if (count($meta) != 2) then
+        error($apputil:BAD_ARCHIVE, "A package must contain an expath-repo.xml and repo.xml descriptor")
+    else
+        let $pkg := $meta//expath:package
+        let $repo := $meta//repo:meta
+        return
+            if (empty($pkg)) then
+                error($apputil:BAD_ARCHIVE, "Failed to load package descriptor: expath:package root element not found.")
+            else if (empty($repo)) then
+                error($apputil:BAD_ARCHIVE, "Failed to load deployment descriptor: repo:meta root element not found.")
+            else
+                ()
 };
 
 declare %private function apputil:install-dependency($name as xs:string, $serverUri as xs:string) {
@@ -135,24 +158,32 @@ declare function apputil:upload($serverUri as xs:anyURI) as xs:string {
         if ($docName) then
             let $stored := xmldb:store($apputil:collection, xmldb:encode-uri($docName), $file)
             let $meta :=
-                compression:unzip(
-                    util:binary-doc($stored), apputil:entry-filter#3,
-                    (),  apputil:entry-data#4, ()
-                )
-            let $dependencies := apputil:unresolved-dependencies($meta//expath:package)
-            return (
-                for $dep in $dependencies
-                return
-                    apputil:install-dependency($dep, $serverUri),
-                let $package := $meta//expath:package/string(@name)
-                let $remove := apputil:remove($package)
-                let $install :=
-                    repo:install-from-db($stored)
-                let $deployed :=
-                    repo:deploy($package)
-                return
-                    $docName
-            )
+                try {
+                    compression:unzip(
+                        util:binary-doc($stored), apputil:entry-filter#3, 
+                        (),  apputil:entry-data#4, ()
+                    )
+                } catch * {
+                    error($apputil:BAD_ARCHIVE, "Failed to unpack archive: " || $err:description)
+                }
+            return
+(:                if (apputil:check-package($meta)) then:)
+                    let $dependencies := apputil:unresolved-dependencies($meta//expath:package)
+                    return (
+                        for $dep in $dependencies
+                        return
+                            apputil:install-dependency($dep, $serverUri),
+                        let $package := $meta//expath:package/string(@name)
+                        let $remove := apputil:remove($package)
+                        let $install :=
+                            repo:install-from-db($stored)
+                        let $deployed :=
+                            repo:deploy($package)
+                        return
+                            $docName
+                    )
+(:                else:)
+(:                    ():)
         else
             error($apputil:BAD_ARCHIVE, "No file found")
 };
@@ -164,6 +195,7 @@ declare function apputil:upload($serverUri as xs:anyURI) as xs:string {
  :)
 declare function apputil:remove($package-url as xs:string) as xs:boolean {
     if ($package-url = repo:list()) then
+        let $log := util:log("DEBUG", "Removing package " || $package-url)
         let $undeploy := repo:undeploy($package-url)
         let $remove := repo:remove($package-url)
         return

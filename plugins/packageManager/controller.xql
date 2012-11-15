@@ -34,6 +34,7 @@ else if (starts-with($exist:path, "/packages/")) then
     let $login := login:set-user("org.exist.login", (), true())
     return (
         response:set-header("Cache-Control", "no-cache"),
+        request:set-attribute("$exist:prefix", $exist:prefix),
         restxq:process($exist:path, $funcs)
     )
 else

@@ -66,6 +66,7 @@ function control:html($page as xs:string) {
         <view>
             <forward url="{$exist:controller}/modules/view.xql">
                 {login:set-user("org.exist.login", (), true())}
+                <set-attribute name="$exist:prefix" value="{$exist:prefix}"/>
                 <set-header name="Cache-Control" value="no-cache"/>
             </forward>
         </view>

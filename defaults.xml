@@ -16,6 +16,14 @@
     </group>
 -->
     <app status="installed">
+        <title>Java Admin Client</title>
+        <abbrev>webstart</abbrev>
+        <version>1.0</version>
+        <icon>resources/images/Java-icon.png</icon>
+        <url>../../webstart/exist.jnlp</url>
+        <type>application</type>
+    </app>
+    <app status="installed">
         <title>Admin Web Application</title>
         <abbrev>admin</abbrev>
         <version>1.0</version>

@@ -30,11 +30,10 @@ if (ends-with($exist:path, ".html")) then
 		</error-handler>
     </dispatch>
 else if (starts-with($exist:path, "/packages/")) then
-    let $funcs := (util:list-functions(), util:list-functions("http://exist-db.org/apps/dashboard/packages/rest"))
+    let $funcs := util:list-functions("http://exist-db.org/apps/dashboard/packages/rest")
     let $login := login:set-user("org.exist.login", (), true())
     return (
         response:set-header("Cache-Control", "no-cache"),
-        request:set-attribute("$exist:prefix", $exist:prefix),
         restxq:process($exist:path, $funcs)
     )
 else

@@ -39,7 +39,7 @@ return
                             <status><error>Failed to remove package {$package-url}</error></status>
                 default return
                     try {
-                        apputil:install-from-repo((), xs:anyURI("public/" || $package-url), xs:anyURI($server-url))
+                        apputil:install-from-repo((), xs:anyURI($package-url), xs:anyURI($server-url || "/find?name="))
                     } catch * {
                         <status>
                             <error>{$err:description}</error>

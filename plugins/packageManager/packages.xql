@@ -143,9 +143,9 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
     let $icon :=
         if ($app/icon) then
             if ($app/@status) then
-                $app/icon
+                $app/icon[1]
             else
-                $repoURL || "/public/" || $app/icon
+                $repoURL || "/public/" || $app/icon[1]
         else
             "resources/images/package.png"
     let $url :=
@@ -240,7 +240,7 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             <div class="toolbar">
                                 <form action="">
                                     <input type="hidden" name="server-url" value="{$repoURL}"/>
-                                    <input type="hidden" name="package-url" value="{$app/@path}"/>
+                                    <input type="hidden" name="package-url" value="{$app/name}"/>
                                     <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
                                     <input type="hidden" name="action" value="install"/>
                                     <input type="hidden" name="type" value="application"/>

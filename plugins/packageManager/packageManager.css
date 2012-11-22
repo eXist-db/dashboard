@@ -115,7 +115,7 @@
   height: 100%;
 }
 #inlineAppArea .packageManager #listWrapper .shortTitle h3 {
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'QuicksandBook', sans-serif;
   font-size: 1.5em;
   font-weight: normal;
 }
@@ -130,11 +130,10 @@
   display: none;
 }
 #inlineAppArea .packageManager #listWrapper .shortView .shortTitle h3 {
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'QuicksandBook', sans-serif;
   font-size: 1.2em;
   display: block;
   margin-top: 5px;
-  src: local('Quicksand'), local('Quicksand'), url('sKd0EMYPAh5PYCRKSryvW7O3LdcAZYWl9Si6vvxL-qU.woff') format('truetype');
 }
 #inlineAppArea .packageManager #listWrapper .hideInstalled .installed {
   display: none;

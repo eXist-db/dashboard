@@ -67,7 +67,7 @@ declare %private function login:store-credentials($user as xs:string, $password 
 };
 
 declare %private function login:is-valid($entry as map(*)) {
-    empty($entry("expires")) or util:system-dateTime() < xs:dateTime($entry("expires"))
+    empty(map:get($entry, "expires")) or util:system-dateTime() < xs:dateTime(map:get($entry, "expires"))
 };
 
 declare %private function login:with-login($user as xs:string, $password as xs:string, $asDba as xs:boolean, $func as function() as item()*) {
@@ -83,11 +83,11 @@ declare %private function login:get-credentials($domain as xs:string, $token as 
     let $entry := cache:get("xquery.login.users", $token)
     return
         if (exists($entry) and login:is-valid($entry)) then
-            login:with-login($entry("user"), $entry("password"), $asDba, function() {
-                <set-attribute xmlns="http://exist.sourceforge.net/NS/exist" name="xquery.user" value="{$entry('user')}"/>,
-                <set-attribute xmlns="http://exist.sourceforge.net/NS/exist" name="xquery.password" value="{$entry('password')}"/>,
-                <set-attribute xmlns="http://exist.sourceforge.net/NS/exist" name="{$domain}.user" value="{$entry('user')}"/>,
-                request:set-attribute($domain || ".user", $entry("user"))
+            login:with-login(map:get($entry, "user"), map:get($entry, "password"), $asDba, function() {
+                <set-attribute xmlns="http://exist.sourceforge.net/NS/exist" name="xquery.user" value="{map:get($entry, 'user')}"/>,
+                <set-attribute xmlns="http://exist.sourceforge.net/NS/exist" name="xquery.password" value="{map:get($entry, 'password')}"/>,
+                <set-attribute xmlns="http://exist.sourceforge.net/NS/exist" name="{$domain}.user" value="{map:get($entry, 'user')}"/>,
+                request:set-attribute($domain || ".user", map:get($entry, "user"))
             })
         else
             util:log("INFO", ("No login entry found for user hash: ", $token))

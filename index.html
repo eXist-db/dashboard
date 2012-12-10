@@ -32,12 +32,27 @@
         </li>
     </ul>
     <div id="actionDialog" data-dojo-type="dijit.Dialog" title="Installing Application"/>
-    <div id="uploadDialog" data-dojo-type="dijit.Dialog" title="Upload Application">
-        <form method="post" action="modules/install.xql" id="upload-form" enctype="multipart/form-data">
+    <div id="uploadDialog" data-dojo-type="dijit.Dialog" title="Upload Package">
+        <div id="package_upload">
+            <p>Drop one or more .xar files here or click on the button below.</p>
+            <form class="file_upload" action="modules/install.xql" method="POST" enctype="multipart/form-data">
+                <div class="file_upload_body">
+                    <input type="file" name="uploadedfiles[]" multiple="multiple"/>
+                    <input type="hidden" name="server-url" value="http://demo.exist-db.org/apps/public-repo"/>
+                    <button>Upload</button>
+                    <div class="file_upload_label">Upload</div>
+                </div>
+            </form>
+            <div class="progress" style="opacity: 0;">
+                <div class="bar" style="width: 0%;">Uploading</div>
+            </div>
+            <table id="package-files"/>
+        </div>
+        <!--form method="post" action="modules/install.xql" id="upload-form" enctype="multipart/form-data">
             <input type="hidden" name="server-url" value="http://demo.exist-db.org/apps/public-repo"/>
             <input id="uploader" name="uploadedfile" multiple="false" type="file" data-dojo-type="dojox.form.Uploader" label="Click to select .xar package"/>
             <input type="submit" label="Submit" data-dojo-type="dijit.form.Button"/>
             <div id="files" data-dojo-type="dojox.form.uploader.FileList" uploaderId="uploader"/>
-        </form>
+        </form-->
     </div>
 </div>

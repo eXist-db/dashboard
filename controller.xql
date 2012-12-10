@@ -84,6 +84,15 @@ function control:plugin-html($page as xs:string) {
     control:html($page)
 };
 
+declare
+    %rest:GET
+    %rest:path("/_shared/{$path}")
+function control:shared($path as xs:string) {
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <forward url="/shared-resources/{$path}"/>
+    </dispatch>
+};
+
 (:~
  : Fallback: this function is called for any GET request
  : not matching any of the previous functions in this module.

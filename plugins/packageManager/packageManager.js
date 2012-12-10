@@ -102,8 +102,47 @@ function(registry,plugin, declare, lang, dom, domConstruct, on, topic, aspect, b
                 uploadDlg.show();
             });
             
-            var uploader = registry.byId("uploader");
-            on(uploader, "complete", lang.hitch(this, "uploadCompleted"));
+//            var uploader = registry.byId("uploader");
+//            on(uploader, "complete", lang.hitch(this, "uploadCompleted"));
+            
+            jQuery("#package_upload").fileupload({
+        		sequentialUploads: true,
+                dataType: "json",
+                add: function(e, data) {
+                    var rows = "";
+                    for (var i = 0; i < data.files.length; i++) {
+                        if (/\.xar$/i.test(data.files[i].name)) {
+                            rows += "<tr><td data-file='" + data.files[i].name + "'>" + data.files[i].name + "</td><td class='error'></td></tr>";
+                        } else {
+                            domConstruct.place("<tr><td>Not a .xar archive: " + data.files[i].name + "</td></tr>", dom.byId("package-files"), "only");
+                            return;
+                        }
+                    }
+                    domConstruct.place(rows, dom.byId("package-files"), "last");
+                    var deferred = data.submit();
+                    query("#package_upload .progress").fadeIn().play();
+                },
+                progressall: function (e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    query('#package_upload .progress .bar').forEach(function(div) {
+                        domStyle.set(div, "width", progress + '%');
+                    });
+                },
+                done: function(e, data) {
+                    query("#package-files tr:first").remove();
+                    query('#package_upload .progress .bar').forEach(function(div) {
+                        domStyle.set(div, "width", '0%');
+                    });
+                    query("#package_upload .progress").fadeOut().play();
+                },
+                fail: function(e, data) {
+                    query("#package-files tr:first .error").innerHTML(data.jqXHR.statusText);
+                    query('#package_upload .progress .bar').forEach(function(div) {
+                        domStyle.set(div, "width", '0%');
+                    });
+                    query("#package_upload .progress").fadeOut().play();
+                }
+            });
             
             this.update();
         },

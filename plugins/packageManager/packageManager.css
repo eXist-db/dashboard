@@ -134,6 +134,7 @@
   font-size: 1.2em;
   display: block;
   margin-top: 5px;
+  src: local('Quicksand'), local('Quicksand'), url('/exist/apps/dashboard/plugins/packageManager/sKd0EMYPAh5PYCRKSryvW7O3LdcAZYWl9Si6vvxL-qU.woff') format('truetype');
 }
 #inlineAppArea .packageManager #listWrapper .hideInstalled .installed {
   display: none;
@@ -144,4 +145,54 @@
 #inlineAppArea .packageManager #listWrapper > ul > li {
   border: thin solid #a0a1a3;
   min-height: 120px;
+}
+form.file_upload .file_upload_body {
+  position: relative;
+  overflow: hidden;
+  direction: ltr;
+  cursor: pointer;
+  text-align: center;
+  color: #555;
+  font-weight: bold;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  width: 15em;
+  line-height: 2.5em;
+  background: #E6E6E6;
+  border: 1px solid lightGrey;
+  margin-left: auto;
+  margin-right: auto;
+  height: auto;
+}
+form.file_upload .file_upload_body input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  border: 300px solid transparent;
+  opacity: 0;
+  -ms-filter: 'alpha(opacity=0)';
+  -o-transform: translate(-300px, -300px) scale(10);
+  -moz-transform: translate(-800px, 0) scale(10);
+  cursor: pointer;
+  height: 100%;
+}
+form.file_upload .file_upload_body button {
+  display: none;
+}
+form.file_upload .file_upload_label {
+  display: block;
+}
+.progress {
+  border: 1px solid #777;
+  width: 320px;
+  margin: 8px auto;
+}
+.progress .bar {
+  height: 18px;
+  background: url(/exist/apps/dashboard/plugins/packageManager/images/progressbar.gif);
+}
+#uploadDialog {
+  width: 460px;
 }

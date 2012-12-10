@@ -112,7 +112,12 @@ function(registry,plugin, declare, lang, dom, domConstruct, on, topic, aspect, b
                     var rows = "";
                     for (var i = 0; i < data.files.length; i++) {
                         if (/\.xar$/i.test(data.files[i].name)) {
-                            rows += "<tr><td data-file='" + data.files[i].name + "'>" + data.files[i].name + "</td><td class='error'></td></tr>";
+                            console.log("file: %o", data.files[i]);
+                            rows += "<tr>";
+                            rows += "<td class='name'>" + data.files[i].name + "</td>";
+                            rows +="<td>" + Math.ceil(data.files[i].size / 1024) + "k</td>";
+                            rows += "<td class='error'></td>";
+                            rows += "</tr>";
                         } else {
                             domConstruct.place("<tr><td>Not a .xar archive: " + data.files[i].name + "</td></tr>", dom.byId("package-files"), "only");
                             return;

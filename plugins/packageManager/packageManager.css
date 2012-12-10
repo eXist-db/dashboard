@@ -196,3 +196,15 @@ form.file_upload .file_upload_label {
 #uploadDialog {
   width: 460px;
 }
+#package-files {
+  width: 100%;
+  margin: 8px 0;
+}
+#package-files td {
+  padding: 4px 6px;
+  text-align: right;
+}
+#package-files .name {
+  font-weight: bold;
+  text-align: left;
+}

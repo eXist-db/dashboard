@@ -8,7 +8,6 @@
             <img src="plugins/backup/images/download-32.png"/>
         </button>
     </div>
-    <h1>Available DB Backups</h1>
     <div class="backup-list">
         <div id="backup-grid-container"/>
     </div>
@@ -17,7 +16,7 @@
         <input type="checkbox" name="inc" data-dojo-type="dijit.form.CheckBox"/> Incremental<br/>
         <input type="hidden" name="action" value="trigger"/>
         <button type="submit" data-dojo-type="dijit.form.Button">Trigger Backup</button>
-        <p class="message" style="opacity: 0;">A backup has been triggered on the server! If it has not been processed immediately,
+        <p class="message-info" style="opacity: 0;">A backup has been triggered on the server! If it has not been processed immediately,
             it will be created once all write transactions have completed.
         </p>
     </form>

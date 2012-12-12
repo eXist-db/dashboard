@@ -170,13 +170,15 @@ function(registry,plugin, declare, lang, dom, domConstruct, on, topic, aspect, b
             var self = this;
             domClass.add(app, "initialized");
             
+/*
             on(app, "click", function() {
                 query("#packageList li").forEach(function (app) {
                     domClass.remove(app, "active");
                 });
                 domClass.add(app, "active");
             });
-            
+*/
+
             // handle form submit
             query("form", app).connect("onsubmit", function (ev) {
                 ev.preventDefault();

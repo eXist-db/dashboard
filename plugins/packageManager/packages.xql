@@ -160,10 +160,37 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                     <div class="packageIconArea">
                     {
                         if ($app/@status = "installed" and $app/type = 'application') then
-                            <a href="{$url}" target="_blank" title="click to open application"><img src="{$icon}"/></a>
+                            <a href="{$url}" target="_blank" title="click to open application"><img class="appIcon" src="{$icon}"/></a>
                         else
-                            <img src="{$icon}"/>
+                            <img class="appIcon" src="{$icon}"/>
                     }
+                    <div class="appFunctions">
+                    {
+                        
+                        if ($app/@status = "installed") then
+                                <form action="">
+                                    <input type="hidden" name="package-url" value="{$app/@path}"/>
+                                    <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
+                                    <input type="hidden" name="action" value="remove"/>
+                                    <input type="hidden" name="type" value="application"/>
+                                    <button class="toobarBtn deleteApp" title="Uninstall">
+                                        <img src="plugins/packageManager/images/deleteApp1.png"/>
+                                    </button>
+                                </form>
+                        else
+                                <form action="">
+                                    <input type="hidden" name="server-url" value="{$repoURL}"/>
+                                    <input type="hidden" name="package-url" value="{$app/name}"/>
+                                    <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
+                                    <input type="hidden" name="action" value="install"/>
+                                    <input type="hidden" name="type" value="application"/>
+                                    <button class="toobarBtn installApp" title="Install">
+                                        <img src="plugins/packageManager/images/dbplus2.png" alt="Install" title="Install"/>
+                                    </button>
+                                </form>
+
+                    }
+                    </div>
                     </div>
                     {
                         switch ($app/type)
@@ -222,34 +249,6 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             <td><a href="{$app/website}">{ $app/website/text() }</a></td>
                         </tr>
                     </table>
-                    {
-                        if ($app/@status = "installed") then
-                            <div class="toolbar">
-                                <form action="">
-                                    <input type="hidden" name="package-url" value="{$app/@path}"/>
-                                    <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
-                                    <input type="hidden" name="action" value="remove"/>
-                                    <input type="hidden" name="type" value="application"/>
-                                    <button class="toobarBtn deleteApp" title="Uninstall">
-                                        <img src="plugins/packageManager/images/Remove-32.png"/>
-                                    </button>
-                                </form>
-                                
-                            </div>
-                        else
-                            <div class="toolbar">
-                                <form action="">
-                                    <input type="hidden" name="server-url" value="{$repoURL}"/>
-                                    <input type="hidden" name="package-url" value="{$app/name}"/>
-                                    <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
-                                    <input type="hidden" name="action" value="install"/>
-                                    <input type="hidden" name="type" value="application"/>
-                                    <button class="toobarBtn installApp" title="Install">
-                                        <img src="plugins/packageManager/images/Upload-32.png" alt="Install" title="Install"/>
-                                    </button>
-                                </form>
-                            </div>
-                    }
                 </li>
             default return
                 if ($app/abbrev = $packages:HIDE) then
@@ -260,9 +259,9 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             data-exist-requireLogin="{$app/@role = 'dba'}">
                             {
                                 if ($app/url) then
-                                    <a href="{$app/url}" target="_blank"><img src="{$icon}"/></a>
+                                    <a href="{$app/url}" target="_blank"><img class="appIcon" src="{$icon}"/></a>
                                 else
-                                    <img src="{$icon}"/>
+                                    <img class="appIcon" src="{$icon}"/>
                             }
                             <h3>{$app/title/text()}</h3>
                         </button>

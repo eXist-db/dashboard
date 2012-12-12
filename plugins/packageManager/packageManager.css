@@ -2,30 +2,39 @@
   position: relative;
 }
 #inlineAppArea .packageManager #packageManagerToolbar {
-  height: 30px;
-  background: #6d6e70;
-  font-size: 0.7em;
-  color: #efefed;
-  text-align: center;
+  height: 36px;
+  /*
+                    background: @lightGreyBase;
+                    font-size: 0.7em;
+                    color:#efefed;
+            text-align: center;
+        */
+
 }
-#inlineAppArea .packageManager #packageManagerToolbar div {
-  margin: 0 10px 0 0;
-}
-#inlineAppArea .packageManager #packageManagerToolbar div #uploadApp {
+#inlineAppArea .packageManager #packageManagerToolbar > * {
+  font-size: 0.8em;
   float: left;
+  height: 30px;
+}
+#inlineAppArea .packageManager #packageManagerToolbar #uploadApp {
   border: none;
   background: transparent;
   margin: 0;
+  width: 8em;
+  float: left;
+  text-align: left;
 }
-#inlineAppArea .packageManager #packageManagerToolbar div #uploadApp img {
-  margin: 0;
+#inlineAppArea .packageManager #packageManagerToolbar #uploadApp img {
+  margin: 0 0 0 12px;
 }
-#inlineAppArea .packageManager #packageManagerToolbar div #details,
-#inlineAppArea .packageManager #packageManagerToolbar div #detailslabel {
-  float: right;
+#inlineAppArea .packageManager #packageManagerToolbar .centered {
+  width: 40em;
+  text-align: center;
+  padding-top: 9px;
 }
-#inlineAppArea .packageManager #packageManagerToolbar div * {
-  margin: 5px;
+#inlineAppArea .packageManager #packageManagerToolbar .right {
+  width: 8em;
+  padding-top: 9px;
 }
 #inlineAppArea .packageManager #listWrapper {
   float: left;
@@ -56,18 +65,18 @@
   display: inline-block;
 }
 #inlineAppArea .packageManager #listWrapper ul li {
-  float: none;
-  margin: 5px 0 5px 5px;
+  float: left;
+  margin: 5px 0 0 5px;
   position: relative;
   -webkit-border-radius: 0px 20px 0px 0px;
   -moz-border-radius: 0px 20px 0px 0px;
   border-radius: 0px 20px 0px 0px;
+  width: 100%;
 }
 #inlineAppArea .packageManager #listWrapper ul li .ribbon {
   position: absolute;
   right: 0;
   width: 80px;
-  opacity: 0.4;
 }
 #inlineAppArea .packageManager #listWrapper ul li .toolbar {
   display: none;
@@ -83,12 +92,17 @@
 #inlineAppArea .packageManager #listWrapper ul li.installed {
   background-color: #cccccc;
 }
+#inlineAppArea .packageManager #listWrapper ul li.installed .ribbon {
+  opacity: 1;
+}
 #inlineAppArea .packageManager #listWrapper ul li.notInstalled {
   background-color: #dddddd;
 }
+#inlineAppArea .packageManager #listWrapper ul li.notInstalled .ribbon {
+  opacity: 0.4;
+}
 #inlineAppArea .packageManager #listWrapper table {
   background: transparent;
-  padding-left: 30px;
 }
 #inlineAppArea .packageManager #listWrapper table th,
 #inlineAppArea .packageManager #listWrapper table td {
@@ -109,22 +123,50 @@
   float: left;
   margin: 15px;
   height: 80px;
+  position: relative;
 }
-#inlineAppArea .packageManager #listWrapper .packageIconArea img {
+#inlineAppArea .packageManager #listWrapper .packageIconArea .appIcon {
   max-width: 128px;
   height: 100%;
+}
+#inlineAppArea .packageManager #listWrapper .packageIconArea .appFunctions {
+  display: none;
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  z-index: 20;
+}
+#inlineAppArea .packageManager #listWrapper .packageIconArea .appFunctions .deleteApp,
+#inlineAppArea .packageManager #listWrapper .packageIconArea .appFunctions .installApp {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  /*
+                        img{
+                            width: 16px;
+                        }
+*/
+
+}
+#inlineAppArea .packageManager #listWrapper .packageIconArea:hover .appFunctions {
+  display: inline-block;
 }
 #inlineAppArea .packageManager #listWrapper .shortTitle h3 {
   font-family: 'QuicksandBook', sans-serif;
   font-size: 1.5em;
   font-weight: normal;
+  margin: 5px 0;
 }
 #inlineAppArea .packageManager #listWrapper .shortTitle p {
   font-size: .75em;
 }
 #inlineAppArea .packageManager #listWrapper .shortTitle p.upgrade {
-  color: red;
+  color: darkred;
   font-weight: bold;
+}
+#inlineAppArea .packageManager #listWrapper .shortView li {
+  height: 80px;
 }
 #inlineAppArea .packageManager #listWrapper .shortView table {
   display: none;
@@ -134,7 +176,10 @@
   font-size: 1.2em;
   display: block;
   margin-top: 5px;
-  src: local('Quicksand'), local('Quicksand'), url('/exist/apps/dashboard/plugins/packageManager/sKd0EMYPAh5PYCRKSryvW7O3LdcAZYWl9Si6vvxL-qU.woff') format('truetype');
+  src: local('Quicksand'), local('Quicksand'), url('sKd0EMYPAh5PYCRKSryvW7O3LdcAZYWl9Si6vvxL-qU.woff') format('truetype');
+}
+#inlineAppArea .packageManager #listWrapper .shortView .packageIconArea .appIcon {
+  height: 50%;
 }
 #inlineAppArea .packageManager #listWrapper .hideInstalled .installed {
   display: none;
@@ -144,7 +189,6 @@
 }
 #inlineAppArea .packageManager #listWrapper > ul > li {
   border: thin solid #a0a1a3;
-  min-height: 120px;
 }
 form.file_upload .file_upload_body {
   position: relative;
@@ -191,7 +235,7 @@ form.file_upload .file_upload_label {
 }
 .progress .bar {
   height: 18px;
-  background: url(/exist/apps/dashboard/plugins/packageManager/images/progressbar.gif);
+  background: url(images/progressbar.gif);
 }
 #uploadDialog {
   width: 460px;

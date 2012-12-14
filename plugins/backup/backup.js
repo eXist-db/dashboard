@@ -106,7 +106,7 @@ define([
         },
         
         showMessage: function(message) {
-            var msg = query(".message", this.container);
+            var msg = query(".message-info", this.container);
             if (message) {
                 msg[0].innerHTML = message;
             }

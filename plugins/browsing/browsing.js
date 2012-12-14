@@ -30,6 +30,7 @@ define([
 ],
     function(plugin, util, declare, dom, domConstruct, on, fx, lang, array, query, parser, registry, geometry, forms) {
 
+        //todo: fix intial value for breadcrumb - currently will be updated when dblclick occurs - when using keyboard it will never updated
         /**
          * Collection browser plugin.
          */

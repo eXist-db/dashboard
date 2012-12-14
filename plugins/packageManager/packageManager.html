@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <div class="packageManager">
     <div id="packageManagerToolbar">
-        <div>
-            <button id="uploadApp" title="upload">
-                <img src="plugins/packageManager/images/Upload-24.png"/>
-                <!--<img src="resources/images/plusss.png"/>-->
-            </button>
+        <button id="uploadApp" title="add a package">
+            <img src="plugins/packageManager/images/dbplus2.png"/>
+            <!--<img src="resources/images/plusss.png"/>-->
+        </button>
+        <div class="centered">
             <input tabindex="0" id="all" type="radio" name="filterApps" value="all" checked="checked"/>
             <label for="all">all</label>
             <input id="installed" type="radio" name="filterApps" value="installed"/>
             <label for="installed">installed</label>
             <input id="available" type="radio" name="filterApps" value="available"/>
             <label for="available">available</label>
-            <label id="detailslabel" for="details">show details</label>
+        </div>
+        <div class="right">
+            <label for="details">show details</label>
             <input id="details" type="checkbox"/>
         </div>
     </div>

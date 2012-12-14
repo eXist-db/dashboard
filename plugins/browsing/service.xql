@@ -12,7 +12,7 @@ declare
     %rest:form-param("resources", "{$resources}")
     %output:media-type("application/json")
     %output:method("json")
-function service:delete-resources($resources as xs:string) {
+function service:delete-resources($resources as xs:string*) {
     try {
         for $resource in $resources
         return

@@ -33,19 +33,21 @@
     <div class="dijitHidden">
         <div data-dojo-type="dijit.Dialog" style="width:600px;" data-dojo-props="title:'Properties'" id="browsing-dialog"/>
         <div id="browsing-upload-dialog" data-dojo-type="dijit.Dialog" title="Upload Files">
-            <p>Drop one or more .xar files here or click on the button below.</p>
-            <form class="file_upload" action="plugins/browsing/upload.xql" method="POST" enctype="multipart/form-data">
-                <div class="file_upload_body">
-                    <input type="file" name="uploadedfiles[]" multiple="multiple"/>
-                    <input id="browsing-upload-collection" name="collection" value="/db/abc" type="hidden"/>
-                    <button>Upload</button>
-                    <div class="file_upload_label">Upload</div>
-                </div>
-            </form>
-            <div class="progress" style="opacity: 0;">
+            <div id="browsing-upload">
+                <p>Drop one or more .xar files here or click on the button below.</p>
+                <form class="file_upload" action="plugins/browsing/upload.xql" method="POST" enctype="multipart/form-data">
+                    <div class="file_upload_body">
+                        <input type="file" name="uploadedfiles[]" multiple="multiple"/>
+                        <input id="browsing-upload-collection" name="collection" value="/db/abc" type="hidden"/>
+                        <button>Upload</button>
+                        <div class="file_upload_label">Upload</div>
+                    </div>
+                </form>
+            </div>
+            <div class="progress">
                 <div class="bar" style="width: 0%;">Uploading</div>
             </div>
-            <table id="package-files"/>
+            <table id="files"/>
 <!---->
 <!--            <form method="post" action="plugins/browsing/upload.xql" id="upload-form" enctype="multipart/form-data">-->
 <!--                <input id="browsing-uploader" name="uploadedfile" multiple="true" type="file" data-dojo-type="dojox.form.Uploader" label="Click to select file to upload"/>-->

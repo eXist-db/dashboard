@@ -47,3 +47,76 @@
     width: 100%;
     overflow: auto;
 }
+
+#browsing-upload-dialog {
+    width: 460px;
+    
+    form.file_upload {
+        
+        .file_upload_body {
+            position: relative;
+            overflow: hidden;
+            direction: ltr;
+        	cursor: pointer;
+        	text-align: center;
+        	color: #555;
+        	font-weight: bold;
+        	-moz-border-radius: 10px;
+        	-webkit-border-radius: 10px;
+        	border-radius: 10px;
+        	width: 15em;
+        	line-height: 2.5em;
+        	background: #E6E6E6;
+        	border: 1px solid lightGrey;
+        	margin-left: auto;
+        	margin-right: auto;
+            height: auto;
+            
+            input {
+                position: absolute;
+                top: 0;
+            	right: 0;
+            	margin: 0;
+            	border: 300px solid transparent;
+            	opacity: 0;
+            	-ms-filter: 'alpha(opacity=0)';
+            	-o-transform: translate(-300px, -300px) scale(10);
+            	-moz-transform: translate(-800px, 0) scale(10);
+            	cursor: pointer;
+            	height: 100%;
+            }
+            
+            button {
+                display: none;
+            }
+        }
+        
+        .file_upload_label {
+        	display: block;
+        }
+    }
+    
+    .progress {
+        border: 1px solid #777;
+        width: 320px;
+        margin: 8px auto;
+        
+        .bar {
+            height: 18px;
+            background: url(images/progressbar.gif);
+        }
+    }
+    
+    #files {
+        width: 100%;
+        margin: 8px 0;
+        td {
+            padding: 4px 6px;
+            text-align: right;
+        }
+        .name {
+            font-weight: bold;
+            text-align: left;
+        }
+    }
+}

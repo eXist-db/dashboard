@@ -244,8 +244,10 @@ define([
             },
 
             refresh: function() {
-                this.store.close();
-                this.grid.setStore(this.store, { collection: this.collection });
+                if (this.store != null) {
+                    this.store.close();
+                    this.grid.setStore(this.store, { collection: this.collection });
+                }
             },
 
             resize: function() {

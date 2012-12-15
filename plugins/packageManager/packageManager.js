@@ -170,7 +170,6 @@ function(registry,plugin, Uploader, declare, lang, dom, domConstruct, on, topic,
                 form: form,
                 handleAs: "json",
                 load: function(data) {
-                    console.log("response: %o", data);
                     if (data && data.error) {
                         dlg.set("content", "<p>" + data.error + "</p>");
                     } else {
@@ -204,7 +203,6 @@ function(registry,plugin, Uploader, declare, lang, dom, domConstruct, on, topic,
         update: function() {
             var self = this;
             
-            registry.byId("package-upload-dialog").hide();
             var appListElement = dom.byId("packageList");
             var anim = baseFx.fadeOut({node: appListElement, duration: 200});
             aspect.after(anim, "onEnd", function() {
@@ -235,6 +233,10 @@ function(registry,plugin, Uploader, declare, lang, dom, domConstruct, on, topic,
         },
         
         uploadCompleted: function() {
+            var upload = registry.byId("package-upload-dialog");
+            if (upload) {
+                upload.hide();
+            }
             topic.publish("packages-changed");
             this.update();
         },

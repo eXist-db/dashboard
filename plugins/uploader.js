@@ -19,6 +19,7 @@ function(declare, array, ready, dom, domConstruct, domStyle, query, fx) {
             this.container = container;
             
             var pending = 0;
+            var progressDiv = query(".overall-progress", container)[0];
             jQuery(this.container).fileupload({
                 sequentialUploads: true,
                 dataType: "json",
@@ -32,7 +33,7 @@ function(declare, array, ready, dom, domConstruct, domStyle, query, fx) {
                         rows += "</tr>";
                     }
                     data.context = domConstruct.place(rows, query(".files", container)[0], "last");
-                    pending++;
+                    pending += 1;
                     data.submit();
                 },
                 progress: function (e, data) {
@@ -40,7 +41,6 @@ function(declare, array, ready, dom, domConstruct, domStyle, query, fx) {
                     query('.bar', data.context).style("width", progress + "%");
                 },
                 progressall: function (e, data) {
-                    var progressDiv = query(".overall-progress", container)[0];
                     var progress = parseInt(data.loaded / data.total * 100, 10);
                     if (domStyle.get(progressDiv, "opacity") == 0) {
                         fx.fadeIn({node: progressDiv, duration: 200}).play();
@@ -53,13 +53,15 @@ function(declare, array, ready, dom, domConstruct, domStyle, query, fx) {
                     query(".overall-progress .progress-label", container).innerHTML(progress + "%");
                 },
                 done: function(e, data) {
-                    pending--;
+                    pending -= 1;
                     if (data.result[0].error) {
                         query(".progress", data.context).innerHTML(data.result[0].error);
                     } else {
                         domConstruct.destroy(data.context);
                     }
-                    if (pending === 0) {
+                    if (pending < 1) {
+                        fx.fadeOut({node: progressDiv, duration: 200}).play();
+                        progress = 0;
                         if (doneCallback) {
                             doneCallback();
                         }

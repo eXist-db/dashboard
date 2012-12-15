@@ -27,6 +27,7 @@ function packages:get($type as xs:string?, $format as xs:string?, $plugins as xs
     let $apps := packages:default-apps($plugins) | packages:installed-apps($format)
     let $apps := 
         if ($type = "local") then $apps else packages:public-repo-contents($apps)
+    let $apps := if ($format = "manager") then $apps except $apps[@removable="no"] else $apps
     for $app in $apps
     return
        packages:display($packages:REPO, $app, $format)

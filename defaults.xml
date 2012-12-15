@@ -15,7 +15,7 @@
         <app></app>
     </group>
 -->
-    <app status="installed">
+    <app status="installed" removable="no">
         <title>Java Admin Client</title>
         <abbrev>webstart</abbrev>
         <version>1.0</version>
@@ -23,7 +23,7 @@
         <url>../../webstart/exist.jnlp</url>
         <type>application</type>
     </app>
-    <app status="installed">
+    <app status="installed" removable="no">
         <title>Admin Web Application</title>
         <abbrev>admin</abbrev>
         <version>1.0</version>

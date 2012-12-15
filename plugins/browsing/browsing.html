@@ -34,7 +34,7 @@
         <div data-dojo-type="dijit.Dialog" style="width:600px;" data-dojo-props="title:'Properties'" id="browsing-dialog"/>
         <div id="browsing-upload-dialog" data-dojo-type="dijit.Dialog" title="Upload Files">
             <div id="browsing-upload">
-                <p>Drop one or more .xar files here or click on the button below.</p>
+                <p>To upload: drop one or more files on this dialog or click on the button below.</p>
                 <form class="file_upload" action="plugins/browsing/upload.xql" method="POST" enctype="multipart/form-data">
                     <div class="file_upload_body">
                         <input type="file" name="uploadedfiles[]" multiple="multiple"/>
@@ -43,19 +43,14 @@
                         <div class="file_upload_label">Upload</div>
                     </div>
                 </form>
+                <div class="overall-progress" style="opacity: 0">
+                    <div class="bar" style="width: 0%;"/>
+                    <div class="progress-label">0%</div>
+                </div>
+                <div class="queue">
+                    <table class="files"/>
+                </div>
             </div>
-            <div class="progress">
-                <div class="bar" style="width: 0%;">Uploading</div>
-            </div>
-            <table id="files"/>
-<!---->
-<!--            <form method="post" action="plugins/browsing/upload.xql" id="upload-form" enctype="multipart/form-data">-->
-<!--                <input id="browsing-uploader" name="uploadedfile" multiple="true" type="file" data-dojo-type="dojox.form.Uploader" label="Click to select file to upload"/>-->
-<!--                <input id="browsing-upload-collection" name="collection" value="/db/abc" type="hidden"/>-->
-<!--                <input type="submit" label="Submit" data-dojo-type="dijit.form.Button"/>-->
-<!--                <div class="filelist" data-dojo-type="dojox.form.uploader.FileList" uploaderId="browsing-uploader"/>-->
-<!--            </form>-->
-<!--            <p>This window will close once all files haven been uploaded and stored.</p>-->
         </div>
     </div>
 </div>

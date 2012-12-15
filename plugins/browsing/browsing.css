@@ -38,7 +38,11 @@
   overflow: auto;
 }
 #browsing-upload-dialog {
-  width: 460px;
+  width: 520px;
+}
+#browsing-upload-dialog p {
+  text-align: center;
+  font-size: 85%;
 }
 #browsing-upload-dialog form.file_upload .file_upload_body {
   position: relative;
@@ -78,24 +82,49 @@
 #browsing-upload-dialog form.file_upload .file_upload_label {
   display: block;
 }
-#browsing-upload-dialog .progress {
-  border: 1px solid #777;
-  width: 320px;
-  margin: 8px auto;
+#browsing-upload-dialog form.file_upload .file_upload_body:hover {
+  background-color: lawngreen;
 }
-#browsing-upload-dialog .progress .bar {
+#browsing-upload-dialog .overall-progress {
+  position: relative;
+  width: 100%;
+}
+#browsing-upload-dialog .overall-progress .bar {
   height: 18px;
   background: url(/exist/apps/dashboard/plugins/browsing/images/progressbar.gif);
 }
-#browsing-upload-dialog #files {
-  width: 100%;
-  margin: 8px 0;
+#browsing-upload-dialog .overall-progress .progress-label {
+  position: absolute;
+  left: 10px;
+  top: 0;
 }
-#browsing-upload-dialog #files td {
+#browsing-upload-dialog .queue {
+  display: block;
+  width: 100%;
+  height: 160px;
+  overflow: auto;
+  margin: 8px 0;
+  font-size: 85%;
+}
+#browsing-upload-dialog .queue .files {
+  width: 100%;
+  margin: 0;
+}
+#browsing-upload-dialog .queue .files tr td {
   padding: 4px 6px;
   text-align: right;
+  border-bottom: 1px solid #E0E0E0;
 }
-#browsing-upload-dialog #files .name {
+#browsing-upload-dialog .queue .files tr td.name {
+  min-width: 120px;
   font-weight: bold;
   text-align: left;
+}
+#browsing-upload-dialog .queue .files tr td.progress {
+  width: 180px;
+  margin: 8px auto;
+}
+#browsing-upload-dialog .queue .files tr td.progress .bar {
+  height: 18px;
+  background: url(/exist/apps/dashboard/plugins/browsing/images/progressbar.gif);
 }

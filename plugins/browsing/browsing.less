@@ -49,7 +49,12 @@
 }
 
 #browsing-upload-dialog {
-    width: 460px;
+    width: 520px;
+    
+    p {
+        text-align: center;
+        font-size: 85%;
+    }
     
     form.file_upload {
         
@@ -94,29 +99,58 @@
         .file_upload_label {
         	display: block;
         }
+        
+        .file_upload_body:hover {
+            background-color: lawngreen;
+        }
     }
     
-    .progress {
-        border: 1px solid #777;
-        width: 320px;
-        margin: 8px auto;
-        
+    .overall-progress {
+        position: relative;
+        width: 100%;
         .bar {
             height: 18px;
             background: url(images/progressbar.gif);
         }
+        .progress-label {
+            position: absolute;
+            left: 10px;
+            top: 0;
+        }
     }
     
-    #files {
+    .queue {
+        display: block;
         width: 100%;
+        height: 160px;
+        overflow: auto;
         margin: 8px 0;
-        td {
-            padding: 4px 6px;
-            text-align: right;
-        }
-        .name {
-            font-weight: bold;
-            text-align: left;
+        font-size: 85%;
+        
+        .files {
+            width: 100%;
+            margin: 0;
+            tr {
+                td {
+                    padding: 4px 6px;
+                    text-align: right;
+                    border-bottom: 1px solid #E0E0E0;
+                }
+                td.name {
+                    min-width: 120px;
+                    font-weight: bold;
+                    text-align: left;
+                }
+                td.progress {
+                    width: 180px;
+                    margin: 8px auto;
+                    
+                    .bar {
+                        height: 18px;
+                        background: url(images/progressbar.gif);
+                    }
+                }
+            }
         }
     }
 }

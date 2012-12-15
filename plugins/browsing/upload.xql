@@ -11,14 +11,18 @@ return
     <response>
     {
         map-pairs(function($name, $file) {
-            let $stored := xmldb:store($collection, xmldb:encode-uri($name), $file)
-            let $log := util:log("DEBUG", ("Uploaded: ", $stored))
-            return
+            try {
+                let $stored := xmldb:store($collection, xmldb:encode-uri($name), $file)
+                return
+                    <json:value json:array="true">
+                        <file>{$stored}</file>
+                        <type>{xmldb:get-mime-type($stored)}</type>
+                    </json:value>
+            } catch * {
                 <json:value json:array="true">
-                    <file>{$stored}</file>
-                    <size>xmldb:size($collection, $name)</size>
-                    <type>xmldb:get-mime-type($stored)</type>
+                    <error>{$err:description}</error>
                 </json:value>
+            }
         }, $names, $files)
     }
     </response>

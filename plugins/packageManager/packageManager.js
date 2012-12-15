@@ -1,5 +1,6 @@
 define(["dijit/registry",
         "plugins/base",
+        "plugins/uploader",
         "dojo/_base/declare",
         "dojo/_base/lang",
         "dojo/dom",
@@ -14,12 +15,9 @@ define(["dijit/registry",
         "dojo/query",
         "dojo/fx",
         "dijit/Dialog",
-        "dojox/form/Uploader",
-        "dojox/form/uploader/FileList",
-        "dojox/form/uploader/plugins/Flash",
         "dojo/NodeList-fx"
 ],
-function(registry,plugin, declare, lang, dom, domConstruct, on, topic, aspect, baseFx, parser, domClass, domStyle, query, fx, dialog, uploader, fileList) {
+function(registry,plugin, Uploader, declare, lang, dom, domConstruct, on, topic, aspect, baseFx, parser, domClass, domStyle, query, fx, dialog) {
 
 
     /*
@@ -98,56 +96,11 @@ function(registry,plugin, declare, lang, dom, domConstruct, on, topic, aspect, b
             //>>>>>>>>>>> upload
             // connect the upload icon
             this.uploadAppListener = on(dom.byId("uploadApp"),"click",function(){
-                var uploadDlg = registry.byId("uploadDialog");
+                var uploadDlg = registry.byId("package-upload-dialog");
                 uploadDlg.show();
             });
             
-//            var uploader = registry.byId("uploader");
-//            on(uploader, "complete", lang.hitch(this, "uploadCompleted"));
-            
-            jQuery("#package_upload").fileupload({
-        		sequentialUploads: true,
-                dataType: "json",
-                add: function(e, data) {
-                    var rows = "";
-                    for (var i = 0; i < data.files.length; i++) {
-                        if (/\.xar$/i.test(data.files[i].name)) {
-                            console.log("file: %o", data.files[i]);
-                            rows += "<tr>";
-                            rows += "<td class='name'>" + data.files[i].name + "</td>";
-                            rows +="<td>" + Math.ceil(data.files[i].size / 1024) + "k</td>";
-                            rows += "<td class='error'></td>";
-                            rows += "</tr>";
-                        } else {
-                            domConstruct.place("<tr><td>Not a .xar archive: " + data.files[i].name + "</td></tr>", dom.byId("package-files"), "only");
-                            return;
-                        }
-                    }
-                    domConstruct.place(rows, dom.byId("package-files"), "last");
-                    var deferred = data.submit();
-                    query("#package_upload .progress").fadeIn().play();
-                },
-                progressall: function (e, data) {
-                    var progress = parseInt(data.loaded / data.total * 100, 10);
-                    query('#package_upload .progress .bar').forEach(function(div) {
-                        domStyle.set(div, "width", progress + '%');
-                    });
-                },
-                done: function(e, data) {
-                    query("#package-files tr:first").remove();
-                    query('#package_upload .progress .bar').forEach(function(div) {
-                        domStyle.set(div, "width", '0%');
-                    });
-                    query("#package_upload .progress").fadeOut().play();
-                },
-                fail: function(e, data) {
-                    query("#package-files tr:first .error").innerHTML(data.jqXHR.statusText);
-                    query('#package_upload .progress .bar').forEach(function(div) {
-                        domStyle.set(div, "width", '0%');
-                    });
-                    query("#package_upload .progress").fadeOut().play();
-                }
-            });
+            new Uploader(dom.byId("package-upload"), lang.hitch(this, "uploadCompleted"));
             
             this.update();
         },
@@ -251,7 +204,7 @@ function(registry,plugin, declare, lang, dom, domConstruct, on, topic, aspect, b
         update: function() {
             var self = this;
             
-            registry.byId("uploadDialog").hide();
+            registry.byId("package-upload-dialog").hide();
             var appListElement = dom.byId("packageList");
             var anim = baseFx.fadeOut({node: appListElement, duration: 200});
             aspect.after(anim, "onEnd", function() {
@@ -289,6 +242,8 @@ function(registry,plugin, declare, lang, dom, domConstruct, on, topic, aspect, b
         close: function() {
             console.log("Closing down");
 
+            registry.byId("package-upload-dialog").destroyRecursive();
+            
             this.detailsListener.remove();
             this.allListener.remove();
             this.installedListener.remove();

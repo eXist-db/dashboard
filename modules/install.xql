@@ -3,6 +3,7 @@ xquery version "3.0";
 import module namespace apputil="http://exist-db.org/xquery/apps" at "apputil.xql";
 
 declare namespace install="http://exist-db.org/apps/dashboard/install";
+declare namespace json="http://www.json.org";
 
 declare option exist:serialize "method=json media-type=application/json";
 
@@ -20,13 +21,21 @@ let $upload := request:get-uploaded-file-name("uploadedfiles[]")
 return
     install:require-dba(function() {
         if (exists($upload)) then
-            let $docName := apputil:upload(xs:anyURI($server-url))
-            return
-                <result>
-                    <file>{$docName}</file>
-                    <size>256</size>
-                    <type>zip</type>
-                </result>
+            <result>
+            {
+                try {
+                    let $docName := apputil:upload(xs:anyURI($server-url))
+                    return
+                        <json:value json:array="true">
+                            <file>{$docName}</file>
+                        </json:value>
+                } catch * {
+                    <json:value json:array="true">
+                        <error>{$err:description}</error>
+                    </json:value>
+                }
+            }
+            </result>
         else
             switch ($action)
                 case "remove" return

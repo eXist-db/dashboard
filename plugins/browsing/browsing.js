@@ -1,9 +1,11 @@
 define([
     "plugins/base",
     "plugins/util",
+    "plugins/uploader",
     "dojo/_base/declare",
     "dojo/dom",
     "dojo/dom-construct",
+    "dojo/dom-style",
     "dojo/on",
     "dojo/_base/fx",
     "dojo/_base/lang",
@@ -23,12 +25,9 @@ define([
     "dijit/Toolbar",
     "dojox/widget/Standby",
     "dijit/Dialog",
-    "dojox/fx",
-    "dojox/form/Uploader",
-    "dojox/form/uploader/FileList",
-    "dojox/form/uploader/plugins/Flash",
+    "dojox/fx"
 ],
-    function(plugin, util, declare, dom, domConstruct, on, fx, lang, array, query, parser, registry, geometry, forms) {
+    function(plugin, util, Uploader, declare, dom, domConstruct, domStyle, on, fx, lang, array, query, parser, registry, geometry, forms) {
 
         //todo: fix intial value for breadcrumb - currently will be updated when dblclick occurs - when using keyboard it will never updated
         /**
@@ -43,7 +42,6 @@ define([
             collection: "/db",
             clipboard: null,
             clipboardCut: false,
-            onUploadCompleteListener: null,
             editor: null,
             
             constructor: function(div) {
@@ -172,49 +170,8 @@ define([
                 });
                 on(dom.byId("browsing-toolbar-reload"), "click", lang.hitch(this, "refresh"));
 
-                jQuery("#browsing-upload").fileupload({
-                	sequentialUploads: true,
-                    dataType: "json",
-                    add: function(e, data) {
-                        console.log("filed: %d", data.files.length);
-                        var rows = "";
-                        for (var i = 0; i < data.files.length; i++) {
-                            rows += "<tr>";
-                            rows += "<td class='name'>" + data.files[i].name + "</td>";
-                            rows +="<td>" + Math.ceil(data.files[i].size / 1024) + "k</td>";
-                            rows += "<td class='error'></td>";
-                            rows += "</tr>";
-                        }
-                        domConstruct.place(rows, dom.byId("files"), "last");
-                        data.submit();
-                    },
-                    progressall: function (e, data) {
-                        var progress = parseInt(data.loaded / data.total * 100, 10);
-                        query('#file_upload .progress .bar').forEach(function(div) {
-                            domStyle.set(div, "width", progress + '%');
-                        });
-                    },
-                    done: function(e, data) {
-                        //query("#files tr:first").remove();
-                        query('#file_upload .progress .bar').forEach(function(div) {
-                            domStyle.set(div, "width", '0%');
-                        });
-                    },
-                    fail: function(e, data) {
-                        query("#files tr:first .error").innerHTML(data.jqXHR.statusText);
-                        query('#file_upload .progress .bar').forEach(function(div) {
-                            domStyle.set(div, "width", '0%');
-                        });
-                        query("#file_upload .progress").fadeOut().play();
-                    }
-                });
-            
-//                var uploader = registry.byId("browsing-uploader");
-//                this.onUploadCompleteListener = on(uploader, "complete", function() {
-//                    $this.refresh();
-//                    registry.byId("browsing-upload-dialog").hide();
-//                });
-
+                new Uploader(dom.byId("browsing-upload"), lang.hitch(this, "refresh"));
+                
                 this.ready();
             },
 
@@ -390,8 +347,6 @@ define([
             close: function() {
                 console.log("Closing down");
 
-                this.onUploadCompleteListener.remove();
-                registry.byId("browsing-uploader").destroyRecursive();
                 // Dialog needs to be destroyed explicitely
                 registry.byId("browsing-dialog").destroyRecursive();
                 registry.byId("browsing-upload-dialog").destroyRecursive();

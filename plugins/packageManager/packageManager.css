@@ -176,7 +176,7 @@
   font-size: 1.2em;
   display: block;
   margin-top: 5px;
-  src: local('Quicksand'), local('Quicksand'), url('sKd0EMYPAh5PYCRKSryvW7O3LdcAZYWl9Si6vvxL-qU.woff') format('truetype');
+  src: local('Quicksand'), local('Quicksand'), url('/exist/apps/dashboard/plugins/packageManager/sKd0EMYPAh5PYCRKSryvW7O3LdcAZYWl9Si6vvxL-qU.woff') format('truetype');
 }
 #inlineAppArea .packageManager #listWrapper .shortView .packageIconArea .appIcon {
   height: 50%;
@@ -190,7 +190,14 @@
 #inlineAppArea .packageManager #listWrapper > ul > li {
   border: thin solid #a0a1a3;
 }
-form.file_upload .file_upload_body {
+#package-upload-dialog {
+  width: 520px;
+}
+#package-upload-dialog p {
+  text-align: center;
+  font-size: 85%;
+}
+#package-upload-dialog form.file_upload .file_upload_body {
   position: relative;
   overflow: hidden;
   direction: ltr;
@@ -209,7 +216,7 @@ form.file_upload .file_upload_body {
   margin-right: auto;
   height: auto;
 }
-form.file_upload .file_upload_body input {
+#package-upload-dialog form.file_upload .file_upload_body input {
   position: absolute;
   top: 0;
   right: 0;
@@ -222,33 +229,55 @@ form.file_upload .file_upload_body input {
   cursor: pointer;
   height: 100%;
 }
-form.file_upload .file_upload_body button {
+#package-upload-dialog form.file_upload .file_upload_body button {
   display: none;
 }
-form.file_upload .file_upload_label {
+#package-upload-dialog form.file_upload .file_upload_label {
   display: block;
 }
-.progress {
-  border: 1px solid #777;
-  width: 320px;
-  margin: 8px auto;
+#package-upload-dialog form.file_upload .file_upload_body:hover {
+  background-color: lawngreen;
 }
-.progress .bar {
-  height: 18px;
-  background: url(images/progressbar.gif);
-}
-#uploadDialog {
-  width: 460px;
-}
-#package-files {
+#package-upload-dialog .overall-progress {
+  position: relative;
   width: 100%;
-  margin: 8px 0;
 }
-#package-files td {
+#package-upload-dialog .overall-progress .bar {
+  height: 18px;
+  background: url(/exist/apps/dashboard/plugins/packageManager/images/progressbar.gif);
+}
+#package-upload-dialog .overall-progress .progress-label {
+  position: absolute;
+  left: 10px;
+  top: 0;
+}
+#package-upload-dialog .queue {
+  display: block;
+  width: 100%;
+  height: 160px;
+  overflow: auto;
+  margin: 8px 0;
+  font-size: 85%;
+}
+#package-upload-dialog .queue .files {
+  width: 100%;
+  margin: 0;
+}
+#package-upload-dialog .queue .files tr td {
   padding: 4px 6px;
   text-align: right;
+  border-bottom: 1px solid #E0E0E0;
 }
-#package-files .name {
+#package-upload-dialog .queue .files tr td.name {
+  min-width: 120px;
   font-weight: bold;
   text-align: left;
+}
+#package-upload-dialog .queue .files tr td.progress {
+  width: 180px;
+  margin: 8px auto;
+}
+#package-upload-dialog .queue .files tr td.progress .bar {
+  height: 18px;
+  background: url(/exist/apps/dashboard/plugins/packageManager/images/progressbar.gif);
 }

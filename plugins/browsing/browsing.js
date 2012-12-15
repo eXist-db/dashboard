@@ -43,13 +43,14 @@ define([
             clipboard: null,
             clipboardCut: false,
             editor: null,
+            contentHeight: 0,
             
             constructor: function(div) {
                 this.inherited(arguments);
                 var $this = this;
 
                 this.loadCSS("plugins/browsing/browsing.css");
-
+                
                 // json data store
                 var restStore = new dojo.store.JsonRest({ target: "plugins/browsing/contents/" });
                 this.store = new dojo.data.ObjectStore({ objectStore: restStore });
@@ -74,6 +75,7 @@ define([
 //                    onStyleRow: function(row) { $this.styleRow(row); }
                     },
                     document.createElement('div'));
+                
                 this.grid.setStore(this.store, { collection: this.collection });
 
                 on(this.grid, "rowDblClick", function(ev) {
@@ -112,14 +114,6 @@ define([
 
                 /*append the new grid to the div*/
                 dom.byId("browsing-grid-container").appendChild(this.grid.domNode);
-
-                this.grid.startup();
-
-                this.resize();
-
-                this.grid.domNode.focus();
-                this.grid.focus.setFocusIndex(0, 0);
-                this.grid.focus.focusGrid();
 
                 on(dom.byId("browsing-toolbar-properties"), "click", lang.hitch(this, "properties"));
                 on(dom.byId("browsing-toolbar-delete"), "click", lang.hitch(this, "delete"));
@@ -172,7 +166,16 @@ define([
 
                 new Uploader(dom.byId("browsing-upload"), lang.hitch(this, "refresh"));
                 
-                this.ready();
+                
+                this.ready(function() {
+                    // resizing and grid initialization after plugin becomes visible
+                    $this.resize();
+                    $this.grid.startup();
+
+                    $this.grid.domNode.focus();
+                    $this.grid.focus.setFocusIndex(0, 0);
+                    $this.grid.focus.focusGrid();
+                });
             },
 
             getSelected: function() {
@@ -251,10 +254,9 @@ define([
             },
 
             resize: function() {
-                var gridContainer = dom.byId("browsing-grid-container");
-                var gridDiv = dom.byId("browsing-grid");
-                var box = geometry.getContentBox(gridContainer);
-                gridDiv.style.height = (box.h - gridContainer.offsetTop) + "px";
+                var box = geometry.getContentBox(query(".browsing")[0]);
+                var gridDiv = dom.byId("browsing-grid-container");
+                domStyle.set("browsing-grid", "height", (box.h - gridDiv.offsetTop) + "px");
             },
 
             changeCollection: function(idx) {

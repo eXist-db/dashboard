@@ -106,7 +106,6 @@ function(registry,plugin, Uploader, declare, lang, dom, domConstruct, on, topic,
         },
         
         initHandlers: function() {
-            console.log("Init handlers");
             var self = this;
             query("#packageList li").forEach(function (app) {
                 self.initToolbar(app);

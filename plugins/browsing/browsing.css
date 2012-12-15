@@ -16,9 +16,6 @@
   font-size: 0.85em;
   padding: 2px 5px;
 }
-.browsing .browsing-container #browsing-grid-container {
-  height: 100%;
-}
 .browsing .browsing-container #browsing-grid {
   height: 300px;
 }

@@ -1,5 +1,5 @@
-define([ "dojo/_base/declare", "dojo/_base/array",  "dojo/ready", "dojo/query", "dijit/registry", "dojo/parser", "dojox/widget/Standby","dojo/domReady!" ],
-function(declare, array, ready, query, registry, parser) {
+define([ "dojo/_base/declare", "dojo/_base/array",  "dojo/ready", "dojo/query", "dojo/_base/fx", "dijit/registry", "dojo/parser", "dojox/widget/Standby","dojo/domReady!" ],
+function(declare, array, ready, query, fx, registry, parser) {
     
     /**
      * Base class for all plugins
@@ -22,8 +22,17 @@ function(declare, array, ready, query, registry, parser) {
          * fade in the plugin. call this from the constructor once the plugin
          * has initialized its UI.
          */
-        ready: function() {
-            var anim = query(".inline-app", this.container).fadeIn();
+        ready: function(callback) {
+            var div = query(".inline-app", this.container)[0];
+            var anim = fx.fadeIn({
+                node: div,
+                duration: 200,
+                onEnd: function() {
+                    if (callback) {
+                        callback();
+                    }
+                }
+            });
             anim.play();
         },
         

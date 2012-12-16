@@ -163,7 +163,8 @@ define([
                     }
                 });
                 on(dom.byId("browsing-toolbar-reload"), "click", lang.hitch(this, "refresh"));
-
+                on(dom.byId("browsing-toolbar-reindex"), "click", lang.hitch(this, "reindex"));
+                
                 new Uploader(dom.byId("browsing-upload"), lang.hitch(this, "refresh"));
                 
                 
@@ -178,13 +179,13 @@ define([
                 });
             },
 
-            getSelected: function() {
-                console.debug("getSelected");
+            getSelected: function(collectionsOnly) {
                 var items = this.grid.selection.getSelected();
                 if (items.length && items.length > 0) {
                     var resources = [];
                     array.forEach(items, function(item) {
-                        resources.push(item.id);
+                        if (!collectionsOnly || item.isCollection)
+                            resources.push(item.id);
                     });
                     return resources;
                 }
@@ -329,6 +330,41 @@ define([
                 uploadDlg.show();
             },
 
+            reindex: function() {
+                var self = this;
+                var target = this.collection;
+                var resources = this.getSelected(true);
+                if (resources && resources.length > 0) {
+                    if (resources.length > 1) {
+                        util.message("Reindex", "Please select a single collection or none to reindex the current root collection");
+                        return;
+                    }
+                    target = resources[0];
+                }
+                
+                util.confirm("Reindex collection?", "Are you sure you want to reindex collection " + 
+                    target + "?",
+                    function() {
+                        self.actionStart();
+                        dojo.xhrPost({
+                            url: "plugins/browsing/contents" + target,
+                            content: { action: "reindex" },
+                            handleAs: "json",
+                            load: function(data) {
+                                if (data.status != "ok") {
+                                    util.message("Reindex Failed!", "Reindex of collection " + target + " failed");
+                                }
+                                self.refresh();
+                                self.actionEnd();
+                            },
+                            error: function() {
+                                self.refresh();
+                                self.actionEnd();
+                            }
+                        });
+                    });
+            },
+            
             styleRow: function(row) {
                 var item = this.grid.getItem(row.index);
                 if (item && item.isCollection) {

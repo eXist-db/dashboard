@@ -125,29 +125,34 @@ function service:copyOrMove($target as xs:string, $sources as xs:string*, $actio
     let $target := concat("/", $target)
     let $user := if (request:get-attribute('org.exist.login.user')) then request:get-attribute('org.exist.login.user') else "guest"
     return
-        if (service:canWrite($target, $user)) then (
-            for $source in $sources
-            let $isCollection := xmldb:collection-available($source)
+        if ($action = "reindex") then
+            let $reindex := xmldb:reindex($target)
             return
-                if ($isCollection) then
-                    switch($action)
-                        case "move" return
-                            xmldb:move($source, $target)
-                        default return
-                            xmldb:copy($source, $target)
-                else
-                    let $split := text:groups($source, "^(.*)/([^/]+)$")
-                    return
-                        switch ($action)
-                            case "move" return
-                                xmldb:move($split[2], $target, $split[3])
-                            default return
-                                xmldb:copy($split[2], $target, $split[3]),
                 <response status="ok"/>
-        ) else
-            <response status="fail">
-                <message>You are not allowed to write to collection {$target}.</message>
-            </response>
+        else
+            if (service:canWrite($target, $user)) then (
+                for $source in $sources
+                let $isCollection := xmldb:collection-available($source)
+                return
+                    if ($isCollection) then
+                        switch($action)
+                            case "move" return
+                                xmldb:move($source, $target)
+                            default return
+                                xmldb:copy($source, $target)
+                    else
+                        let $split := text:groups($source, "^(.*)/([^/]+)$")
+                        return
+                            switch ($action)
+                                case "move" return
+                                    xmldb:move($split[2], $target, $split[3])
+                                default return
+                                    xmldb:copy($split[2], $target, $split[3]),
+                    <response status="ok"/>
+            ) else
+                <response status="fail">
+                    <message>You are not allowed to write to collection {$target}.</message>
+                </response>
 };
 
 declare

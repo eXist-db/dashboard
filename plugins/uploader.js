@@ -14,10 +14,11 @@ function(declare, array, ready, dom, domConstruct, domStyle, query, fx) {
     var klass = declare(null, {
         
         container: null,
+        errorsFound: false,
         
         constructor: function(container, doneCallback) {
             this.container = container;
-            
+            var self = this;
             var pending = 0;
             var progressDiv = query(".overall-progress", container)[0];
             jQuery(this.container).fileupload({
@@ -56,6 +57,7 @@ function(declare, array, ready, dom, domConstruct, domStyle, query, fx) {
                     pending -= 1;
                     if (data.result[0].error) {
                         query(".progress", data.context).innerHTML(data.result[0].error);
+                        self.errorsFound = true;
                     } else {
                         domConstruct.destroy(data.context);
                     }
@@ -63,7 +65,7 @@ function(declare, array, ready, dom, domConstruct, domStyle, query, fx) {
                         fx.fadeOut({node: progressDiv, duration: 200}).play();
                         progress = 0;
                         if (doneCallback) {
-                            doneCallback();
+                            doneCallback(self.errorsFound);
                         }
                     }
                 },
@@ -71,6 +73,11 @@ function(declare, array, ready, dom, domConstruct, domStyle, query, fx) {
                     query(".progress", data.context).innerHTML(data.jqXHR.statusText);
                 }
             });
+        },
+        
+        clear: function() {
+            query(".files", this.container).empty();
+            this.errorsFound = false;
         }
     });
     

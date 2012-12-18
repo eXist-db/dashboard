@@ -93,14 +93,17 @@ function(registry,plugin, Uploader, declare, lang, dom, domConstruct, on, topic,
                 domClass.add(packageList,"hideInstalled");
             });
 
+            var uploader = new Uploader(dom.byId("package-upload"), lang.hitch(this, "uploadCompleted"));
+            
+            var self = this;
+            
             //>>>>>>>>>>> upload
             // connect the upload icon
             this.uploadAppListener = on(dom.byId("uploadApp"),"click",function(){
+                uploader.clear();
                 var uploadDlg = registry.byId("package-upload-dialog");
                 uploadDlg.show();
             });
-            
-            new Uploader(dom.byId("package-upload"), lang.hitch(this, "uploadCompleted"));
             
             this.update();
         },
@@ -231,9 +234,9 @@ function(registry,plugin, Uploader, declare, lang, dom, domConstruct, on, topic,
             anim.play();
         },
         
-        uploadCompleted: function() {
+        uploadCompleted: function(errorsFound) {
             var upload = registry.byId("package-upload-dialog");
-            if (upload) {
+            if (upload && !errorsFound) {
                 upload.hide();
             }
             topic.publish("packages-changed");

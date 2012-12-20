@@ -246,15 +246,17 @@ declare
     %rest:form-param("owner", "{$owner}")
     %rest:form-param("group", "{$group}")
     %rest:form-param("resources", "{$resources}")
+    %rest:form-param("mime", "{$mime}")
     %output:media-type("application/json")
     %output:method("json")
-function service:change-properties($resources as xs:string, $owner as xs:string?, $group as xs:string?) {
+function service:change-properties($resources as xs:string, $owner as xs:string?, $group as xs:string?, $mime as xs:string?) {
     for $resource in $resources
     let $uri := xs:anyURI($resource)
     return (
         sm:chown($uri, $owner),
         sm:chgrp($uri, $group),
-        sm:chmod($uri, service:permissions-from-form())
+        sm:chmod($uri, service:permissions-from-form()),
+        xmldb:set-mime-type($resource, $mime)
     ),
     <response status="ok"/>
 };

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<div class="userManager2 inline-app" style="width: 100%; height: 100%;">
+    <div data-dojo-type="dijit.layout.StackContainer" data-dojo-id="myStackContainer" style="width: 100%; height: 100%;">
+        <div data-dojo-type="dijit.layout.ContentPane">
+            <div data-dojo-type="dijit.layout.TabContainer" style="width: 100%; height: 100%;">
+                <div title="Users" data-dojo-type="dijit.layout.ContentPane">
+                    <div class="userManager-list">
+                        <div class="toolbar" data-dojo-type="dijit.Toolbar">
+                            <button class="refreshUsers" data-dojo-type="dijit.form.Button">Refresh</button>
+                        </div>
+                        <div id="userManager-grid-container"/>
+                    </div>
+                    <div class="userGridButtons">
+                        <button data-dojo-type="dijit.form.Button">Close</button>
+                        <button data-dojo-type="dijit.form.Button">Create</button>
+                    </div>
+                </div>
+                <div title="Groups" data-dojo-type="dijit.layout.ContentPane">
+                    <div class="groupManager-list">
+                        <div class="toolbar" data-dojo-type="dijit.Toolbar">
+                            <button class="refreshGroups" data-dojo-type="dijit.form.Button">Refresh</button>
+                        </div>
+                        <div id="groupManager-grid-container"/>
+                    </div>
+                    <div class="groupGridButtons">
+                        <button data-dojo-type="dijit.form.Button">Close</button>
+                        <button data-dojo-type="dijit.form.Button">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

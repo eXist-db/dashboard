@@ -261,6 +261,7 @@ require(["dijit/registry",
                     domConstruct.place(data, container, "only");
                     require([ "plugins/" + name + "/" + name], function(Plugin) {
                         var plugin = new Plugin(container, this);
+                        plugin.init();
                         openPlugin = plugin;
                         dom.byId("inlineAppTitle").innerHTML = openPlugin.pluginName;
                     });

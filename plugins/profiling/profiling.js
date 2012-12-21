@@ -28,6 +28,8 @@ define([
             this.loadCSS("plugins/profiling/profiling.css");
             
             var $this = this;
+            
+            this.ready();
         },
         
         close: function() {

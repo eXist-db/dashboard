@@ -12,8 +12,11 @@ function(declare, array, ready, query, fx, registry, parser) {
         
         constructor: function(div) {
             this.container = div;
+        },
+        
+        init: function() {
             parser.parse(this.container);
-            this.standby = new dojox.widget.Standby({target: div});
+            this.standby = new dojox.widget.Standby({target: this.container});
             document.body.appendChild(this.standby.domNode);
             this.standby.startup();
         },

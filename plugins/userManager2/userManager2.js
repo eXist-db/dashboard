@@ -102,8 +102,56 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             dojo.byId("groupManager-grid-container").appendChild(this.groupsGrid.domNode);
             this.groupsGrid.startup();
             
-            on(registry.byId("userManager-grid"), "RowContextMenu", function(ev){
-                console.debug("right-clicked for context menu"); //for debug
+            //enable/disable group grid context menu items appropriately
+            on(this.usersGrid, "RowContextMenu", function(ev){
+                  var items = $this.usersGrid.selection.getSelected();
+                  if(items.length) {
+                    var restricted = restrictedUsername(items);
+                    registry.byId("editUserItem").setDisabled(restricted);
+                    registry.byId("removeUserItem").setDisabled(restricted);
+                  } else {
+                    registry.byId("editUserItem").setDisabled(true);
+                    registry.byId("removeUserItem").setDisabled(true);
+                  }
+            });
+            
+            query("#removeUserItem").on("click", function(ev){
+                var items = $this.usersGrid.selection.getSelected();
+                if(items.length) {
+                    if(!restrictedUsername(items)) {
+                        dojo.forEach(items, function(selectedItem) {
+                            if(selectedItem !== null) {
+                                $this.usersStore.deleteItem(selectedItem);
+                            }
+                        });
+                    }
+                }    
+            });
+            
+            //enable/disable user grid context menu items appropriately
+            on(this.groupsGrid, "RowContextMenu", function(ev){
+                  var items = registry.byId("groupManager-grid").selection.getSelected();
+                  if(items.length) {
+                    var restricted = restrictedGroupname(items);
+                    registry.byId("editGroupItem").setDisabled(restricted);
+                    registry.byId("removeGroupItem").setDisabled(restricted);
+                  } else {
+                    registry.byId("editGroupItem").setDisabled(true);
+                    registry.byId("removeGroupItem").setDisabled(true);  
+                  }
+            });
+            
+            query("#removeGroupItem").on("click", function(ev){
+                var items = $this.groupsGrid.selection.getSelected();
+                if(items.length) {
+                    if(!restrictedGroupname(items)) {
+                        dojo.forEach(items, function(selectedItem) {
+                            if(selectedItem !== null) {
+                                $this.groupsStore.deleteItem(selectedItem);
+                            }
+                        });
+                    }
+                }    
             });
             
             on(registry.byId("userManager-grid-Menu"), "Open", function(ev){
@@ -187,5 +235,27 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         var stack = registry.byId("userManager2stack");
         var page = registry.byId(pageId);
         stack.selectChild(page);
+    };
+    
+    //expects array of json user objects
+    function restrictedUsername(users) {
+        for(var i = 0; i < users.length; i++) {
+            var username = users[i].user
+            if(username == "SYSTEM" || username == "admin" || username == "guest") {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    //expects array of json group objects
+    function restrictedGroupname(groups) {
+        for(var i = 0; i < groups.length; i++) {
+            var groupname = groups[i].user
+            if(groupname == "dba" || groupname == "guest") {
+                return true;
+            }
+        }
+        return false;
     }
 });

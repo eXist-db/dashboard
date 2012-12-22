@@ -10,7 +10,8 @@ define([ "plugins/base",
         "dijit/registry",
         "dojox/data/JsonRestStore",
         "dijit/form/CheckBox",
-        "dijit/form/ComboBox",
+        "dijit/form/NumberSpinner",
+        "dijit/form/MultiSelect",
         "dijit/Toolbar",
         "dijit/layout/TabContainer",
         "dijit/layout/ContentPane",
@@ -101,12 +102,20 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             dojo.byId("groupManager-grid-container").appendChild(this.groupsGrid.domNode);
             this.groupsGrid.startup();
             
-            query("#userManager-grid").on("onRowContextMenu", function(ev) {
-                console.debug("adam context menu");
+            on(registry.byId("userManager-grid"), "RowContextMenu", function(ev){
+                console.debug("right-clicked for context menu"); //for debug
             });
             
-            query("#userManager-grid-Menu").on("open", function() {
-                console.debug("userManager-grid-Menu opened");
+            on(registry.byId("userManager-grid-Menu"), "Open", function(ev){
+                console.debug("adam context menu opened"); //for debug
+            });
+            
+            query("#createUser").on("click", function(ev) {
+                changePage("newUserPage");
+            });
+            
+            query("#newUserItem").on("click", function(ev) {
+                changePage("newUserPage");
             });
             
             /* events */
@@ -128,6 +137,10 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 closeMe();
             });
             
+            query("#closeNewUser").on("click", function(ev) {
+               changePage("userGroupPage"); 
+            });
+            
             this.ready();
         },
         
@@ -141,7 +154,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             groupStore = null;
         },
         
-         refreshUsers: function() {
+        refreshUsers: function() {
             this.usersStore.close();
             this.usersGrid.setStore(this.usersStore);
         },
@@ -155,6 +168,12 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
     function closeMe() {
         console.debug("Closing UserManager2");
         console.error("TODO implement close button functionality");
+        //plugin.close(); ///???
     };
     
+    function changePage(pageId) {
+        var stack = registry.byId("userManager2stack");
+        var page = registry.byId(pageId);
+        stack.selectChild(page);
+    }
 });

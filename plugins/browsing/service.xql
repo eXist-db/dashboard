@@ -2,6 +2,8 @@ xquery version "3.0";
 
 module namespace service="http://exist-db.org/apps/dashboard/service";
 
+import module namespace sm = "http://exist-db.org/xquery/securitymanager";
+
 declare namespace json="http://www.json.org";
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace rest="http://exquery.org/ns/restxq";
@@ -215,7 +217,7 @@ function service:edit-properties($resources as xs:string*) {
                 <label for="group">Group:</label>
                 <select data-dojo-type="dijit.form.Select" name="group">
                 {
-                    for $group in sm:get-groups()
+                    for $group in sm:list-groups()
                     order by $group
                     return
                         <option value="{$group}">
@@ -391,11 +393,7 @@ declare %private function service:get-properties($resources as xs:string*) as ma
 };
 
 declare %private function service:get-users() {
-    distinct-values(
-        for $group in sm:get-groups()
-        return
-            sm:get-group-members($group)
-    )
+    sm:list-users()
 };
 
 declare %private function service:checkbox($name as xs:string, $test as xs:boolean) {

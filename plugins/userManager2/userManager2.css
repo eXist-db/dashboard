@@ -1,5 +1,17 @@
 .userManager2 {
   position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.userManager2stack {
+  width: 100%;
+  height: 100%;
+}
+
+.userManager2tabs {
+  width: 100%;
+  height: 100%;
 }
 
 .userGridButtons {

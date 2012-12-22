@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<div class="userManager2 inline-app" style="width: 100%; height: 100%;">
-    <div data-dojo-type="dijit.layout.StackContainer" data-dojo-id="myStackContainer" style="width: 100%; height: 100%;">
+<div class="userManager2 inline-app">
+    <div class="userManager2stack" data-dojo-type="dijit.layout.StackContainer" data-dojo-id="myStackContainer">
         <div data-dojo-type="dijit.layout.ContentPane">
-            <div data-dojo-type="dijit.layout.TabContainer" style="width: 100%; height: 100%;">
+            <div class="userManager2Tabs" data-dojo-type="dijit.layout.TabContainer">
                 <div title="Users" data-dojo-type="dijit.layout.ContentPane">
                     <div class="userManager-list">
                         <div class="toolbar" data-dojo-type="dijit.Toolbar">
                             <button class="refreshUsers" data-dojo-type="dijit.form.Button">Refresh</button>
                         </div>
-                        <div id="userManager-grid-container"/>
+                        <div id="userManager-grid-container">
+                            <div data-dojo-type="dijit.Menu" id="userManager-grid-Menu" style="display:none;">
+                                <div data-dojo-type="dijit.MenuItem" id="newUserItem">New User...</div>
+                                <div data-dojo-type="dijit.MenuItem" id="editUserItem" disabled="true">Edit User...</div>                                
+                                <div data-dojo-type="dijit.MenuItem" id="removeUserItem" disabled="true">Remove User</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="userGridButtons">
-                        <button class="closeButton" data-dojo-type="dijit.form.Button">Close</button>
-                        <button class="createUser" data-dojo-type="dijit.form.Button">Create</button>
+                        <button id="uCloseButton" data-dojo-type="dijit.form.Button">Close</button>
+                        <button id="createUser" data-dojo-type="dijit.form.Button">Create</button>
                     </div>
                 </div>
                 <div title="Groups" data-dojo-type="dijit.layout.ContentPane">
@@ -20,11 +26,17 @@
                         <div class="toolbar" data-dojo-type="dijit.Toolbar">
                             <button class="refreshGroups" data-dojo-type="dijit.form.Button">Refresh</button>
                         </div>
-                        <div id="groupManager-grid-container"/>
+                        <div id="groupManager-grid-container">
+                            <div data-dojo-type="dijit.Menu" id="groupManager-grid-Menu" style="display:none;">
+                                <div data-dojo-type="dijit.MenuItem" id="newGroupItem">New Group...</div>
+                                <div data-dojo-type="dijit.MenuItem" id="editGroupItem" disabled="true">Edit Group...</div>                                
+                                <div data-dojo-type="dijit.MenuItem" id="removeGroupItem" disabled="true">Remove Group</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="groupGridButtons">
-                        <button class="closeButton2" data-dojo-type="dijit.form.Button">Close</button>
-                        <button class="createGroup" data-dojo-type="dijit.form.Button">Create</button>
+                        <button id="gCloseButton" data-dojo-type="dijit.form.Button">Close</button>
+                        <button id="createGroup" data-dojo-type="dijit.form.Button">Create</button>
                     </div>
                 </div>
             </div>

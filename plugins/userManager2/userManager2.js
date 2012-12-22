@@ -8,15 +8,19 @@ define([ "plugins/base",
         "dojox/fx",
         "dojo/parser",
         "dijit/registry",
-        "dojox/grid/DataGrid",
-        "dijit/Toolbar",
         "dojox/data/JsonRestStore",
         "dijit/form/CheckBox",
         "dijit/form/ComboBox",
+        "dijit/Toolbar",
         "dijit/layout/TabContainer",
         "dijit/layout/ContentPane",
         "dijit/layout/StackContainer",
-        "dijit/layout/StackController"
+        "dijit/layout/StackController",
+        "dojox/widget/Standby",
+        "dojox/grid/EnhancedGrid",
+        "dojox/grid/enhanced/plugins/Menu",
+        "dijit/Menu",
+        "dijit/MenuItem"
 ],
 function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry) {
 
@@ -35,35 +39,45 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         constructor: function(div) {
             this.inherited(arguments);
             this.loadCSS("plugins/userManager2/userManager2.css");
-
+        },
+        
+        init: function() {
+            this.inherited(arguments);
+            
             var $this = this;
             
-            /* User Store and Grid */
+            /* users */
             this.usersStore = new dojox.data.JsonRestStore({target:"plugins/userManager2/api/user", idAttribute:"id"});
 
-            var userslayout = [[
+            var usersLayout = [[
               {'name': 'User', 'field': 'user', 'width': '15%'},
               {'name': 'Full Name', 'field': 'fullName', 'width': '30%'},
               {'name': 'Description', 'field': 'description', 'width': '55%'}
             ]];
             
-            this.usersGrid = new dojox.grid.DataGrid(
+            this.usersGrid = new dojox.grid.EnhancedGrid(
                 {
                     id: 'userManager-grid',
                     store: this.usersStore,
-                    structure: userslayout,
+                    structure: usersLayout,
                     autoWidth: false,
-                    autoHeight: true,
-                    selectionMode: "single"
+                    autoHeight: 8,
+                    selectionMode: "single",
+                    plugins: {
+                        menus: {
+                            rowMenu:"userManager-grid-Menu"
+                        }
+                    }
                 },
-                document.createElement('div'));
+                document.createElement('div')
+            );
             dojo.byId("userManager-grid-container").appendChild(this.usersGrid.domNode);
             this.usersGrid.startup();
             
-            /* Group Store and Grid */
+            /* groups */
             this.groupsStore = new dojox.data.JsonRestStore({target:"plugins/userManager2/api/group", idAttribute:"id"});
 
-            var groupslayout = [[
+            var groupsLayout = [[
               {'name': 'Group', 'field': 'group', 'width': '15%'},
               {'name': 'Description', 'field': 'description', 'width': '85%'}
             ]];
@@ -72,23 +86,30 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 {
                     id: 'groupManager-grid',
                     store: this.groupsStore,
-                    structure: groupslayout,
+                    structure: groupsLayout,
                     autoWidth: false,
                     autoHeight: true,
-                    selectionMode: "single"
+                    selectionMode: "single",
+                    plugins: {
+                        menus: {
+                            rowMenu:"groupManager-grid-Menu"
+                        }
+                    }
                 },
                 document.createElement('div')
             );
-            
             dojo.byId("groupManager-grid-container").appendChild(this.groupsGrid.domNode);
             this.groupsGrid.startup();
             
-            query(".closeButton", this.container).on("click", function(ev) {
-                
-                alert("HELLLO ADAM");
-                domStyle.set(dojo.byId("inlineAppArea"), "display", "none");
+            query("#userManager-grid").on("onRowContextMenu", function(ev) {
+                console.debug("adam context menu");
             });
             
+            query("#userManager-grid-Menu").on("open", function() {
+                console.debug("userManager-grid-Menu opened");
+            });
+            
+            /* events */
             query(".refreshUsers", this.container).on("click", function(ev) {
                 ev.preventDefault();
                 $this.refreshUsers();
@@ -97,6 +118,14 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             query(".refreshGroups", this.container).on("click", function(ev) {
                 ev.preventDefault();
                 $this.refreshGroups();
+            });
+            
+            query("#uCloseButton", this.container).on("click", function(ev) {
+                closeMe();
+            });
+            
+            query("#gCloseButton", this.container).on("click", function(ev) {
+                closeMe();
             });
             
             this.ready();
@@ -113,16 +142,19 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         },
         
          refreshUsers: function() {
-            alert("HELLO2");
             this.usersStore.close();
             this.usersGrid.setStore(this.usersStore);
         },
         
         refreshGroups: function() {
-            alert("HELLO3");
             this.groupsStore.close();
             this.groupsGrid.setStore(this.groupsStore);
         }
     });
+    
+    function closeMe() {
+        console.debug("Closing UserManager2");
+        console.error("TODO implement close button functionality");
+    };
     
 });

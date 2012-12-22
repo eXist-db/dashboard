@@ -118,6 +118,14 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 changePage("newUserPage");
             });
             
+            query("#createGroup").on("click", function(ev) {
+                changePage("newGroupPage");
+            });
+            
+            query("#newGroupItem").on("click", function(ev) {
+                changePage("newGroupPage");
+            });
+            
             /* events */
             query(".refreshUsers", this.container).on("click", function(ev) {
                 ev.preventDefault();
@@ -138,6 +146,10 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             });
             
             query("#closeNewUser").on("click", function(ev) {
+               changePage("userGroupPage"); 
+            });
+            
+            query("#closeNewGroup").on("click", function(ev) {
                changePage("userGroupPage"); 
             });
             

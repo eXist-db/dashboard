@@ -62,10 +62,10 @@
                     </div>
                     <div>
                         <span>
-                            <label for="description">Description:</label>
+                            <label for="userdescription">Description:</label>
                         </span>
                         <span>
-                            <input type="text" name="description" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="description"/>
+                            <input type="text" name="userdescription" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="userdescription"/>
                         </span>
                     </div>
                 </fieldset>
@@ -142,6 +142,43 @@
                 <div class="actionButtons">
                     <button id="closeNewUser" data-dojo-type="dijit.form.Button">Close</button>
                     <button id="createNewUser" data-dojo-type="dijit.form.Button">Create</button>
+                </div>
+            </form>
+        </div>
+        <div id="newGroupPage" data-dojo-type="dijit.layout.ContentPane">
+            <form id="newGroup-form" action="" data-dojo-type="dijit.form.Form">
+                <fieldset>
+                    <div>
+                        <span>
+                            <label for="groupname">Group name:</label>
+                        </span>
+                        <span>
+                            <input type="text" name="groupname" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="groupname"/>
+                        </span>
+                    </div>
+                    <div>
+                        <span>
+                            <label for="groupdescription">Description:</label>
+                        </span>
+                        <span>
+                            <input type="text" name="groupdescription" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="groupdescription"/>
+                        </span>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <div>
+                        <div>
+                            <label for="groupmembers">Group Members:</label>
+                        </div>
+                        <div id="groupMember-grid-container"/>
+                    </div>
+                    <div>
+                        <button id="addGroupMember" data-dojo-type="dijit.form.Button">Add Group Member...</button>
+                    </div>
+                </fieldset>
+                <div class="actionButtons">
+                    <button id="closeNewGroup" data-dojo-type="dijit.form.Button">Close</button>
+                    <button id="createNewGroup" data-dojo-type="dijit.form.Button">Create</button>
                 </div>
             </form>
         </div>

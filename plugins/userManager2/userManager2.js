@@ -16,8 +16,7 @@ define([ "plugins/base",
         "dijit/layout/TabContainer",
         "dijit/layout/ContentPane",
         "dijit/layout/StackContainer",
-        "dijit/layout/StackController",
-        "dijit/form/Button"
+        "dijit/layout/StackController"
 ],
 function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry) {
 
@@ -28,6 +27,10 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
 
     return declare(plugin, {
         pluginName:"User Manager2",
+        usersStore: null,
+        usersGrid: null,
+        groupsStore: null,
+        groupsGrid: null,
         
         constructor: function(div) {
             this.inherited(arguments);
@@ -74,12 +77,52 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     autoHeight: true,
                     selectionMode: "single"
                 },
-                document.createElement('div'));
+                document.createElement('div')
+            );
+            
             dojo.byId("groupManager-grid-container").appendChild(this.groupsGrid.domNode);
             this.groupsGrid.startup();
             
+            query(".closeButton", this.container).on("click", function(ev) {
+                
+                alert("HELLLO ADAM");
+                domStyle.set(dojo.byId("inlineAppArea"), "display", "none");
+            });
+            
+            query(".refreshUsers", this.container).on("click", function(ev) {
+                ev.preventDefault();
+                $this.refreshUsers();
+            });
+            
+            query(".refreshGroups", this.container).on("click", function(ev) {
+                ev.preventDefault();
+                $this.refreshGroups();
+            });
+            
             this.ready();
         },
+        
+        close: function() {
+            console.log("Closing down");
+            this.inherited(arguments);
+            
+            usersGrid = null;
+            usersStore = null;
+            groupGrid = null;
+            groupStore = null;
+        },
+        
+         refreshUsers: function() {
+            alert("HELLO2");
+            this.usersStore.close();
+            this.usersGrid.setStore(this.usersStore);
+        },
+        
+        refreshGroups: function() {
+            alert("HELLO3");
+            this.groupsStore.close();
+            this.groupsGrid.setStore(this.groupsStore);
+        }
     });
     
 });

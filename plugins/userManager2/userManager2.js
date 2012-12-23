@@ -30,6 +30,14 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
     * author: Adam Retter
     */
 
+    /**
+     * TODO
+     *  1) deleting a user does not send a DELETE to the Server
+     *  2) UMASK currently expressed as an Integer - need to subclass the NumberSpinner - how to do that?
+     * 
+     */
+
+
     return declare(plugin, {
         pluginName:"User Manager2",
         usersStore: null,
@@ -122,6 +130,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                         dojo.forEach(items, function(selectedItem) {
                             if(selectedItem !== null) {
                                 $this.usersStore.deleteItem(selectedItem);
+                                $this.usersStore.save();
                             }
                         });
                     }
@@ -154,16 +163,30 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 }    
             });
             
+            /*
             on(registry.byId("userManager-grid-Menu"), "Open", function(ev){
                 console.debug("adam context menu opened"); //for debug
-            });
+            });*/
             
             query("#createUser").on("click", function(ev) {
+                resetNewUserForm();
                 changePage("newUserPage");
             });
             
             query("#newUserItem").on("click", function(ev) {
+                resetNewUserForm();
                 changePage("newUserPage");
+            });
+            
+            query("#editUserItem").on("click", function(ev) {
+                var items = $this.usersGrid.selection.getSelected();
+                if(items.length) {
+                    if(!restrictedUsername(items)) {
+                        resetNewUserForm();
+                        setupEditUserForm(items[0]);
+                        changePage("newUserPage");       
+                    }
+                }
             });
             
             query("#createGroup").on("click", function(ev) {
@@ -194,6 +217,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             });
             
             query("#closeNewUser").on("click", function(ev) {
+               resetNewUserForm();
                changePage("userGroupPage"); 
             });
             
@@ -235,6 +259,32 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         var stack = registry.byId("userManager2stack");
         var page = registry.byId(pageId);
         stack.selectChild(page);
+    };
+    
+    function resetNewUserForm() {
+        registry.byId("username").set("value", "");
+        registry.byId("fullName").set("value", "");
+        registry.byId("userdescription").set("value", "");
+        registry.byId("password").set("value", "");
+        registry.byId("passwordRepeat").set("value", "");
+        registry.byId("disabled").set("checked", false);
+        registry.byId("umask").set("value", "022");
+        registry.byId("personalGroup").set("checked", true);
+        registry.byId("availableGroups").set("value", []);
+        registry.byId("memberOfGroups").set("value", []);
+    };
+    
+    function setupEditUserForm(user) {
+        registry.byId("username").set("value", user.user);
+        registry.byId("fullName").set("value", user.fullName);
+        registry.byId("userdescription").set("value", user.description);
+        registry.byId("password").set("value", "password");
+        registry.byId("passwordRepeat").set("value", "password");
+        registry.byId("disabled").set("checked", user.disabled);
+        registry.byId("umask").set("value", user.umask);
+        registry.byId("personalGroup").set("checked", true);        //TODO tick if there is a group which we are a member of with the same name as our username
+        registry.byId("availableGroups").set("value", []);          //TODO get list of all available groups from server...
+        registry.byId("memberOfGroups").set("value", user.groups);  //TODO
     };
     
     //expects array of json user objects

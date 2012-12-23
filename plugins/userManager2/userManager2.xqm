@@ -17,6 +17,15 @@ declare function usermanager:list-users() {
                     <user>{$user}</user>
                     <fullName>{secman:get-account-metadata($user, $usermanager:METADATA_FULLNAME_KEY)}</fullName>
                     <description>{secman:get-account-metadata($user, $usermanager:METADATA_DESCRIPTION_KEY)}</description>
+                    <password/>
+                    <disabled>{not(secman:is-account-enabled($user))}</disabled>
+                    <umask>{secman:get-umask($user)}</umask>
+                    <groups>
+                    {
+                        for $group in secman:get-user-groups($user) return
+                            <group>{$group}</group>
+                    }
+                    </groups>
                 </json:value>
         }
     </json:value>

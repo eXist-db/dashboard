@@ -165,6 +165,10 @@
   color: darkred;
   font-weight: bold;
 }
+#inlineAppArea .packageManager #listWrapper .shortTitle p.requires {
+  font-weight: bold;
+  margin-top: 0;
+}
 #inlineAppArea .packageManager #listWrapper .shortView li {
   height: 80px;
 }

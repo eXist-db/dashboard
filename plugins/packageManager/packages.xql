@@ -75,7 +75,7 @@ declare %private function packages:installed-apps($format as xs:string?) as elem
                         }
                         <abbrev>{$expathXML//@abbrev/string()}</abbrev>
                         <website>{$repoXML//repo:website/text()}</website>
-                        <version>{$expathXML//@version/string()}</version>
+                        <version>{$expathXML//expath:package/@version/string()}</version>
                         <license>{$repoXML//repo:license/text()}</license>
                         <icon>{if (exists($icon)) then 'modules/get-icon.xql?package=' || $app else 'resources/images/package.png'}</icon>
                         <url>{$app-url}</url>
@@ -210,6 +210,12 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                 <p class="upgrade">Installed version: {$app/@installed/string()}. Available: {$app/@available/string()}</p>
                             else
                                 <p>Version: {$app/version/text()}</p>
+                        }
+                        {
+                            if ($app/requires) then
+                                <p class="requires">Requires eXist-db {$app/requires/@version/string()}</p>
+                            else
+                                ()
                         }
                     </div>
                     <table>

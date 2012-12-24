@@ -11,5 +11,5 @@
     <repo:target>/db/dashboard</repo:target>
     <repo:prepare>pre-install.xql</repo:prepare>
     <repo:finish/>
-    <deployed>2012-12-14T21:40:21.418+01:00</deployed>
+    <deployed>2012-12-24T13:36:59.086+01:00</deployed>
 </repo:meta>

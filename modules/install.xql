@@ -1,6 +1,7 @@
 xquery version "3.0";
 
 import module namespace apputil="http://exist-db.org/xquery/apps" at "apputil.xql";
+import module namespace config="http://exist-db.org/xquery/apps/config" at "config.xqm";
 
 declare namespace install="http://exist-db.org/apps/dashboard/install";
 declare namespace json="http://www.json.org";
@@ -18,7 +19,7 @@ declare %private function install:require-dba($func as function() as item()*) {
 
 let $action := request:get-parameter("action", "install")
 let $package-url := request:get-parameter("package-url", ())
-let $server-url := request:get-parameter("server-url", ())
+let $server-url := $config:REPO
 let $upload := request:get-uploaded-file-name("uploadedfiles[]")
 return
     install:require-dba(function() {

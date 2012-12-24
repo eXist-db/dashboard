@@ -1,3 +1,5 @@
+xquery version "3.0";
+
 (:~
  : A set of helper functions to access the application context from
  : within a module.
@@ -30,6 +32,10 @@ declare variable $config:app-root :=
 declare variable $config:repo-descriptor := doc(concat($config:app-root, "/repo.xml"))/repo:meta;
 
 declare variable $config:expath-descriptor := doc(concat($config:app-root, "/expath-pkg.xml"))/expath:package;
+
+declare variable $config:SETTINGS := doc($config:app-root || "/configuration.xml")/settings;
+
+declare variable $config:REPO := xs:anyURI($config:SETTINGS/repository);
 
 (:~
  : Resolve the given path using the current application context.

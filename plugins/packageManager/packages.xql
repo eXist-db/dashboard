@@ -13,8 +13,6 @@ declare namespace http="http://expath.org/ns/http-client";
 
 declare variable $packages:DEFAULTS := doc($config:app-root || "/defaults.xml")/apps;
 
-declare variable $packages:REPO := xs:anyURI("http://demo.exist-db.org/exist/apps/public-repo");
-
 declare variable $packages:HIDE := ("dashboard");
 
 declare
@@ -30,7 +28,7 @@ function packages:get($type as xs:string?, $format as xs:string?, $plugins as xs
     let $apps := if ($format = "manager") then $apps except $apps[@removable="no"] else $apps
     for $app in $apps
     return
-       packages:display($packages:REPO, $app, $format)
+       packages:display($config:REPO, $app, $format)
 };
 
 declare %private function packages:default-apps($plugins as xs:string?) {
@@ -107,7 +105,7 @@ declare %private function packages:get-package-meta($app as xs:string, $name as 
 
 declare %private function packages:public-repo-contents($installed as element(app)*) {
     try {
-        let $url := "http://demo.exist-db.org/exist/apps/public-repo/public/apps.xml"
+        let $url := $config:REPO || "/public/apps.xml"
         (: EXPath client module does not work properly. No idea why. :)
 (:        let $request :=:)
 (:            <http:request method="get" href="{$url}" timeout="10">:)

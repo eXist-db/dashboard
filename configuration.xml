@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+    <repository>http://demo.exist-db.org/exist/apps/public-repo</repository>
+<!--    <repository>http://localhost:8080/exist/apps/public-repo</repository>-->
+</settings>

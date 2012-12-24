@@ -11,5 +11,7 @@
     <repo:target>/db/dashboard</repo:target>
     <repo:prepare>pre-install.xql</repo:prepare>
     <repo:finish/>
+    <repo:note>If you are updating this package, you may need to clear the browser's cache or at least reload any open
+    page which is part of the dashboard.</repo:note>
     <deployed>2012-12-24T13:36:59.086+01:00</deployed>
 </repo:meta>

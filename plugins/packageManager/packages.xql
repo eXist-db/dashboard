@@ -218,6 +218,13 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                 ()
                         }
                     </div>
+                    {
+                        if ($app/note) then
+                            (: Installation notes are shown if user clicks on install :)
+                            <p class="installation-note" style="display: none">{ $app/note/node() }</p>
+                        else
+                            ()
+                    }
                     <table>
                         <tr class="title">
                             <th>Title:</th>

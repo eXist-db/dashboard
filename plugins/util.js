@@ -43,7 +43,7 @@ function(dom, construct, domForm, connect, query, registry) {
             dialog.show();
         },
         
-        message: function(title, message) {
+        message: function(title, message, callback) {
             var dialog = new dijit.Dialog({
                 title: title
             });
@@ -59,6 +59,9 @@ function(dom, construct, domForm, connect, query, registry) {
                 onClick: function() {
                     dialog.hide();
                     dialog.destroyRecursive();
+                    if (callback) {
+                        callback();
+                    }
                 }
             });
             div.appendChild(closeButton.domNode);

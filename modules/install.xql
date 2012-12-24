@@ -10,8 +10,10 @@ declare option exist:serialize "method=json media-type=application/json";
 declare %private function install:require-dba($func as function() as item()*) {
     if (xmldb:is-admin-user(xmldb:get-current-user())) then
         $func()
-    else
-        response:set-status-code(403)
+    else (
+        response:set-status-code(403),
+        <status><error>{xmldb:get-current-user()}</error></status>
+    )
 };
 
 let $action := request:get-parameter("action", "install")

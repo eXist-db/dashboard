@@ -217,7 +217,7 @@ function service:edit-properties($resources as xs:string*) {
                 <label for="group">Group:</label>
                 <select data-dojo-type="dijit.form.Select" name="group">
                 {
-                    for $group in sm:list-groups()
+                    for $group in sm:get-groups()
                     order by $group
                     return
                         <option value="{$group}">

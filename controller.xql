@@ -38,9 +38,9 @@ else if ($exist:resource = "login") then
     let $loggedIn := $login("org.exist.login", (), true())
     let $output := util:declare-option("exist:serialize", "method=json media-type=application/json")
     return
-        if (exists($loggedIn)) then
+        if (xmldb:get-current-user() != "guest") then
             <ok>
-                <user>{$loggedIn[@name="org.exist.login.user"]/@value/string()}</user>
+                <user>{xmldb:get-current-user()}</user>
                 <isDba json:literal="true">true</isDba>
             </ok>
         else (

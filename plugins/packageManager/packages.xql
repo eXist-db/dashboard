@@ -122,16 +122,16 @@ declare %private function packages:public-repo-contents($installed as element(ap
             else
                 map(function($app as element(app)) {
                     (: Ignore apps which are already installed :)
-                    if ($installed/abbrev = $app/abbrev) then
-                        if ($installed/version = $app/version) then
-                            ()
-                        else
+                    if ($app/abbrev = $installed/abbrev) then
+                        if (packages:is-newer($app/version/string(), $installed[abbrev = $app/abbrev]/version)) then
                             element { node-name($app) } {
                                 attribute available { $app/version/string() },
                                 attribute installed { $installed[abbrev = $app/abbrev]/version/string() },
                                 $app/@*,
                                 $app/*
                             }
+                        else
+                            ()
                     else
                         $app
                 }, $data/httpclient:body//app)
@@ -207,7 +207,13 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                         <h3>{$app/title/text()}</h3>
                         {
                             if ($app/@available) then
-                                <p class="upgrade">Installed version: {$app/@installed/string()}. Available: {$app/@available/string()}</p>
+                                let $installed := $app/@installed/string()
+                                let $available := $app/@available/string()
+                                return
+                                    if (packages:is-newer($available, $installed)) then
+                                        <p class="upgrade">Installed version: {$installed}. Available: {$available}</p>
+                                    else
+                                        ()
                             else
                                 <p>Version: {$app/version/text()}</p>
                         }
@@ -280,4 +286,22 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             <h3>{$app/title/text()}</h3>
                         </button>
                     </li>
+};
+
+declare %private function packages:is-newer($available as xs:string, $installed as xs:string) as xs:boolean {
+    let $verInstalled := tokenize($installed, "\.")
+    let $verAvailable := tokenize($available, "\.")
+    return
+        packages:compare-versions($verInstalled, $verAvailable)
+};
+
+declare %private function packages:compare-versions($installed as xs:string*, $available as xs:string*) as xs:boolean {
+    if (empty($installed)) then
+        exists($available)
+    else if (empty($available)) then
+        false()
+    else if (head($available) = head($installed)) then
+        packages:compare-versions(tail($installed), tail($available))
+    else
+        number(head($available)) > number(head($installed))
 };

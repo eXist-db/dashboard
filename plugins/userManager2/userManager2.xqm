@@ -20,12 +20,10 @@ declare function usermanager:list-users() {
                     <password/>
                     <disabled>{not(secman:is-account-enabled($user))}</disabled>
                     <umask>{secman:get-umask($user)}</umask>
-                    <groups>
                     {
                         for $group in secman:get-user-groups($user) return
-                            <group>{$group}</group>
+                            <groups json:array="true">{$group}</groups>
                     }
-                    </groups>
                 </json:value>
         }
     </json:value>

@@ -33,8 +33,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
     /**
      * TODO
      *  1) deleting a user does not send a DELETE to the Server
-     *  2) UMASK currently expressed as an Integer - need to subclass the NumberSpinner - how to do that?
-     * 
+     *  2) UMASK currently expressed as an Integer - need to subclass the NumberSpinner - how to do that? see: http://dojotoolkit.org/reference-guide/1.8/dijit/Declaration.html
+     *  3) Add validation to form fields!
      */
 
 
@@ -56,7 +56,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             var $this = this;
             
             /* users */
-            this.usersStore = new dojox.data.JsonRestStore({target:"plugins/userManager2/api/user", idAttribute:"id"});
+            this.usersStore = new dojox.data.JsonRestStore({target:"plugins/userManager2/api/user", idAttribute:"user"});
 
             var usersLayout = [[
               {'name': 'User', 'field': 'user', 'width': '15%'},
@@ -84,7 +84,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             this.usersGrid.startup();
             
             /* groups */
-            this.groupsStore = new dojox.data.JsonRestStore({target:"plugins/userManager2/api/group", idAttribute:"id"});
+            this.groupsStore = new dojox.data.JsonRestStore({target:"plugins/userManager2/api/group", idAttribute:"group"});
 
             var groupsLayout = [[
               {'name': 'Group', 'field': 'group', 'width': '15%'},
@@ -129,7 +129,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     if(!restrictedUsername(items)) {
                         dojo.forEach(items, function(selectedItem) {
                             if(selectedItem !== null) {
-                                $this.usersStore.deleteItem(selectedItem);
+                                $this.usersStore.deleteItem(selectedItem); //TODO this doesnt seem to send a DELETE to the server?
                                 $this.usersStore.save();
                             }
                         });
@@ -156,34 +156,104 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     if(!restrictedGroupname(items)) {
                         dojo.forEach(items, function(selectedItem) {
                             if(selectedItem !== null) {
-                                $this.groupsStore.deleteItem(selectedItem);
+                                $this.groupsStore.deleteItem(selectedItem); //TODO this doesnt seem to send a DELETE to the server?
+                                $this.usersStore.save();
                             }
                         });
                     }
                 }    
             });
             
-            /*
-            on(registry.byId("userManager-grid-Menu"), "Open", function(ev){
-                console.debug("adam context menu opened"); //for debug
-            });*/
-            
             query("#createUser").on("click", function(ev) {
-                resetNewUserForm();
+                dojo.style(dojo.byId("saveEditedUser"), "display", "none");
+                dojo.style(dojo.byId("createNewUser"), "display", "block");
+                setupNewUserForm($this.groupsStore);
                 changePage("newUserPage");
             });
             
             query("#newUserItem").on("click", function(ev) {
-                resetNewUserForm();
+                dojo.style(dojo.byId("saveEditedUser"), "display", "none");
+                dojo.style(dojo.byId("createNewUser"), "display", "block");
+                setupNewUserForm($this.groupsStore);
                 changePage("newUserPage");
             });
             
+            query("#createNewUser").on("click", function(ev) {
+                var newUserData = dijit.byId("newUser-form").get("value");
+                
+                var hasPersonalGroup = false;
+                var personalGroupName = "";
+                if(newUserData.personalGroup) {
+                    if(newUserData.personalGroup == "true") {
+                        hasPersonalGroup = true
+                        personalGroupName = newUserData.username
+                    }
+                }
+                
+                /* 1) create the personal group if required? */
+
+                //TODO should have the groupname personalGroupName
+                
+                /* 2) create the user */
+                
+                //get member of groups
+                var memberOfGroups = new Array();
+                var memberOfGroupsOptions = dijit.byId("memberOfGroups").domNode.options;
+                for(var i = 0; i < memberOfGroupsOptions.length; i++) {
+                    memberOfGroups[i] = memberOfGroupsOptions[i].innerHTML;
+                }
+                
+                //if they are to have a personal group make sure their first group is their personal group
+                if(hasPersonalGroup) {
+                    memberOfGroups = memberOfGroups.reverse();
+                    memberOfGroups.push(personalGroupName);
+                    memberOfGroups = memberOfGroups.reverse();
+                }
+                
+                var disabled = false;
+                if(newUserData.disabled) {
+                    if(newUserData.disabled == "true") {
+                        disabled = true
+                    }
+                }
+                
+                var newUser = {
+                   user: newUserData.username,
+                   fullName: newUserData.fullName,
+                   description: newUserData.userdescription,
+                   password: newUserData.password,
+                   disabled: disabled,
+                   umask: newUserData.umask,
+                   groups: memberOfGroups
+                };
+                
+                $this.usersStore.newItem(newUser);  //TODO does not seemt to PUT/POST to server?
+                //$this.usersGrid.update(); //probably not needed?
+                
+                /* 3) Add the user as a group manager of their personal group */
+                //TODO
+                
+                //if we uncomment the lines below, the new store entry doesnt seemt to show up in the grid? why?
+                //reset form and move back to first form
+                //resetNewUserForm();
+                //changePage("userGroupPage"); 
+            });
+            
+            query("#switchLeft").on("click", function(ev) {
+        	    dijit.byId("availableGroups").addSelected(dijit.byId("memberOfGroups"));
+    		});
+    		
+    		query("#switchRight").on("click", function(ev) {
+        	    dijit.byId("memberOfGroups").addSelected(dijit.byId("availableGroups"));
+    		});
+            
             query("#editUserItem").on("click", function(ev) {
+                dojo.style(dojo.byId("createNewUser"), "display", "none");
+                dojo.style(dojo.byId("saveEditedUser"), "display", "block");
                 var items = $this.usersGrid.selection.getSelected();
                 if(items.length) {
                     if(!restrictedUsername(items)) {
-                        resetNewUserForm();
-                        setupEditUserForm(items[0]);
+                        setupEditUserForm(items[0], $this.groupsStore);
                         changePage("newUserPage");       
                     }
                 }
@@ -209,6 +279,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             });
             
             query("#uCloseButton", this.container).on("click", function(ev) {
+                resetNewUserForm();
                 closeMe();
             });
             
@@ -270,22 +341,83 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         registry.byId("disabled").set("checked", false);
         registry.byId("umask").set("value", "022");
         registry.byId("personalGroup").set("checked", true);
+        
+        query("#availableGroups").forEach(function(node) {
+            var count = node.options.length;
+            for(var i = 0; i < count; i++) {
+                dojo.destroy(node.options[0]); //always remove the first node, which will change as we remove nodes!
+            }
+        });
         registry.byId("availableGroups").set("value", []);
+        
+        query("#memberOfGroups").forEach(function(node) {
+            var count = node.options.length;
+            for(var i = 0; i < count; i++) {
+                dojo.destroy(node.options[0]); //always remove the first node, which will change as we remove nodes!
+            }
+        });
         registry.byId("memberOfGroups").set("value", []);
     };
     
-    function setupEditUserForm(user) {
+    function setupNewUserForm(groupsStore) {
+        setAvailableGroups(groupsStore, {});
+    };
+    
+    function setupEditUserForm(user, groupsStore) {
         registry.byId("username").set("value", user.user);
         registry.byId("fullName").set("value", user.fullName);
         registry.byId("userdescription").set("value", user.description);
         registry.byId("password").set("value", "password");
         registry.byId("passwordRepeat").set("value", "password");
         registry.byId("disabled").set("checked", user.disabled);
-        registry.byId("umask").set("value", user.umask);
-        registry.byId("personalGroup").set("checked", true);        //TODO tick if there is a group which we are a member of with the same name as our username
-        registry.byId("availableGroups").set("value", []);          //TODO get list of all available groups from server...
-        registry.byId("memberOfGroups").set("value", user.groups);  //TODO
+        registry.byId("umask").set("value", parseInt(user.umask).toString(8)); //need to convert from int to octal for display?
+
+        var memberOfGroups = query("#memberOfGroups");
+        dojo.forEach(user.groups, function(group) {
+            if(group == user.name) {
+                //tick if there is a group which we are a member of with the same name as our username
+                registry.byId("personalGroup").set("checked", true);       
+            }
+            
+            memberOfGroups.forEach(function(node){
+                var option = dojo.create('option');
+                option.innerHTML = group;
+                option.value = group;
+                node.appendChild(option);
+            });
+        });
+        //registry.byId("memberOfGroups").set("value", user.groups);
+        
+        setAvailableGroups(groupsStore, user.groups);
+        //registry.byId("availableGroups").set("value", []);
     };
+    
+    function setAvailableGroups(groupsStore, memberOfGroups) {
+        var availableGroups = query("#availableGroups");
+        var fnGroupsStoreItems = function(items, request) {
+            items.forEach(function(item) {
+                var group = item.group;
+                var found = false;
+                if(memberOfGroups) {
+                    for(var i = 0; i < memberOfGroups.length; i++) {
+                        if(group == memberOfGroups[i]) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if(!found) {
+                    availableGroups.forEach(function(node) {
+                        var option = dojo.create('option');
+                        option.innerHTML = group;
+                        option.value = group;
+                        node.appendChild(option);
+                    });
+                }
+            });
+        };
+        groupsStore.fetch({onComplete: fnGroupsStoreItems});
+    }
     
     //expects array of json user objects
     function restrictedUsername(users) {

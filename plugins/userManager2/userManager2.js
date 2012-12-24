@@ -34,7 +34,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
      * TODO
      *  1) deleting a user does not send a DELETE to the Server
      *  2) UMASK currently expressed as an Integer - need to subclass the NumberSpinner - how to do that? see: http://dojotoolkit.org/reference-guide/1.8/dijit/Declaration.html
-     * 
+     *  3) Add validation to form fields!
      */
 
 
@@ -178,6 +178,67 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 changePage("newUserPage");
             });
             
+            query("#createNewUser").on("click", function(ev) {
+                var newUserData = dijit.byId("newUser-form").get("value");
+                
+                var hasPersonalGroup = false;
+                var personalGroupName = "";
+                if(newUserData.personalGroup) {
+                    if(newUserData.personalGroup == "true") {
+                        hasPersonalGroup = true
+                        personalGroupName = newUserData.username
+                    }
+                }
+                
+                /* 1) create the personal group if required? */
+
+                //TODO should have the groupname personalGroupName
+                
+                /* 2) create the user */
+                
+                //get member of groups
+                var memberOfGroups = new Array();
+                var memberOfGroupsOptions = dijit.byId("memberOfGroups").domNode.options;
+                for(var i = 0; i < memberOfGroupsOptions.length; i++) {
+                    memberOfGroups[i] = memberOfGroupsOptions[i].innerHTML;
+                }
+                
+                //if they are to have a personal group make sure their first group is their personal group
+                if(hasPersonalGroup) {
+                    memberOfGroups = memberOfGroups.reverse();
+                    memberOfGroups.push(personalGroupName);
+                    memberOfGroups = memberOfGroups.reverse();
+                }
+                
+                var disabled = false;
+                if(newUserData.disabled) {
+                    if(newUserData.disabled == "true") {
+                        disabled = true
+                    }
+                }
+                
+                var newUser = {
+                   user: newUserData.username,
+                   fullName: newUserData.fullName,
+                   description: newUserData.userdescription,
+                   password: newUserData.password,
+                   disabled: disabled,
+                   umask: newUserData.umask,
+                   groups: memberOfGroups
+                };
+                
+                $this.usersStore.newItem(newUser);  //TODO does not seemt to PUT/POST to server?
+                //$this.usersGrid.update(); //probably not needed?
+                
+                /* 3) Add the user as a group manager of their personal group */
+                //TODO
+                
+                //if we uncomment the lines below, the new store entry doesnt seemt to show up in the grid? why?
+                //reset form and move back to first form
+                //resetNewUserForm();
+                //changePage("userGroupPage"); 
+            });
+            
             query("#switchLeft").on("click", function(ev) {
         	    dijit.byId("availableGroups").addSelected(dijit.byId("memberOfGroups"));
     		});
@@ -227,7 +288,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             });
             
             query("#closeNewUser").on("click", function(ev) {
-               resetNewUserForm($this.groupsStore);
+               resetNewUserForm();
                changePage("userGroupPage"); 
             });
             

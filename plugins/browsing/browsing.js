@@ -47,6 +47,10 @@ define([
             
             constructor: function(div) {
                 this.inherited(arguments);
+            },
+            
+            init: function() {
+                this.inherited(arguments);
                 var $this = this;
 
                 this.loadCSS("plugins/browsing/browsing.css");

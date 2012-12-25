@@ -7,6 +7,10 @@ define([ "plugins/base", "dojo/_base/declare", "dojo/dom", "dojo/_base/connect",
 
         constructor: function(div) {
             this.inherited(arguments);
+        },
+        
+        init: function() {
+            this.inherited(arguments);
             
             var form = dom.byId("shutdown-form");
             connect.connect(form, "onsubmit", function(e) {

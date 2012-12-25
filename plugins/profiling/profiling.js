@@ -25,6 +25,10 @@ define([
     
         constructor: function(div) {
             this.inherited(arguments);
+        },
+        
+        init: function() {
+            this.inherited(arguments);
             this.loadCSS("plugins/profiling/profiling.css");
             
             var $this = this;

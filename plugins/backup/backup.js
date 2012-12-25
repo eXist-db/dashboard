@@ -27,6 +27,10 @@ define([
     
         constructor: function(div) {
             this.inherited(arguments);
+        },
+        
+        init: function() {
+            this.inherited(arguments);
             this.loadCSS("plugins/backup/backup.css");
             
             var $this = this;

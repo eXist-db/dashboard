@@ -52,6 +52,10 @@ function(registry, plugin, util, Uploader, declare, lang, dom, domConstruct, on,
         
         constructor: function(div) {
             this.inherited(arguments);
+        },
+        
+        init: function() {
+            this.inherited(arguments);
 
             this.loadCSS("plugins/packageManager/packageManager.css");
 

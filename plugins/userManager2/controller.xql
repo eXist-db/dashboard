@@ -17,6 +17,7 @@ if(starts-with($exist:path, "/api/"))then(
     (: debugging :)
     if($exist:path eq "/api/user/" and request:get-method() eq "GET")then
         usermanager:list-users()
+    
     else if(starts-with($exist:path, "/api/user/"))then
         let $user := replace($exist:path, "/api/user/", "") return
             if(request:get-method() eq "DELETE")then (
@@ -31,8 +32,24 @@ if(starts-with($exist:path, "/api/"))then(
                 util:log("debug", "USERMANAGER2 received PUT")
             else
                 usermanager:get-user($user)
+    
     else if($exist:path eq "/api/group/")then
         usermanager:list-groups()
+    
+    else if(starts-with($exist:path, "/api/group/"))then
+        let $group := replace($exist:path, "/api/group/", "") return
+        if(request:get-method() eq "DELETE")then (
+            usermanager:delete-group($group),
+            <deleted>
+                <group>{$group}</group>
+            </deleted>
+        )
+        else if(request:get-method() eq "POST")then 
+            util:log("debug", "USERMANAGER2 GROUP received POST")
+        else if(request:get-method() eq "PUT") then
+            util:log("debug", "USERMANAGER2 GROUP received PUT")
+        else
+            usermanager:get-group($group)
     else
         <pathWas>{$exist:path}</pathWas>
 )else

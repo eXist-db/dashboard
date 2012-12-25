@@ -178,7 +178,6 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                 </form>
                         else
                                 <form action="">
-                                    <input type="hidden" name="server-url" value="{$repoURL}"/>
                                     <input type="hidden" name="package-url" value="{$app/name}"/>
                                     <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
                                     <input type="hidden" name="action" value="install"/>
@@ -266,6 +265,31 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             <th>Website:</th>
                             <td><a href="{$app/website}">{ $app/website/text() }</a></td>
                         </tr>
+                        {
+                            if ($app/other/version) then
+                                <tr>
+                                    <th colspan="2">Other Versions:</th>
+                                </tr>
+                            else
+                                ()
+                        }
+                        {
+                            for $version in $app/other/version
+                            return
+                                <tr>
+                                    <th>{$version/@version/string()}</th>
+                                    <td>
+                                        <form action="">
+                                            <input type="hidden" name="package-url" value="{$app/name}"/>
+                                            <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
+                                            <input type="hidden" name="version" value="{$version/@version}"/>
+                                            <input type="hidden" name="action" value="install"/>
+                                            <input type="hidden" name="type" value="application"/>
+                                            <button class="installApp" title="Install">Install</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                        }
                     </table>
                 </li>
             default return

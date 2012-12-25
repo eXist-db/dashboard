@@ -1,6 +1,6 @@
 xquery version "3.0";
 
-import module namespace apputil="http://exist-db.org/xquery/apps" at "apputil.xql";
+import module namespace apputil="http://exist-db.org/xquery/apps";
 import module namespace config="http://exist-db.org/xquery/apps/config" at "config.xqm";
 
 declare namespace install="http://exist-db.org/apps/dashboard/install";
@@ -19,6 +19,7 @@ declare %private function install:require-dba($func as function() as item()*) {
 
 let $action := request:get-parameter("action", "install")
 let $package-url := request:get-parameter("package-url", ())
+let $version := request:get-parameter("version", ())
 let $server-url := $config:REPO
 let $upload := request:get-uploaded-file-name("uploadedfiles[]")
 return
@@ -51,7 +52,7 @@ return
                             <status><error>Failed to remove package {$package-url}</error></status>
                 default return
                     try {
-                        apputil:install-from-repo((), xs:anyURI($package-url), xs:anyURI($server-url || "/find?name="))
+                        apputil:install-from-repo($package-url, (), $server-url, $version)
                     } catch * {
                         <status>
                             <error>{$err:description}</error>

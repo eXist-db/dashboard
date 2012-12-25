@@ -217,7 +217,7 @@ function service:edit-properties($resources as xs:string*) {
                 <label for="group">Group:</label>
                 <select data-dojo-type="dijit.form.Select" name="group">
                 {
-                    for $group in sm:list-groups()
+                    for $group in sm:get-groups()
                     order by $group
                     return
                         <option value="{$group}">
@@ -393,7 +393,11 @@ declare %private function service:get-properties($resources as xs:string*) as ma
 };
 
 declare %private function service:get-users() {
-    sm:list-users()
+    distinct-values(
+        for $group in sm:get-groups()
+        return
+            sm:get-group-members($group)    
+    )
 };
 
 declare %private function service:checkbox($name as xs:string, $test as xs:boolean) {

@@ -1,5 +1,6 @@
 define(["dijit/registry",
         "plugins/base",
+        "plugins/util",
         "plugins/uploader",
         "dojo/_base/declare",
         "dojo/_base/lang",
@@ -17,7 +18,7 @@ define(["dijit/registry",
         "dijit/Dialog",
         "dojo/NodeList-fx"
 ],
-function(registry,plugin, Uploader, declare, lang, dom, domConstruct, on, topic, aspect, baseFx, parser, domClass, domStyle, query, fx, dialog) {
+function(registry, plugin, util, Uploader, declare, lang, dom, domConstruct, on, topic, aspect, baseFx, parser, domClass, domStyle, query, fx, dialog) {
 
 
     /*
@@ -50,6 +51,10 @@ function(registry,plugin, Uploader, declare, lang, dom, domConstruct, on, topic,
         escapeListener:null,
         
         constructor: function(div) {
+            this.inherited(arguments);
+        },
+        
+        init: function() {
             this.inherited(arguments);
 
             this.loadCSS("plugins/packageManager/packageManager.css");
@@ -152,7 +157,14 @@ function(registry,plugin, Uploader, declare, lang, dom, domConstruct, on, topic,
             if (action === "install") {
                 dlg.set("title", "Install Application");
                 dlg.set("content", "<p>Installing application <abbrev>" + name + "</abbrev> ...");
-                self.doInstallOrRemove(form, dlg);
+                var note = query(".installation-note", app)[0];
+                if (note) {
+                    util.message("Installation Note", note.innerHTML, function() {
+                        self.doInstallOrRemove(form, dlg);
+                    });
+                } else {
+                    self.doInstallOrRemove(form, dlg);
+                }
             } else {
                 var anim = fx.wipeOut({ node: app, duration: 300 });
                 aspect.after(anim, "onEnd", function() {

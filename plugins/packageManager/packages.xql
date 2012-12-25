@@ -13,8 +13,6 @@ declare namespace http="http://expath.org/ns/http-client";
 
 declare variable $packages:DEFAULTS := doc($config:app-root || "/defaults.xml")/apps;
 
-declare variable $packages:REPO := xs:anyURI("http://demo.exist-db.org/exist/apps/public-repo");
-
 declare variable $packages:HIDE := ("dashboard");
 
 declare
@@ -30,7 +28,7 @@ function packages:get($type as xs:string?, $format as xs:string?, $plugins as xs
     let $apps := if ($format = "manager") then $apps except $apps[@removable="no"] else $apps
     for $app in $apps
     return
-       packages:display($packages:REPO, $app, $format)
+       packages:display($config:REPO, $app, $format)
 };
 
 declare %private function packages:default-apps($plugins as xs:string?) {
@@ -75,7 +73,7 @@ declare %private function packages:installed-apps($format as xs:string?) as elem
                         }
                         <abbrev>{$expathXML//@abbrev/string()}</abbrev>
                         <website>{$repoXML//repo:website/text()}</website>
-                        <version>{$expathXML//@version/string()}</version>
+                        <version>{$expathXML//expath:package/@version/string()}</version>
                         <license>{$repoXML//repo:license/text()}</license>
                         <icon>{if (exists($icon)) then 'modules/get-icon.xql?package=' || $app else 'resources/images/package.png'}</icon>
                         <url>{$app-url}</url>
@@ -107,7 +105,7 @@ declare %private function packages:get-package-meta($app as xs:string, $name as 
 
 declare %private function packages:public-repo-contents($installed as element(app)*) {
     try {
-        let $url := "http://demo.exist-db.org/exist/apps/public-repo/public/apps.xml"
+        let $url := $config:REPO || "/public/apps.xml"
         (: EXPath client module does not work properly. No idea why. :)
 (:        let $request :=:)
 (:            <http:request method="get" href="{$url}" timeout="10">:)
@@ -122,16 +120,16 @@ declare %private function packages:public-repo-contents($installed as element(ap
             else
                 map(function($app as element(app)) {
                     (: Ignore apps which are already installed :)
-                    if ($installed/abbrev = $app/abbrev) then
-                        if ($installed/version = $app/version) then
-                            ()
-                        else
+                    if ($app/abbrev = $installed/abbrev) then
+                        if (packages:is-newer($app/version/string(), $installed[abbrev = $app/abbrev]/version)) then
                             element { node-name($app) } {
                                 attribute available { $app/version/string() },
                                 attribute installed { $installed[abbrev = $app/abbrev]/version/string() },
                                 $app/@*,
                                 $app/*
                             }
+                        else
+                            ()
                     else
                         $app
                 }, $data/httpclient:body//app)
@@ -180,7 +178,6 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                 </form>
                         else
                                 <form action="">
-                                    <input type="hidden" name="server-url" value="{$repoURL}"/>
                                     <input type="hidden" name="package-url" value="{$app/name}"/>
                                     <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
                                     <input type="hidden" name="action" value="install"/>
@@ -207,11 +204,30 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                         <h3>{$app/title/text()}</h3>
                         {
                             if ($app/@available) then
-                                <p class="upgrade">Installed version: {$app/@installed/string()}. Available: {$app/@available/string()}</p>
+                                let $installed := $app/@installed/string()
+                                let $available := $app/@available/string()
+                                return
+                                    if (packages:is-newer($available, $installed)) then
+                                        <p class="upgrade">Installed version: {$installed}. Available: {$available}</p>
+                                    else
+                                        ()
                             else
                                 <p>Version: {$app/version/text()}</p>
                         }
+                        {
+                            if ($app/requires) then
+                                <p class="requires">Requires eXist-db {$app/requires/@version/string()}</p>
+                            else
+                                ()
+                        }
                     </div>
+                    {
+                        if ($app/note) then
+                            (: Installation notes are shown if user clicks on install :)
+                            <p class="installation-note" style="display: none">{ $app/note/node() }</p>
+                        else
+                            ()
+                    }
                     <table>
                         <tr class="title">
                             <th>Title:</th>
@@ -249,6 +265,31 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             <th>Website:</th>
                             <td><a href="{$app/website}">{ $app/website/text() }</a></td>
                         </tr>
+                        {
+                            if ($app/other/version) then
+                                <tr>
+                                    <th colspan="2">Other Versions:</th>
+                                </tr>
+                            else
+                                ()
+                        }
+                        {
+                            for $version in $app/other/version
+                            return
+                                <tr>
+                                    <th>{$version/@version/string()}</th>
+                                    <td>
+                                        <form action="">
+                                            <input type="hidden" name="package-url" value="{$app/name}"/>
+                                            <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
+                                            <input type="hidden" name="version" value="{$version/@version}"/>
+                                            <input type="hidden" name="action" value="install"/>
+                                            <input type="hidden" name="type" value="application"/>
+                                            <button class="installApp" title="Install">Install</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                        }
                     </table>
                 </li>
             default return
@@ -267,4 +308,22 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             <h3>{$app/title/text()}</h3>
                         </button>
                     </li>
+};
+
+declare %private function packages:is-newer($available as xs:string, $installed as xs:string) as xs:boolean {
+    let $verInstalled := tokenize($installed, "\.")
+    let $verAvailable := tokenize($available, "\.")
+    return
+        packages:compare-versions($verInstalled, $verAvailable)
+};
+
+declare %private function packages:compare-versions($installed as xs:string*, $available as xs:string*) as xs:boolean {
+    if (empty($installed)) then
+        exists($available)
+    else if (empty($available)) then
+        false()
+    else if (head($available) = head($installed)) then
+        packages:compare-versions(tail($installed), tail($available))
+    else
+        number(head($available)) > number(head($installed))
 };

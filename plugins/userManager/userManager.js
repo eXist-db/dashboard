@@ -33,6 +33,12 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
 
         constructor: function(div) {
             this.inherited(arguments);
+            
+        },
+        
+        init: function() {
+            this.inherited(arguments);
+            
             this.loadCSS("plugins/userManager/userManager.css");
 
             var $this = this;
@@ -78,7 +84,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             
             comboBox.startup();
 
-            /* DoesnÂ´t work right now as wished. Woul be nice to be able to select multiple Groups.
+            /* Doesn«t work right now as wished. Woul be nice to be able to select multiple Groups.
              * Should then replace the above ComboBox.
              */
             /*

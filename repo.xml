@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<repo:meta xmlns="http://exist-db.org/xquery/repo" xmlns:repo="http://exist-db.org/xquery/repo">
-    <repo:description>eXist-db Dashboard</repo:description>
-    <repo:author>Joern Turner</repo:author>
-    <repo:author>Wolfgang Meier</repo:author>
-    <repo:website/>
-    <repo:status>alpha</repo:status>
-    <repo:license>GNU-LGPL</repo:license>
-    <repo:copyright>true</repo:copyright>
-    <repo:type>application</repo:type>
-    <repo:target>/db/dashboard</repo:target>
-    <repo:prepare>pre-install.xql</repo:prepare>
-    <repo:finish/>
-    <deployed>2012-12-14T21:40:21.418+01:00</deployed>
-</repo:meta>
+<meta xmlns="http://exist-db.org/xquery/repo">
+    <description>eXist-db Dashboard</description>
+    <author>Joern Turner</author>
+    <author>Wolfgang Meier</author>
+    <website>https://github.com/eXist-db/dashboard</website>
+    <status>alpha</status>
+    <license>GNU-LGPL</license>
+    <copyright>true</copyright>
+    <type>application</type>
+    <target>dashboard</target>
+    <prepare>pre-install.xql</prepare>
+    <finish/>
+    <note>If you are updating to this version of eXide, you may need to bypass the browser's cache (and cookies). On most browsers, hold Ctrl (IE) or Shift (Firefox, Safari, Chrome) and click the reload button.</note>
+    <deployed>2012-12-24T19:55:46.335+01:00</deployed>
+</meta>

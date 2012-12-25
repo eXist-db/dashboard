@@ -110,6 +110,10 @@
   font-size: 0.7em;
   vertical-align: top;
 }
+#inlineAppArea .packageManager #listWrapper table th form,
+#inlineAppArea .packageManager #listWrapper table td form {
+  padding: 0;
+}
 #inlineAppArea .packageManager #listWrapper table ul {
   margin: 0;
   padding: 0;
@@ -164,6 +168,10 @@
 #inlineAppArea .packageManager #listWrapper .shortTitle p.upgrade {
   color: darkred;
   font-weight: bold;
+}
+#inlineAppArea .packageManager #listWrapper .shortTitle p.requires {
+  font-weight: bold;
+  margin-top: 0;
 }
 #inlineAppArea .packageManager #listWrapper .shortView li {
   height: 80px;

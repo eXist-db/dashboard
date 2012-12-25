@@ -1,6 +1,7 @@
 xquery version "3.0";
 
-import module namespace apputil="http://exist-db.org/xquery/apps" at "apputil.xql";
+import module namespace apputil="http://exist-db.org/xquery/apps";
+import module namespace config="http://exist-db.org/xquery/apps/config" at "config.xqm";
 
 declare namespace install="http://exist-db.org/apps/dashboard/install";
 declare namespace json="http://www.json.org";
@@ -10,13 +11,16 @@ declare option exist:serialize "method=json media-type=application/json";
 declare %private function install:require-dba($func as function() as item()*) {
     if (xmldb:is-admin-user(xmldb:get-current-user())) then
         $func()
-    else
-        response:set-status-code(403)
+    else (
+        response:set-status-code(403),
+        <status><error>{xmldb:get-current-user()}</error></status>
+    )
 };
 
 let $action := request:get-parameter("action", "install")
 let $package-url := request:get-parameter("package-url", ())
-let $server-url := request:get-parameter("server-url", ())
+let $version := request:get-parameter("version", ())
+let $server-url := $config:REPO
 let $upload := request:get-uploaded-file-name("uploadedfiles[]")
 return
     install:require-dba(function() {
@@ -48,7 +52,7 @@ return
                             <status><error>Failed to remove package {$package-url}</error></status>
                 default return
                     try {
-                        apputil:install-from-repo((), xs:anyURI($package-url), xs:anyURI($server-url || "/find?name="))
+                        apputil:install-from-repo($package-url, (), $server-url, $version)
                     } catch * {
                         <status>
                             <error>{$err:description}</error>

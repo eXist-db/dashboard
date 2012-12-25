@@ -382,7 +382,7 @@ require(["dijit/registry",
                         }
                     },
                     error: function(error) {
-                        dom.byId("login-message").innerHTML = "Login failed.";
+                        dom.byId("login-message").innerHTML = "Login failed: " + error.responseText;
                         registry.byId("user").set("label", "Not logged in");
                         login = null;
                     }

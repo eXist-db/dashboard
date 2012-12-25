@@ -1,4 +1,4 @@
-xquery version "1.0";
+xquery version "3.0";
 
 declare namespace json="http://www.json.org";
 declare namespace control="http://exist-db.org/apps/dashboard/controller";
@@ -34,21 +34,26 @@ else if (matches($exist:path, ".xql/?$")) then
         <cache-control cache="yes"/>
     </dispatch>
 
-else if ($exist:resource = "login") then
-    let $loggedIn := $login("org.exist.login", (), true())
-    let $output := util:declare-option("exist:serialize", "method=json media-type=application/json")
-    return
-        if (xmldb:get-current-user() != "guest") then
-            <ok>
-                <user>{xmldb:get-current-user()}</user>
-                <isDba json:literal="true">true</isDba>
-            </ok>
-        else (
-            response:set-status-code(401),
-            <fail/>
-        )
+else if ($exist:resource = "login") then (
+    util:declare-option("exist:serialize", "method=json media-type=application/json"),
+    try {
+        let $loggedIn := $login("org.exist.login", (), true())
+        return
+            if (xmldb:get-current-user() != "guest") then
+                <ok>
+                    <user>{xmldb:get-current-user()}</user>
+                    <isDba json:literal="true">true</isDba>
+                </ok>
+            else (
+                response:set-status-code(401),
+                <fail/>
+            )
+    } catch * {
+        response:set-status-code(401),
+        <fail>{$err:description}</fail>
+    }
 
-else if (ends-with($exist:resource, ".html")) then
+) else if (ends-with($exist:resource, ".html")) then
     (:~
      : Pages ending with .html are run through view.xql to
      : expand templates.

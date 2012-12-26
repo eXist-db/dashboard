@@ -9,6 +9,8 @@ define([ "plugins/base",
         "dojo/parser",
         "dijit/registry",
         "dojox/data/JsonRestStore",
+        /* dojo/data/ObjectStore",*/      /* switch from JsonRestStore to Json Rest when Dojo 1.8 is used */
+        /* "dojo/store/JsonRest", */
         "dijit/form/CheckBox",
         "dijit/form/NumberSpinner",
         "dijit/form/MultiSelect",
@@ -32,9 +34,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
 
     /**
      * TODO
-     *  1) deleting a user does not send a DELETE to the Server
-     *  2) UMASK currently expressed as an Integer - need to subclass the NumberSpinner - how to do that? see: http://dojotoolkit.org/reference-guide/1.8/dijit/Declaration.html
-     *  3) Add validation to form fields!
+     *  1) UMASK currently expressed as an Integer - need to subclass the NumberSpinner - how to do that? see: http://dojotoolkit.org/reference-guide/1.8/dijit/Declaration.html
+     *  2) Add validation to form fields!
      */
 
 
@@ -57,6 +58,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             
             /* users */
             this.usersStore = new dojox.data.JsonRestStore({target:"plugins/userManager2/api/user", idAttribute:"user"});
+            //this.usersStore = new dojo.store.JsonRest({target:"plugins/userManager2/api/user", idAttribute:"user"});
 
             var usersLayout = [[
               {'name': 'User', 'field': 'user', 'width': '15%'},
@@ -67,7 +69,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             this.usersGrid = new dojox.grid.EnhancedGrid(
                 {
                     id: 'userManager-grid',
-                    store: this.usersStore,
+                    //store: new dojo.data.ObjectStore({objectStore: this.usersStore}),
+                    store: $this.usersStore,
                     structure: usersLayout,
                     autoWidth: false,
                     autoHeight: 8,
@@ -91,7 +94,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
               {'name': 'Description', 'field': 'description', 'width': '85%'}
             ]];
             
-            this.groupsGrid = new dojox.grid.DataGrid(
+            this.groupsGrid = new dojox.grid.EnhancedGrid(
                 {
                     id: 'groupManager-grid',
                     store: this.groupsStore,
@@ -110,7 +113,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             dojo.byId("groupManager-grid-container").appendChild(this.groupsGrid.domNode);
             this.groupsGrid.startup();
             
-            //enable/disable group grid context menu items appropriately
+            //enable/disable user grid context menu items appropriately
             on(this.usersGrid, "RowContextMenu", function(ev){
                   var items = $this.usersGrid.selection.getSelected();
                   if(items.length) {
@@ -129,7 +132,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     if(!restrictedUsername(items)) {
                         dojo.forEach(items, function(selectedItem) {
                             if(selectedItem !== null) {
-                                $this.usersStore.deleteItem(selectedItem); //TODO this doesnt seem to send a DELETE to the server?
+                                //$this.usersStore.remove(selectedItem.user);
+                                $this.usersStore.deleteItem(selectedItem);
                                 $this.usersStore.save();
                             }
                         });
@@ -137,9 +141,9 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 }    
             });
             
-            //enable/disable user grid context menu items appropriately
+            //enable/disable group grid context menu items appropriately
             on(this.groupsGrid, "RowContextMenu", function(ev){
-                  var items = registry.byId("groupManager-grid").selection.getSelected();
+                  var items = $this.groupsGrid.selection.getSelected();
                   if(items.length) {
                     var restricted = restrictedGroupname(items);
                     registry.byId("editGroupItem").setDisabled(restricted);
@@ -156,8 +160,9 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     if(!restrictedGroupname(items)) {
                         dojo.forEach(items, function(selectedItem) {
                             if(selectedItem !== null) {
-                                $this.groupsStore.deleteItem(selectedItem); //TODO this doesnt seem to send a DELETE to the server?
-                                $this.usersStore.save();
+                                //$this.groupsStore.remove(selectedItem.user); //TODO this doesnt seem to send a DELETE to the server?
+                                $this.groupsStore.deleteItem(selectedItem);
+                                $this.groupsStore.save();
                             }
                         });
                     }
@@ -178,60 +183,76 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 changePage("newUserPage");
             });
             
+            query("#saveEditedUser").on("click", function(ev) {
+                var items = $this.usersGrid.selection.getSelected();
+                var oldUser = items[0];
+                
+                $this.usersStore.changing(oldUser); //prepare to change the user
+                
+                var newUserData = dijit.byId("newUser-form").get("value");
+                var disabled = isUserDisabled(newUserData.disabled);
+                var createPersonalGroup = hasPersonalGroup(newUserData.personalGroup);
+                var memberOfGroups = getMemberOfGroups(createPersonalGroup, newUserData.username);
+                
+                newUser.user = newUserData.username;
+                newUser.fullName = newUserData.fullName;
+                newUser.description = newUserData.userdescription;
+                newUser.password = newUserData.password;
+                newUser.disabled = disabled;
+                newUser.umask = newUserData.umask;
+                newUser.groups = memberOfGroups;
+                
+                $this.usersStore.save(); //save the updated user
+            });
+            
             query("#createNewUser").on("click", function(ev) {
                 var newUserData = dijit.byId("newUser-form").get("value");
-                
-                var hasPersonalGroup = false;
-                var personalGroupName = "";
-                if(newUserData.personalGroup) {
-                    if(newUserData.personalGroup == "true") {
-                        hasPersonalGroup = true
-                        personalGroupName = newUserData.username
-                    }
-                }
+                var createPersonalGroup = hasPersonalGroup(newUserData.personalGroup);
                 
                 /* 1) create the personal group if required? */
-
-                //TODO should have the groupname personalGroupName
+                var personalGroupName = newUserData.username;
+                var newGroup;
+                if(createPersonalGroup) {
+                    Group = $this.groupsStore.getConstructor();
+                    newGroup = new Group();
+                    
+                    newGroup.group = personalGroupName;
+                    newGroup.description = "Personal group for " + personalGroupName;
+                    newGroup.members = [];
+                    
+                    $this.groupsStore.save(); //save the personal group
+                }
                 
                 /* 2) create the user */
+                var disabled = isUserDisabled(newUserData.disabled);
+                var memberOfGroups = getMemberOfGroups(createPersonalGroup, newUserData.username);
                 
-                //get member of groups
-                var memberOfGroups = new Array();
-                var memberOfGroupsOptions = dijit.byId("memberOfGroups").domNode.options;
-                for(var i = 0; i < memberOfGroupsOptions.length; i++) {
-                    memberOfGroups[i] = memberOfGroupsOptions[i].innerHTML;
-                }
+                User = $this.usersStore.getConstructor();
+                var newUser = new User();
                 
-                //if they are to have a personal group make sure their first group is their personal group
-                if(hasPersonalGroup) {
-                    memberOfGroups = memberOfGroups.reverse();
-                    memberOfGroups.push(personalGroupName);
-                    memberOfGroups = memberOfGroups.reverse();
-                }
+                newUser.user = newUserData.username;
+                newUser.fullName = newUserData.fullName;
+                newUser.description = newUserData.userdescription;
+                newUser.password = newUserData.password;
+                newUser.disabled = disabled;
+                newUser.umask = newUserData.umask;
+                newUser.groups = memberOfGroups;
                 
-                var disabled = false;
-                if(newUserData.disabled) {
-                    if(newUserData.disabled == "true") {
-                        disabled = true
-                    }
-                }
-                
-                var newUser = {
-                   user: newUserData.username,
-                   fullName: newUserData.fullName,
-                   description: newUserData.userdescription,
-                   password: newUserData.password,
-                   disabled: disabled,
-                   umask: newUserData.umask,
-                   groups: memberOfGroups
-                };
-                
-                $this.usersStore.newItem(newUser);  //TODO does not seemt to PUT/POST to server?
-                //$this.usersGrid.update(); //probably not needed?
+                $this.usersStore.save();
                 
                 /* 3) Add the user as a group manager of their personal group */
-                //TODO
+                if(createPersonalGroup) {
+                    $this.usersStore.changing(newGroup); //prepare to change the group
+                    
+                    var members = newGroup.members;
+                    members = members.push({
+                        member: personalGroupName,
+                        isManager: true
+                    });
+                    newGroup.members = members;
+                    
+                    $this.usersStore.save(); //save the updated personal group
+                }
                 
                 //if we uncomment the lines below, the new store entry doesnt seemt to show up in the grid? why?
                 //reset form and move back to first form
@@ -440,4 +461,46 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         }
         return false;
     }
+    
+    function hasPersonalGroup(sPersonalGroup) {
+        //determine if the user should have a personalGroup
+        var personalGroup = false;
+        if(sPersonalGroup) {
+            if(sPersonalGroup == "true") {
+                personalGroup = true
+            }
+        }
+        
+        return personalGroup;
+    };
+        
+    function getMemberOfGroups(hasPersonalGroup, username) {
+    
+        //get member of groups
+        var memberOfGroups = new Array();
+        var memberOfGroupsOptions = dijit.byId("memberOfGroups").domNode.options;
+        for(var i = 0; i < memberOfGroupsOptions.length; i++) {
+            memberOfGroups[i] = memberOfGroupsOptions[i].innerHTML;
+        }
+        
+        //if they are to have a personal group make sure their first group is their personal group
+        if(hasPersonalGroup) {
+            var personalGroupName = username;
+            memberOfGroups = memberOfGroups.reverse();
+            memberOfGroups.push(personalGroupName);
+            memberOfGroups = memberOfGroups.reverse();
+        }
+        
+        return memberOfGroups;
+    };
+        
+    function isUserDisabled(sDisabled) {
+        var disabled = false;
+        if(sDisabled) {
+            if(sDisabled == "true") {
+                disabled = true
+            }
+        }
+        return disabled;
+    };
 });

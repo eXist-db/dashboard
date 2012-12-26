@@ -18,7 +18,7 @@ declare function usermanager:list-users() as element(json:value) {
     </json:value>
 };
 
-declare function usermanager:get-user($user) as element(json:value){
+declare function usermanager:get-user($user) as element(json:value) {
     <json:value>
         <user>{$user}</user>
         <fullName>{secman:get-account-metadata($user, $usermanager:METADATA_FULLNAME_KEY)}</fullName>
@@ -43,10 +43,26 @@ declare function usermanager:list-groups() as element(json:value) {
     <json:value>
         {
             for $group in secman:list-groups() return
-                <json:value>
-                    <group>{$group}</group>
-                    <description>{secman:get-group-metadata($group, $usermanager:METADATA_DESCRIPTION_KEY)}</description>
-                </json:value>
+                usermanager:get-group($group)
         }
     </json:value>
+};
+
+declare function usermanager:get-group($group) as element(json:value) {
+    <json:value>
+        <group>{$group}</group>
+        <description>{secman:get-group-metadata($group, $usermanager:METADATA_DESCRIPTION_KEY)}</description>
+        {
+            let $managers := secman:get-group-managers($group) return
+                for $member in secman:get-group-members($group) return
+                    <members json:array="true">
+                        <member>{$member}</member>
+                        <isManager>{$managers = $member}</isManager>
+                    </members>
+        }
+    </json:value>
+};
+
+declare function usermanager:delete-group($group) as empty() {
+    secman:delete-group($group)
 };

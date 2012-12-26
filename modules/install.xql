@@ -51,12 +51,18 @@ return
                         else
                             <status><error>Failed to remove package {$package-url}</error></status>
                 default return
-                    try {
-                        apputil:install-from-repo($package-url, (), $server-url, $version)
-                    } catch * {
-                        <status>
-                            <error>{$err:description}</error>
-                            <trace>{$exerr:xquery-stack-trace}</trace>
-                        </status>
-                    }
+                    (: Use dynamic lookup for backwards compatibility :)
+                    let $func := function-lookup(xs:QName("apputil:install-from-repo"), 4)
+                    return
+                        try {
+                            if (empty($func)) then
+                                apputil:install-from-repo($package-url, (), $server-url)
+                            else
+                                $func($package-url, (), $server-url, $version)
+                        } catch * {
+                            <status>
+                                <error>{$err:description}</error>
+                                <trace>{$exerr:xquery-stack-trace}</trace>
+                            </status>
+                        }
     })

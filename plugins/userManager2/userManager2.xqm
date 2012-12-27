@@ -3,6 +3,7 @@ xquery version "3.0";
 module namespace usermanager = "http://exist-db.org/apps/dashboard/userManager2";
 
 import module namespace secman = "http://exist-db.org/xquery/securitymanager";
+import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
 
 declare namespace json="http://www.json.org";
 
@@ -34,8 +35,8 @@ declare function usermanager:get-user($user) as element(json:value) {
 };
 
 declare function usermanager:delete-user($user) as empty() {
+    
     (: TODO implement secman module functions instead :)
-
     xmldb:delete-user($user)
 };
 
@@ -65,4 +66,19 @@ declare function usermanager:get-group($group) as element(json:value) {
 
 declare function usermanager:delete-group($group) as empty() {
     secman:delete-group($group)
+};
+
+declare function usermanager:create-group($group-json as element(json)) as xs:string? {
+    
+    (: TODO implement support for explicit members in the JSON :)
+    
+    let $group := $group-json/pair[@name eq "group"],
+    $description := $group-json/pair[@name eq "description"] return
+    
+        (: TODO implement secman module functions instead :)
+        if(xmldb:create-group($group))then (
+            secman:set-group-metadata($group, $usermanager:METADATA_DESCRIPTION_KEY, $description),
+            $group
+        ) else
+            ()
 };

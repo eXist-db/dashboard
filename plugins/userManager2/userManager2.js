@@ -194,6 +194,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 var createPersonalGroup = hasPersonalGroup(newUserData.personalGroup);
                 var memberOfGroups = getMemberOfGroups(createPersonalGroup, newUserData.username);
                 
+                //TODO add/remove personal group!
+                
                 newUser.user = newUserData.username;
                 newUser.fullName = newUserData.fullName;
                 newUser.description = newUserData.userdescription;
@@ -209,49 +211,28 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 var newUserData = dijit.byId("newUser-form").get("value");
                 var createPersonalGroup = hasPersonalGroup(newUserData.personalGroup);
                 
-                /* 1) create the personal group if required? */
+                /* 1) create user with personal group if required? */
                 var personalGroupName = newUserData.username;
                 var newGroup;
                 if(createPersonalGroup) {
-                    Group = $this.groupsStore.getConstructor();
-                    newGroup = new Group();
                     
-                    newGroup.group = personalGroupName;
-                    newGroup.description = "Personal group for " + personalGroupName;
-                    newGroup.members = [];
+                    //callback here adds the user as a manager of their personal group
+                    var fnSetGroupManager = function() {
+                        setGroupManager($this.groupsStore, personalGroupName, newUserData.username);  
+                    };
                     
-                    $this.groupsStore.save(); //save the personal group
-                }
-                
-                /* 2) create the user */
-                var disabled = isUserDisabled(newUserData.disabled);
-                var memberOfGroups = getMemberOfGroups(createPersonalGroup, newUserData.username);
-                
-                User = $this.usersStore.getConstructor();
-                var newUser = new User();
-                
-                newUser.user = newUserData.username;
-                newUser.fullName = newUserData.fullName;
-                newUser.description = newUserData.userdescription;
-                newUser.password = newUserData.password;
-                newUser.disabled = disabled;
-                newUser.umask = newUserData.umask;
-                newUser.groups = memberOfGroups;
-                
-                $this.usersStore.save();
-                
-                /* 3) Add the user as a group manager of their personal group */
-                if(createPersonalGroup) {
-                    $this.usersStore.changing(newGroup); //prepare to change the group
+                    //callback here creates the new user
+                    var fnCreateNewUser = function() {
+                        createNewUser($this.usersStore, newUserData, createPersonalGroup, fnSetGroupManager);    
+                    };
                     
-                    var members = newGroup.members;
-                    members = members.push({
-                        member: personalGroupName,
-                        isManager: true
-                    });
-                    newGroup.members = members;
+                    //create the personal group... and then call above callbacks on success
+                    createNewGroup($this.groupsStore, personalGroupName, "Personal group for " + newUserData.username, [], fnCreateNewUser);
                     
-                    $this.usersStore.save(); //save the updated personal group
+                } else {
+                
+                    /* 2) otherwise, directly create the user */
+                    $this.groupsStore.save(createNewUser($this.usersStore, newUserData, createPersonalGroup, null));
                 }
                 
                 //if we uncomment the lines below, the new store entry doesnt seemt to show up in the grid? why?
@@ -502,5 +483,62 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             }
         }
         return disabled;
+    };
+    
+    function createNewUser(usersStore, newUserData, createPersonalGroup, onSuccessCallback) {
+        var disabled = isUserDisabled(newUserData.disabled);
+        var memberOfGroups = getMemberOfGroups(createPersonalGroup, newUserData.username);
+        
+        User = usersStore.getConstructor();
+        var newUser = new User();
+        
+        newUser.user = newUserData.username;
+        newUser.fullName = newUserData.fullName;
+        newUser.description = newUserData.userdescription;
+        newUser.password = newUserData.password;
+        newUser.disabled = disabled;
+        newUser.umask = newUserData.umask;
+        newUser.groups = memberOfGroups;
+        
+        usersStore.save({onComplete: onSuccessCallback});  
+    };
+    
+    function createNewGroup(groupsStore, groupName, description, members, onSuccessCallback) {
+        Group = groupsStore.getConstructor();
+        newGroup = new Group();
+        
+        newGroup.group = groupName;
+        newGroup.description = description;
+        newGroup.members = members;
+        
+        groupsStore.save({onComplete: onSuccessCallback});  
+    };
+    
+    function setGroupManager(groupsStore, groupName, managerUserName) {
+        groupsStore.changing(newGroup); //prepare to change the group
+                    
+        var members = newGroup.members;
+        
+        //if they are already in the members list, just change them to a manager
+        var exists = false;
+        for(var i = 0; i < members.length; i++) {
+            if(members[i].member == managerUserName) {
+                members[i].isManager = true;
+                exists = true;
+                break;
+            }
+        }
+        
+        //if not, add them as a member and set them as a manager
+        if(!exists) {
+            members.push({
+                member: managerUserName,
+                isManager: true
+            });
+        }
+
+        newGroup.members = members;
+        
+        groupsStore.save(); //save the updated group
     };
 });

@@ -11,7 +11,7 @@
                         <div id="userManager-grid-container">
                             <div data-dojo-type="dijit.Menu" id="userManager-grid-Menu" style="display:none;">
                                 <div data-dojo-type="dijit.MenuItem" id="newUserItem">New User...</div>
-                                <div data-dojo-type="dijit.MenuItem" id="editUserItem" disabled="true">Edit User...</div>                                
+                                <div data-dojo-type="dijit.MenuItem" id="editUserItem" disabled="true">Edit User...</div>
                                 <div data-dojo-type="dijit.MenuItem" id="removeUserItem" disabled="true">Remove User</div>
                             </div>
                         </div>
@@ -29,7 +29,7 @@
                         <div id="groupManager-grid-container">
                             <div data-dojo-type="dijit.Menu" id="groupManager-grid-Menu" style="display:none;">
                                 <div data-dojo-type="dijit.MenuItem" id="newGroupItem">New Group...</div>
-                                <div data-dojo-type="dijit.MenuItem" id="editGroupItem" disabled="true">Edit Group...</div>                                
+                                <div data-dojo-type="dijit.MenuItem" id="editGroupItem" disabled="true">Edit Group...</div>
                                 <div data-dojo-type="dijit.MenuItem" id="removeGroupItem" disabled="true">Remove Group</div>
                             </div>
                         </div>
@@ -73,7 +73,7 @@
                     <div>
                         <span>
                             <label for="password">Password:</label>
-                        </span>  
+                        </span>
                         <span>
                             <input type="password" name="password" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="password"/>
                         </span>
@@ -82,7 +82,7 @@
                         <span>
                             <label for="userPasswordRepeat">Confirm password:</label>
                         </span>
-                        <span>                        
+                        <span>
                             <input type="password" name="passwordRepeat" value="" data-dojo-type="dijit.form.TextBox" data-dojo-props="trim:true" id="passwordRepeat"/>
                         </span>
                     </div>
@@ -120,8 +120,7 @@
                                 <label for="availableGroups">Available Groups:</label>
                             </div>
                             <div>
-                                <select data-dojo-type="dijit.form.MultiSelect" id="availableGroups" name="availableGroups" size="10">
-                                </select>
+                                <select data-dojo-type="dijit.form.MultiSelect" id="availableGroups" name="availableGroups" size="10"/>
                             </div>
                         </div>
                         <div class="groupMembershipActionsContainer">
@@ -133,8 +132,7 @@
                                 <label for="availableGroups">Member of Groups:</label>
                             </div>
                             <div>
-                                <select data-dojo-type="dijit.form.MultiSelect" id="memberOfGroups" name="memberOfGroups" size="10">
-                                </select>
+                                <select data-dojo-type="dijit.form.MultiSelect" id="memberOfGroups" name="memberOfGroups" size="10"/>
                             </div>
                         </div>
                     </div>
@@ -171,7 +169,13 @@
                         <div>
                             <label for="groupmembers">Group Members:</label>
                         </div>
-                        <div id="groupMember-grid-container"/>
+                        <div id="groupMembers-grid-container">
+                            <div data-dojo-type="dijit.Menu" id="groupMembers-grid-Menu" style="display:none;">
+                                <div data-dojo-type="dijit.MenuItem" id="newGroupMemberItem">Add Group Member...</div>
+                                <div data-dojo-type="dijit.MenuItem" id="groupManagerItem" disabled="true">Group Manager</div>
+                                <div data-dojo-type="dijit.MenuItem" id="removeGroupMemberItem" disabled="true">Remove Group Member</div>
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <button id="addGroupMember" data-dojo-type="dijit.form.Button">Add Group Member...</button>

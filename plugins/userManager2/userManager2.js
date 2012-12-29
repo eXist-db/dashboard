@@ -8,6 +8,7 @@ define([ "plugins/base",
         "dojox/fx",
         "dojo/parser",
         "dijit/registry",
+        "dojo/data/ItemFileReadStore",
         "dojox/data/JsonRestStore",
         /* dojo/data/ObjectStore",*/      /* switch from JsonRestStore to Json Rest when Dojo 1.8 is used */
         /* "dojo/store/JsonRest", */
@@ -123,7 +124,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     store: $this.usersStore,
                     structure: usersLayout,
                     autoWidth: false,
-                    autoHeight: 8,
+                    autoHeight: true,             //TODO setting to true seems to solve the problem with them being shown and not having to click refresh, otherwise 12 is a good value
                     selectionMode: "single",
                     plugins: {
                         menus: {
@@ -189,7 +190,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     store: this.groupsStore,
                     structure: groupsLayout,
                     autoWidth: false,
-                    autoHeight: true,
+                    autoHeight: true,             //TODO setting to true seems to solve the problem with them being shown and not having to click refresh, otherwise 12 is a good value
                     selectionMode: "single",
                     plugins: {
                         menus: {
@@ -255,6 +256,50 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     }
                 }    
             });
+            
+            
+            /////TEMP
+            this.groupMembersStore = new dojo.data.ItemFileReadStore({
+                data: {
+                    label: "member",
+                    identifier: "member",
+                    items: [
+                        {
+                            member: "fred",
+                            isManager: true
+                        },
+                        {
+                            member: "bob",
+                            isManager: false
+                        }
+                    ]
+                }
+            });
+
+            var groupMembersLayout = [[
+              {'name': 'Username', 'field': 'member', 'width': '70%'},
+              {'name': 'Group Manager', 'field': 'isManager', 'width': '30%'}
+            ]];
+            
+            this.groupMembersGrid = new dojox.grid.EnhancedGrid(
+                {
+                    id: 'groupMembers-grid',
+                    store: this.groupMembersStore,
+                    structure: groupMembersLayout,
+                    autoWidth: false,
+                    autoHeight: true,             //TODO setting to true seems to solve the problem with them being shown and not having to click refresh, otherwise 12 is a good value
+                    selectionMode: "single",
+                    plugins: {
+                        menus: {
+                            rowMenu:"groupMembers-grid-Menu"
+                        }
+                    }
+                },
+                document.createElement('div')
+            );
+            dojo.byId("groupMembers-grid-container").appendChild(this.groupMembersGrid.domNode);
+            this.groupMembersGrid.startup();
+            ////END TEMP
             
             query("#createUser").on("click", function(ev) {
                 dojo.style(dojo.byId("saveEditedUser"), "display", "none");

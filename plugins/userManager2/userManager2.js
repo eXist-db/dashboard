@@ -13,6 +13,7 @@ define([ "plugins/base",
         /* dojo/data/ObjectStore",*/      /* switch from JsonRestStore to Json Rest when Dojo 1.8 is used */
         /* "dojo/store/JsonRest", */
         "dijit/form/CheckBox",
+        "dijit/form/ComboBox",
         "dijit/form/NumberSpinner",
         "dijit/form/MultiSelect",
         "dijit/Toolbar",
@@ -324,6 +325,29 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                         $this.groupMembersStore.save();
                     }
                 });
+            });
+            
+            query('#removeGroupMemberItem').on("click", function(ev) {
+                var items = $this.groupMembersGrid.selection.getSelected();
+                var item = items[0];
+               
+                $this.groupMembersStore.deleteItem(item);
+                $this.groupMembersStore.save();
+            });
+           
+            query('#addGroupMember').on("click", function(ev) {
+               changePage("addUserToGroupPage"); 
+            });
+            
+            query('#addUserToGroup').on("click", function(ev) {
+                
+                alert("TODO implement this");
+                
+                //changePage("newGroupPage");
+            });
+            
+            query('#cancelAddUserToGroup').on("click", function(ev) {
+                changePage("newGroupPage");
             });
             
             query("#createUser").on("click", function(ev) {

@@ -27,10 +27,11 @@ define([ "plugins/base",
 ],
 function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry) {
 
-    /*
-    * functions for user manager plugin
-    * author: Adam Retter
-    */
+    /**
+     * functions for user manager plugin
+     * author: Adam Retter <adam.retter@googlemail.com>
+     * date: 2012-12-29
+     */
 
     /**
      * TODO
@@ -270,31 +271,86 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             });
             
             query("#saveEditedUser").on("click", function(ev) {
-                var items = $this.usersGrid.selection.getSelected();
-                var oldUser = items[0];
-                
-                $this.usersStore.changing(oldUser); //prepare to change the user
                 
                 var newUserData = dijit.byId("newUser-form").get("value");
-                var disabled = isUserDisabled(newUserData.disabled);
                 var createPersonalGroup = hasPersonalGroup(newUserData.personalGroup);
-                var memberOfGroups = getMemberOfGroups(createPersonalGroup, oldUser.user);
+                var items = $this.usersGrid.selection.getSelected();
+                var oldUser = items[0];
+                var personalGroupName = oldUser.user;
                 
-                //TODO add/remove personal group!
+                var fnEditUser = function() {
+                    
+                    $this.usersStore.changing(oldUser); //prepare to change the user
+                    
+                    var disabled = isUserDisabled(newUserData.disabled);
+                    var memberOfGroups = getMemberOfGroups(createPersonalGroup, oldUser.user);
+                    
+                    oldUser.fullName = newUserData.fullName;
+                    oldUser.description = newUserData.userdescription;
+                    
+                    if(newUserData.password.length == 0 || newUserData.password == "password") {
+                        oldUser.password = null;
+                    } else {
+                        oldUser.password = newUserData.password;
+                    }
+                    
+                    oldUser.disabled = disabled;
+                    oldUser.umask = newUserData.umask;
+                    oldUser.groups = memberOfGroups;
+                    
+                    //save the updated user
+                    $this.usersStore.save({
+                        onComplete: function() {
+                            resetNewUserForm();
+                            changePage("userGroupPage");
+                        }
+                    });
+                }
                 
-                oldUser.fullName = newUserData.fullName;
-                oldUser.description = newUserData.userdescription;
-                oldUser.password = newUserData.password;
-                oldUser.disabled = disabled;
-                oldUser.umask = newUserData.umask;
-                oldUser.groups = memberOfGroups;
+                //callback here adds the user as a manager of their personal group
+                var fnSetGroupManager = function() {
+                    setGroupManager($this.groupsStore, personalGroupName, oldUser.user, fnEditUser);  
+                };
                 
-                $this.usersStore.save(); //save the updated user
+                //if a personal group does not exist and the user now wants one, we must create one first 
+                //and add them as a manager to that group!
+                if(createPersonalGroup) {
+                    $this.groupsStore.fetchItemByIdentity({
+                        identity: personalGroupName,
+                        onItem: function(group) {
+                            if(group) {
+                                //personal group already exists
+                                //edit the user directly
+                                fnEditUser();
+                            } else {
+                                //personal group does not exist
+                                //create the personal group... and then call above callbacks on success to edit the user
+                                createNewGroup($this.groupsStore, personalGroupName, "Personal group for " + newUserData.username, [], fnSetGroupManager);
+                            }
+                        },
+                        onError: function() {
+                            //personal group does not exist
+                            //create the personal group... and then call above callbacks on success to edit the user
+                            createNewGroup($this.groupsStore, personalGroupName, "Personal group for " + newUserData.username, [], fnSetGroupManager);
+                        }
+                    });
+                } else {
+                    //edit the user directly
+                    fnEditUser();
+                }
             });
             
             query("#createNewUser").on("click", function(ev) {
                 var newUserData = dijit.byId("newUser-form").get("value");
                 var createPersonalGroup = hasPersonalGroup(newUserData.personalGroup);
+                
+                //callback here changes the screen back after creating the user
+                var fnAfterCreateUser = function() {
+                    //resetNewUserForm();
+                    //changePage("userGroupPage");
+                    
+                    //TODO if we uncomment the lines above, then when we move back to the grid, it is empty. Why?
+                };
                 
                 /* 1) create user with personal group if required? */
                 var personalGroupName = newUserData.username;
@@ -303,7 +359,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     
                     //callback here adds the user as a manager of their personal group
                     var fnSetGroupManager = function() {
-                        setGroupManager($this.groupsStore, personalGroupName, newUserData.username);  
+                        setGroupManager($this.groupsStore, personalGroupName, newUserData.username, fnAfterCreateUser);  
                     };
                     
                     //callback here creates the new user
@@ -317,13 +373,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 } else {
                 
                     /* 2) otherwise, directly create the user */
-                    $this.groupsStore.save(createNewUser($this.usersStore, newUserData, createPersonalGroup, null));
+                    $this.groupsStore.save(createNewUser($this.usersStore, newUserData, createPersonalGroup, fnAfterCreateUser));
                 }
-                
-                //if we uncomment the lines below, the new store entry doesnt seemt to show up in the grid? why?
-                //reset form and move back to first form
-                //resetNewUserForm();
-                //changePage("userGroupPage"); 
             });
             
             query("#switchLeft").on("click", function(ev) {
@@ -613,7 +664,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         groupsStore.save({onComplete: onSuccessCallback});  
     };
     
-    function setGroupManager(groupsStore, groupName, managerUserName) {
+    function setGroupManager(groupsStore, groupName, managerUserName, onSuccessCallback) {
         
         groupsStore.fetchItemByIdentity({
             identity: groupName,
@@ -643,7 +694,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         
                 group.members = members;
                 
-                groupsStore.save(); //save the updated group     
+                groupsStore.save({onComplete: onSuccessCallback}); //save the updated group     
             }
         });
     };

@@ -69,7 +69,13 @@ declare variable $exist:path external;
                                     <error>could not create user</error>
                                 )
                 else
-                    usermanager:get-user($user)
+                    if(usermanager:user-exists($user))then
+                        usermanager:get-user($user)
+                    else
+                    (
+                        response:set-status-code(404),
+                        <error>No such user: {$user}</error>
+                    )    
         
         else if($exist:path eq "/api/group/")then
             usermanager:list-groups()
@@ -125,7 +131,13 @@ declare variable $exist:path external;
                                 <error>could not create group</error>
                             )
             else
-                usermanager:get-group($group)
+                if(usermanager:group-exists($group))then
+                    usermanager:get-group($group)
+                else
+                (
+                    response:set-status-code(404),
+                    <error>No such group: {$group}</error>
+                )
         else
             <pathWas>{$exist:path}</pathWas>
     )else

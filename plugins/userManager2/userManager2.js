@@ -57,7 +57,56 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             var $this = this;
             
             /* users */
-            this.usersStore = new dojox.data.JsonRestStore({target:"plugins/userManager2/api/user", idAttribute:"user"});
+            this.usersStore = new dojox.data.JsonRestStore({
+                target: "plugins/userManager2/api/user",
+                idAttribute:"user",
+                schema: {
+                    description: "JSON Schema for a User",
+                    type: "object",
+                    properties: {
+                        user: {
+                            description: "The username of the User",
+                            type: "string",
+                            required: true
+                        },
+                        fullName: {
+                            description: "The full name of the User",
+                            type: "string",
+                            required: false
+                        },
+                        description: {
+                            description: "A description of the User",
+                            type: "string",
+                            required: false
+                        },
+                        password: {
+                            description: "The user's password",
+                            type: "string",
+                            required: false
+                        },
+                        disabled: {
+                            description: "Is the user's account disabled?",
+                            type: "boolean",
+                            required: true
+                        },
+                        umask: {
+                            description: "The umask of the user's account",
+                            type: "integer",
+                            minimum: 18,
+                            maximum: 511,
+                            required: true
+                        },
+                        groups: {
+                            description: "The groups the user is a member of",
+                            type: "array",
+                            required: true,
+                            items: {
+                                type: "string"
+                            }
+                        }
+                    }
+                }
+            });
             //this.usersStore = new dojo.store.JsonRest({target:"plugins/userManager2/api/user", idAttribute:"user"});
 
             var usersLayout = [[
@@ -87,7 +136,46 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             this.usersGrid.startup();
             
             /* groups */
-            this.groupsStore = new dojox.data.JsonRestStore({target:"plugins/userManager2/api/group", idAttribute:"group"});
+            this.groupsStore = new dojox.data.JsonRestStore({
+                target: "plugins/userManager2/api/group",
+                idAttribute:"group",
+                schema: {
+                    description: "JSON Schema for a User",
+                    type: "object",
+                    properties: {
+                        group: {
+                            description: "The name of the Group",
+                            type: "string",
+                            required: true
+                        },
+                        description: {
+                            description: "A description of the Group",
+                            type: "string",
+                            required: false
+                        },
+                        members: {
+                            description: "The members of the group",
+                            type: "array",
+                            required: true,
+                            items: {
+                                type: "object",
+                                properties: {
+                                    member: {
+                                        description: "The name of the account which is a member of this group",
+                                        type: "string",
+                                        required: true
+                                    },
+                                    isManager: {
+                                        description: "Is the member a manager of this group?",
+                                        type: "boolean",
+                                        required: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
 
             var groupsLayout = [[
               {'name': 'Group', 'field': 'group', 'width': '15%'},
@@ -132,7 +220,6 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     if(!restrictedUsername(items)) {
                         dojo.forEach(items, function(selectedItem) {
                             if(selectedItem !== null) {
-                                //$this.usersStore.remove(selectedItem.user);
                                 $this.usersStore.deleteItem(selectedItem);
                                 $this.usersStore.save();
                             }
@@ -160,7 +247,6 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     if(!restrictedGroupname(items)) {
                         dojo.forEach(items, function(selectedItem) {
                             if(selectedItem !== null) {
-                                //$this.groupsStore.remove(selectedItem.user); //TODO this doesnt seem to send a DELETE to the server?
                                 $this.groupsStore.deleteItem(selectedItem);
                                 $this.groupsStore.save();
                             }
@@ -192,17 +278,16 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 var newUserData = dijit.byId("newUser-form").get("value");
                 var disabled = isUserDisabled(newUserData.disabled);
                 var createPersonalGroup = hasPersonalGroup(newUserData.personalGroup);
-                var memberOfGroups = getMemberOfGroups(createPersonalGroup, newUserData.username);
+                var memberOfGroups = getMemberOfGroups(createPersonalGroup, oldUser.user);
                 
                 //TODO add/remove personal group!
                 
-                newUser.user = newUserData.username;
-                newUser.fullName = newUserData.fullName;
-                newUser.description = newUserData.userdescription;
-                newUser.password = newUserData.password;
-                newUser.disabled = disabled;
-                newUser.umask = newUserData.umask;
-                newUser.groups = memberOfGroups;
+                oldUser.fullName = newUserData.fullName;
+                oldUser.description = newUserData.userdescription;
+                oldUser.password = newUserData.password;
+                oldUser.disabled = disabled;
+                oldUser.umask = newUserData.umask;
+                oldUser.groups = memberOfGroups;
                 
                 $this.usersStore.save(); //save the updated user
             });
@@ -336,6 +421,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
     
     function resetNewUserForm() {
         registry.byId("username").set("value", "");
+        registry.byId("username").set("disabled", false);
+        
         registry.byId("fullName").set("value", "");
         registry.byId("userdescription").set("value", "");
         registry.byId("password").set("value", "");
@@ -367,6 +454,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
     
     function setupEditUserForm(user, groupsStore) {
         registry.byId("username").set("value", user.user);
+        registry.byId("username").set("disabled", true);
+        
         registry.byId("fullName").set("value", user.fullName);
         registry.byId("userdescription").set("value", user.description);
         registry.byId("password").set("value", "password");
@@ -467,9 +556,19 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         //if they are to have a personal group make sure their first group is their personal group
         if(hasPersonalGroup) {
             var personalGroupName = username;
-            memberOfGroups = memberOfGroups.reverse();
-            memberOfGroups.push(personalGroupName);
-            memberOfGroups = memberOfGroups.reverse();
+            
+            var memberOfGroupsWithPersonal = new Array();
+            memberOfGroupsWithPersonal[0] = personalGroupName;
+            
+            //copy from memberOfGroups to memberOfGroupsWithPersonal
+            var j = 1;
+            for(var i = 0; i < memberOfGroups.length; i++) {
+                if(memberOfGroups[i] != personalGroupName) {    //dont copy an existing personal group, otherwise we will have the entry twice!
+                    memberOfGroupsWithPersonal[j++] = memberOfGroups[i];
+                }
+            }
+            
+            memberOfGroups = memberOfGroupsWithPersonal;
         }
         
         return memberOfGroups;
@@ -490,55 +589,62 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         var memberOfGroups = getMemberOfGroups(createPersonalGroup, newUserData.username);
         
         User = usersStore.getConstructor();
-        var newUser = new User();
-        
-        newUser.user = newUserData.username;
-        newUser.fullName = newUserData.fullName;
-        newUser.description = newUserData.userdescription;
-        newUser.password = newUserData.password;
-        newUser.disabled = disabled;
-        newUser.umask = newUserData.umask;
-        newUser.groups = memberOfGroups;
+        var newUser = new User({
+            user: newUserData.username,
+            fullName: newUserData.fullName,
+            description: newUserData.userdescription,
+            password: newUserData.password,
+            disabled: disabled,
+            umask: newUserData.umask,
+            groups: memberOfGroups  
+        });
         
         usersStore.save({onComplete: onSuccessCallback});  
     };
     
     function createNewGroup(groupsStore, groupName, description, members, onSuccessCallback) {
         Group = groupsStore.getConstructor();
-        newGroup = new Group();
-        
-        newGroup.group = groupName;
-        newGroup.description = description;
-        newGroup.members = members;
+        newGroup = new Group({
+            group: groupName,
+            description: description,
+            members: members
+        });
         
         groupsStore.save({onComplete: onSuccessCallback});  
     };
     
     function setGroupManager(groupsStore, groupName, managerUserName) {
-        groupsStore.changing(newGroup); //prepare to change the group
+        
+        groupsStore.fetchItemByIdentity({
+            identity: groupName,
+            onItem: function(group) {
+                
+                groupsStore.changing(group); //prepare to change the group
                     
-        var members = newGroup.members;
+                var members = group.members;
+                
+                //if they are already in the members list, just change them to a manager
+                var exists = false;
+                for(var i = 0; i < members.length; i++) {
+                    if(members[i].member == managerUserName) {
+                        members[i].isManager = true;
+                        exists = true;
+                        break;
+                    }
+                }
+                
+                //if not, add them as a member and set them as a manager
+                if(!exists) {
+                    members.push({
+                        member: managerUserName,
+                        isManager: true
+                    });
+                }
         
-        //if they are already in the members list, just change them to a manager
-        var exists = false;
-        for(var i = 0; i < members.length; i++) {
-            if(members[i].member == managerUserName) {
-                members[i].isManager = true;
-                exists = true;
-                break;
+                group.members = members;
+                
+                groupsStore.save(); //save the updated group     
             }
-        }
-        
-        //if not, add them as a member and set them as a manager
-        if(!exists) {
-            members.push({
-                member: managerUserName,
-                isManager: true
-            });
-        }
-
-        newGroup.members = members;
-        
-        groupsStore.save(); //save the updated group
+        });
     };
 });

@@ -8,7 +8,7 @@ define([ "plugins/base",
         "dojox/fx",
         "dojo/parser",
         "dijit/registry",
-        "dojo/data/ItemFileReadStore",
+        "dojo/data/ItemFileWriteStore",
         "dojox/data/JsonRestStore",
         /* dojo/data/ObjectStore",*/      /* switch from JsonRestStore to Json Rest when Dojo 1.8 is used */
         /* "dojo/store/JsonRest", */
@@ -47,6 +47,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         usersGrid: null,
         groupsStore: null,
         groupsGrid: null,
+        groupMembersStore: null,
+        groupMembersGrid: null,
         
         constructor: function(div) {
             this.inherited(arguments);
@@ -234,8 +236,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             on(this.groupsGrid, "RowContextMenu", function(ev){
                   var items = $this.groupsGrid.selection.getSelected();
                   if(items.length) {
+                    registry.byId("editGroupItem").setDisabled(false);
                     var restricted = restrictedGroupname(items);
-                    registry.byId("editGroupItem").setDisabled(restricted);
                     registry.byId("removeGroupItem").setDisabled(restricted);
                   } else {
                     registry.byId("editGroupItem").setDisabled(true);
@@ -257,28 +259,18 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 }    
             });
             
-            
-            /////TEMP
-            this.groupMembersStore = new dojo.data.ItemFileReadStore({
+            this.groupMembersStore = new dojo.data.ItemFileWriteStore({
                 data: {
                     label: "member",
                     identifier: "member",
-                    items: [
-                        {
-                            member: "fred",
-                            isManager: true
-                        },
-                        {
-                            member: "bob",
-                            isManager: false
-                        }
-                    ]
-                }
+                    items: []
+                },
+                clearOnClose: true
             });
 
             var groupMembersLayout = [[
-              {'name': 'Username', 'field': 'member', 'width': '70%'},
-              {'name': 'Group Manager', 'field': 'isManager', 'width': '30%'}
+              {name: 'Username', field: 'member', width: '70%'},
+              {name: 'Group Manager', field: 'isManager', width: '30%', type: dojox.grid.cells.Bool, editable: true }
             ]];
             
             this.groupMembersGrid = new dojox.grid.EnhancedGrid(
@@ -299,7 +291,40 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             );
             dojo.byId("groupMembers-grid-container").appendChild(this.groupMembersGrid.domNode);
             this.groupMembersGrid.startup();
-            ////END TEMP
+            
+            //enable/disable group members grid context menu items appropriately
+            on(this.groupMembersGrid, "RowContextMenu", function(ev){
+                  var items = $this.groupMembersGrid.selection.getSelected();
+                  if(items.length) {
+                    registry.byId("groupManagerItem").setDisabled(false);
+                    registry.byId("removeGroupMemberItem").setDisabled(false);
+                  } else {
+                    registry.byId("groupManagerItem").setDisabled(true);
+                    registry.byId("removeGroupMemberItem").setDisabled(true);
+                  }
+            });
+            
+            query('#groupManagerItem').on("click", function(ev) {
+                var items = $this.groupMembersGrid.selection.getSelected();
+                var item = items[0];
+               
+                $this.groupMembersStore.fetchItemByIdentity({
+                    identity: item.member,
+                    onItem: function(member) {
+                        
+                        //Note for some reason we seem to get an array here when I would expect an atomic value
+                        //possibly a bug in Dojo ItemFileWriteDataStore? -- so handle both cases!
+                        var isManager = $this.groupMembersStore.getValue(member, "isManager");
+                        if(isManager.constructor === Array) {
+                            $this.groupMembersStore.setValue(member, "isManager", [!isManager[0]]);    
+                        } else {
+                            $this.groupMembersStore.setValue(member, "isManager", !isManager);
+                        }
+                        
+                        $this.groupMembersStore.save();
+                    }
+                });
+            });
             
             query("#createUser").on("click", function(ev) {
                 dojo.style(dojo.byId("saveEditedUser"), "display", "none");
@@ -435,19 +460,33 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 dojo.style(dojo.byId("saveEditedUser"), "display", "block");
                 var items = $this.usersGrid.selection.getSelected();
                 if(items.length) {
-                    if(!restrictedUsername(items)) {
-                        setupEditUserForm(items[0], $this.groupsStore);
-                        changePage("newUserPage");       
-                    }
+                    setupEditUserForm(items[0], $this.groupsStore);
+                    changePage("newUserPage");
                 }
             });
             
             query("#createGroup").on("click", function(ev) {
+                dojo.style(dojo.byId("saveEditedGroup"), "display", "none");
+                dojo.style(dojo.byId("createNewGroup"), "display", "block");
+                setupNewGroupForm($this.groupMembersStore, $this.groupMembersGrid);
                 changePage("newGroupPage");
             });
             
             query("#newGroupItem").on("click", function(ev) {
+                dojo.style(dojo.byId("saveEditedGroup"), "display", "none");
+                dojo.style(dojo.byId("createNewGroup"), "display", "block");
+                setupNewGroupForm($this.groupMembersStore, $this.groupMembersGrid);
                 changePage("newGroupPage");
+            });
+            
+            query("#editGroupItem").on("click", function(ev) {
+                dojo.style(dojo.byId("createNewGroup"), "display", "none");
+                dojo.style(dojo.byId("saveEditedGroup"), "display", "block");
+                var items = $this.groupsGrid.selection.getSelected();
+                if(items.length) {
+                    setupEditGroupForm(items[0], $this.groupMembersStore, $this.groupMembersGrid);
+                    changePage("newGroupPage");
+                }
             });
             
             /* events */
@@ -573,10 +612,50 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 node.appendChild(option);
             });
         });
-        //registry.byId("memberOfGroups").set("value", user.groups);
         
         setAvailableGroups(groupsStore, user.groups);
-        //registry.byId("availableGroups").set("value", []);
+    };
+    
+    function setupNewGroupForm(groupMembersStore, groupMembersGrid) {
+        
+        //clear the members grid
+        groupMembersStore.close();
+        groupMembersStore.data = {
+            label: "member",
+            identifier: "member",
+            items: []
+        };
+        
+        groupMembersStore.fetch();
+        groupMembersGrid._refresh();
+    };
+    
+    function setupEditGroupForm(group, groupMembersStore, groupMembersGrid) {
+        registry.byId("groupname").set("value", group.group);
+        registry.byId("groupname").set("disabled", true);
+        
+        registry.byId("groupdescription").set("value", group.description);
+        
+        //reload the members grid
+        groupMembersStore.close();
+        
+        
+        var groupMembers = new Array();
+        for(var i = 0; i < group.members.length; i++) {
+            groupMembers[i] = {
+                member: group.members[i].member,
+                isManager: group.members[i].isManager
+            };
+        }
+        
+        groupMembersStore.data = {
+            label: "member",
+            identifier: "member",
+            items: groupMembers
+        };
+        
+        groupMembersStore.fetch();
+        groupMembersGrid._refresh();
     };
     
     function setAvailableGroups(groupsStore, memberOfGroups) {
@@ -620,7 +699,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
     //expects array of json group objects
     function restrictedGroupname(groups) {
         for(var i = 0; i < groups.length; i++) {
-            var groupname = groups[i].user
+            var groupname = groups[i].group
             if(groupname == "dba" || groupname == "guest") {
                 return true;
             }

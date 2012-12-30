@@ -1,3 +1,29 @@
+/*
+Copyright (c) 2012, Adam Retter
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of Adam Retter Consulting nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL Adam Retter BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 define([ "plugins/base",
         "dojo/_base/declare", 
         "dojo/dom",
@@ -293,6 +319,13 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             dojo.byId("groupMembers-grid-container").appendChild(this.groupMembersGrid.domNode);
             this.groupMembersGrid.startup();
             
+            var comboBox = new dijit.form.ComboBox({
+                id: "newgroupmember",
+                name: "newgroupmember",
+                store: $this.usersStore,
+                searchAttr: "user"
+            }, "newgroupmember");
+            
             //enable/disable group members grid context menu items appropriately
             on(this.groupMembersGrid, "RowContextMenu", function(ev){
                   var items = $this.groupMembersGrid.selection.getSelected();
@@ -341,9 +374,18 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             
             query('#addUserToGroup').on("click", function(ev) {
                 
-                alert("TODO implement this");
+                var addUserToGroupData = dijit.byId("addUserToGroup-form").get("value");
+                $this.groupMembersStore.newItem({
+                    member: addUserToGroupData.newgroupmember,
+                    isManager: false
+                });
                 
-                //changePage("newGroupPage");
+                $this.groupMembersStore.save({
+                    onComplete: function() {
+                        $this.groupMembersGrid._refresh();
+                        changePage("newGroupPage");
+                    }
+                });
             });
             
             query('#cancelAddUserToGroup').on("click", function(ev) {
@@ -419,13 +461,13 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                             } else {
                                 //personal group does not exist
                                 //create the personal group... and then call above callbacks on success to edit the user
-                                createNewGroup($this.groupsStore, personalGroupName, "Personal group for " + newUserData.username, [], fnSetGroupManager);
+                                _createNewGroup($this.groupsStore, personalGroupName, "Personal group for " + newUserData.username, [], fnSetGroupManager);
                             }
                         },
                         onError: function() {
                             //personal group does not exist
                             //create the personal group... and then call above callbacks on success to edit the user
-                            createNewGroup($this.groupsStore, personalGroupName, "Personal group for " + newUserData.username, [], fnSetGroupManager);
+                            _createNewGroup($this.groupsStore, personalGroupName, "Personal group for " + newUserData.username, [], fnSetGroupManager);
                         }
                     });
                 } else {
@@ -462,7 +504,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     };
                     
                     //create the personal group... and then call above callbacks on success
-                    createNewGroup($this.groupsStore, personalGroupName, "Personal group for " + newUserData.username, [], fnCreateNewUser);
+                    _createNewGroup($this.groupsStore, personalGroupName, "Personal group for " + newUserData.username, [], fnCreateNewUser);
                     
                 } else {
                 
@@ -513,6 +555,18 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 }
             });
             
+            query("#createNewGroup").on("click", function(ev) {
+                var newGroupData = dijit.byId("newGroup-form").get("value");
+                
+                //callback here changes the screen back after creating the user
+                var fnAfterCreateGroup = function() {
+                    resetNewGroupForm();
+                    changePage("userGroupPage");
+                };
+                
+                createNewGroup($this.groupsStore, newGroupData, $this.groupMembersStore, fnAfterCreateGroup);
+            });
+            
             /* events */
             query(".refreshUsers", this.container).on("click", function(ev) {
                 ev.preventDefault();
@@ -530,6 +584,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             });
             
             query("#gCloseButton", this.container).on("click", function(ev) {
+                resetNewGroupForm();
                 closeMe();
             });
             
@@ -539,6 +594,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             });
             
             query("#closeNewGroup").on("click", function(ev) {
+                resetNewGroupForm();
                changePage("userGroupPage"); 
             });
             
@@ -682,6 +738,13 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         groupMembersGrid._refresh();
     };
     
+    function resetNewGroupForm() {
+        registry.byId("groupname").set("value", "");
+        registry.byId("groupname").set("disabled", false);
+        
+        registry.byId("groupdescription").set("value", "");
+    };
+    
     function setAvailableGroups(groupsStore, memberOfGroups) {
         var availableGroups = query("#availableGroups");
         var fnGroupsStoreItems = function(items, request) {
@@ -801,7 +864,44 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         usersStore.save({onComplete: onSuccessCallback});  
     };
     
-    function createNewGroup(groupsStore, groupName, description, members, onSuccessCallback) {
+    function createNewGroup(groupsStore, newGroupData, groupMembersStore, onSuccessCallback) {
+        
+        var fnGroupMembersStoreItems = function(items, request) {
+            var members = new Array();
+            
+            for(var i = 0; i < items.length; i++) {
+                
+                //Note for some reason we seem to get an array here when I would expect an atomic value
+                //possibly a bug in Dojo ItemFileWriteDataStore? -- so handle both cases!
+                var member;
+                if(items[i].member.constructor === Array) {
+                    member = items[i].member[0];
+                } else {
+                    member = items[i].member;
+                }
+                
+                //Note for some reason we seem to get an array here when I would expect an atomic value
+                //possibly a bug in Dojo ItemFileWriteDataStore? -- so handle both cases!
+                var isManager;
+                if(items[i].isManager.constructor === Array) {
+                    isManager = items[i].isManager[0];
+                } else {
+                    isManager = items[i].isManager;
+                }
+                
+                members[i] = {
+                    member: member,
+                    isManager: isManager
+                };
+            }
+            
+            _createNewGroup(groupsStore, newGroupData.groupname, newGroupData.groupdescription, members, onSuccessCallback);
+        };
+        
+        groupMembersStore.fetch({onComplete: fnGroupMembersStoreItems});
+    };
+    
+    function _createNewGroup(groupsStore, groupName, description, members, onSuccessCallback) {
         Group = groupsStore.getConstructor();
         newGroup = new Group({
             group: groupName,

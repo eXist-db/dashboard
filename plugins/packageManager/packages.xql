@@ -65,6 +65,7 @@ declare %private function packages:installed-apps($format as xs:string?) as elem
                 return
                     <app status="installed" path="{$expathXML//@name}">
                         <title>{$expathXML//expath:title/text()}</title>
+                        <name>{$expathXML//@name/string()}</name>
                         <description>{$repoXML//repo:description/text()}</description>
                         {
                             for $author in $repoXML//repo:author
@@ -238,6 +239,10 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             <td>{ $app/abbrev/text() }</td>
                         </tr>
                         <tr>
+                            <th>Name (URI):</th>
+                            <td>{ $app/name/string() }</td>
+                        </tr>
+                        <tr>
                             <th>Description:</th>
                             <td>{ $app/description/text() }</td>
                         </tr>
@@ -261,10 +266,15 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             <th>License:</th>
                             <td>{ $app/license/text() }</td>
                         </tr>
-                        <tr>
-                            <th>Website:</th>
-                            <td><a href="{$app/website}">{ $app/website/text() }</a></td>
-                        </tr>
+                        {
+                            if ($app/website != "") then
+                                <tr>
+                                    <th>Website:</th>
+                                    <td><a href="{$app/website}">{ $app/website/text() }</a></td>
+                                </tr>
+                            else
+                                ()
+                        }
                         {
                             if ($app/other/version) then
                                 <tr>

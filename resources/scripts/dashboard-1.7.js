@@ -370,15 +370,21 @@ require(["dijit/registry",
                     form: form,
                     handleAs: "json",
                     load: function(data) {
-                        domConstruct.empty("login-message");
-                        hideStatus();
-                        registry.byId("user").set("label", login);
-                        registry.byId("user").closeDropDown(false);
-                        domStyle.set("login-dialog-form", "display", "none");
-                        domStyle.set("login-dialog-logout", "display", "block");
-                        if(callbackFunction){
-                            callbackFunction();
-                            callbackFunction = undefined;
+                        if (data.user) {
+                            domConstruct.empty("login-message");
+                            hideStatus();
+                            registry.byId("user").set("label", login);
+                            registry.byId("user").closeDropDown(false);
+                            domStyle.set("login-dialog-form", "display", "none");
+                            domStyle.set("login-dialog-logout", "display", "block");
+                            if(callbackFunction){
+                                callbackFunction();
+                                callbackFunction = undefined;
+                            }
+                        } else {
+                            dom.byId("login-message").innerHTML = data.fail;
+                            registry.byId("user").set("label", "Not logged in");
+                            login = null;
                         }
                     },
                     error: function(error) {
@@ -393,15 +399,15 @@ require(["dijit/registry",
                 dojo.xhrPost({
                     url: "login?logout=true",
                     load: function(data) {
-                    },
-                    error: function(error) {
-                        // will return an error because we're no longer logged in
                         login = null;
                         domStyle.set("login-dialog-form", "display", "block");
                         domStyle.set("login-dialog-logout", "display", "none");
                         registry.byId("user").set("label", "Not logged in");
                         popup.close(registry.byId("login-dialog"));
                         form.reset();
+                    },
+                    error: function(error) {
+                        status("Logout failed");
                     }
                 });
             });

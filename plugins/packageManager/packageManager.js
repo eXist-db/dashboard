@@ -153,8 +153,8 @@ function(registry, plugin, util, Uploader, declare, lang, dom, domConstruct, on,
             var action = query("input[name = 'action']", form).val();
             var name = query("input[name = 'abbrev']", form).val();
             var dlg = registry.byId("actionDialog");
-            self.actionStart();
             if (action === "install") {
+                self.actionStart();
                 dlg.set("title", "Install Application");
                 dlg.set("content", "<p>Installing application <abbrev>" + name + "</abbrev> ...");
                 var note = query(".installation-note", app)[0];
@@ -166,13 +166,17 @@ function(registry, plugin, util, Uploader, declare, lang, dom, domConstruct, on,
                     self.doInstallOrRemove(form, dlg);
                 }
             } else {
-                var anim = fx.wipeOut({ node: app, duration: 300 });
-                aspect.after(anim, "onEnd", function() {
-                    dlg.set("title", "Remove Application");
-                    dlg.set("content", "<p>Removing application <abbrev>" + name + "</abbrev> ...");
-                    self.doInstallOrRemove(form, dlg);
+                util.confirm("Remove package", "Are you sure you want to remove package " + name + "?",
+                    function() {
+                        self.actionStart();
+                        var anim = fx.wipeOut({ node: app, duration: 300 });
+                        aspect.after(anim, "onEnd", function() {
+                            dlg.set("title", "Remove Application");
+                            dlg.set("content", "<p>Removing application <abbrev>" + name + "</abbrev> ...");
+                            self.doInstallOrRemove(form, dlg);
+                        });
+                        anim.play();
                 });
-                anim.play();
             }
         },
 

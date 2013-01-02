@@ -215,8 +215,9 @@ declare function usermanager:update-group($group-name as xs:string, $group-json 
             (: 0) update the description :)
             let $existing-description := secman:get-group-metadata($group, $usermanager:METADATA_DESCRIPTION_KEY),
             $updated-description := string($group-json/pair[@name eq "description"])
+            
             return
-                if($existing-description ne $updated-description)then
+                if(not($existing-description = $updated-description))then
                     (: update the description :)
                     secman:set-group-metadata($group, $usermanager:METADATA_DESCRIPTION_KEY, $updated-description)
                 else(),

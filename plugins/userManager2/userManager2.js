@@ -567,6 +567,27 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 createNewGroup($this.groupsStore, newGroupData, $this.groupMembersStore, fnAfterCreateGroup);
             });
             
+            query("#saveEditedGroup").on("click", function(ev) {
+               var newGroupData = dijit.byId("newGroup-form").get("value");
+               
+               var fnAfterEditGroup = function() {
+                    resetNewGroupForm();
+                    changePage("userGroupPage");
+                };
+               
+               var items = $this.groupsGrid.selection.getSelected();
+               var oldGroup = items[0];
+               
+               $this.groupsStore.changing(oldGroup);
+               
+               oldGroup.description = newGroupData.groupdescription;
+               
+               getGroupMembersFromStore($this.groupMembersStore, function(members) {
+                  oldGroup.members = members;
+                  $this.groupsStore.save({onComplete: fnAfterEditGroup}); 
+               });
+            });
+            
             /* events */
             query(".refreshUsers", this.container).on("click", function(ev) {
                 ev.preventDefault();
@@ -864,8 +885,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         usersStore.save({onComplete: onSuccessCallback});  
     };
     
-    function createNewGroup(groupsStore, newGroupData, groupMembersStore, onSuccessCallback) {
-        
+    function getGroupMembersFromStore(groupMembersStore, fnMembersCallback) {
         var fnGroupMembersStoreItems = function(items, request) {
             var members = new Array();
             
@@ -895,10 +915,16 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 };
             }
             
-            _createNewGroup(groupsStore, newGroupData.groupname, newGroupData.groupdescription, members, onSuccessCallback);
+            fnMembersCallback(members);
         };
         
         groupMembersStore.fetch({onComplete: fnGroupMembersStoreItems});
+    }
+    
+    function createNewGroup(groupsStore, newGroupData, groupMembersStore, onSuccessCallback) {
+        getGroupMembersFromStore(groupMembersStore, function(members){
+            _createNewGroup(groupsStore, newGroupData.groupname, newGroupData.groupdescription, members, onSuccessCallback);
+        });
     };
     
     function _createNewGroup(groupsStore, groupName, description, members, onSuccessCallback) {

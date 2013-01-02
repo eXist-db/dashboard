@@ -40,17 +40,19 @@ else if ($exist:resource = "login") then (
         let $loggedIn := $login("org.exist.login", (), true())
         return
             if (xmldb:get-current-user() != "guest") then
-                <ok>
+                <response>
                     <user>{xmldb:get-current-user()}</user>
                     <isDba json:literal="true">true</isDba>
-                </ok>
+                </response>
             else (
-                response:set-status-code(401),
-                <fail/>
+                <response>
+                    <fail>Wrong user or password</fail>
+                </response>
             )
     } catch * {
-        response:set-status-code(401),
-        <fail>{$err:description}</fail>
+        <response>
+            <fail>{$err:description}</fail>
+        </response>
     }
 
 ) else if (ends-with($exist:resource, ".html")) then

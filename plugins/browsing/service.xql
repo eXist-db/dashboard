@@ -258,7 +258,10 @@ function service:change-properties($resources as xs:string, $owner as xs:string?
         sm:chown($uri, $owner),
         sm:chgrp($uri, $group),
         sm:chmod($uri, service:permissions-from-form()),
-        xmldb:set-mime-type($resource, $mime)
+        if (doc-available($resource)) then
+            xmldb:set-mime-type($resource, $mime)
+        else
+            ()
     ),
     <response status="ok"/>
 };

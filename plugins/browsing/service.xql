@@ -71,21 +71,9 @@ function service:resources($collection as xs:string) {
             (: where sm:has-access(xs:anyURI($path), "r") :) (: TODO: why this check? should be on opening the thing not listing it! :)
             (: order by $resource ascending :) (: already ordered by service:list-collection-contents(...) :)
             return
-                let $permissions := 
-                    if ($isCollection) then
-                        xmldb:permissions-to-string(xmldb:get-permissions($path))
-                    else
-                        xmldb:permissions-to-string(xmldb:get-permissions($collection, $resource))
-                let $owner := 
-                    if ($isCollection) then
-                        xmldb:get-owner($path)
-                    else
-                        xmldb:get-owner($collection, $resource)
-                let $group :=
-                    if ($isCollection) then
-                        xmldb:get-group($path)
-                    else
-                        xmldb:get-group($collection, $resource)
+                let $permissions := sm:get-permissions(xs:anyURI($path))/sm:permission
+                let $owner := string($permissions/@owner)
+                let $group := string($permissions/@group)
                 let $lastMod := 
                     if ($isCollection) then
                         format-dateTime(xmldb:created($path), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]")
@@ -100,7 +88,7 @@ function service:resources($collection as xs:string) {
                     <json:value json:array="true">
                         <name>{$resource/text()}</name>
                         <id>{$path}</id>
-                        <permissions>{$permissions}</permissions>
+                        <permissions>{string($permissions/@mode)}{if($permissions/sm:acl/@entries ne "0")then "+" else ""}</permissions>
                         <owner>{$owner}</owner>
                         <group>{$group}</group>
                         <last-modified>{$lastMod}</last-modified>

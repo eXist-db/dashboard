@@ -66,14 +66,10 @@ function service:resources($collection as xs:string) {
             </json:value>
         {
             for $resource in $subset
-            let $isCollection := starts-with($resource, "/")
-            let $path := 
-                if ($isCollection) then
-                    concat($collection, $resource)
-                else
-                    concat($collection, "/", $resource)
-            where sm:has-access(xs:anyURI($path), "r")
-            order by $resource ascending
+            let $isCollection := local-name($resource) eq "collection"
+            let $path := string-join(($collection, $resource), "/")
+            (: where sm:has-access(xs:anyURI($path), "r") :) (: TODO: why this check? should be on opening the thing not listing it! :)
+            (: order by $resource ascending :) (: already ordered by service:list-collection-contents(...) :)
             return
                 let $permissions := 
                     if ($isCollection) then
@@ -97,12 +93,12 @@ function service:resources($collection as xs:string) {
                         format-dateTime(xmldb:created($collection, $resource), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]")
                 let $canWrite :=
                     if ($isCollection) then
-                        service:canWrite(concat($collection, "/", $resource), $user)
+                        service:canWrite($path, $user)
                     else
                         service:canWriteResource($collection, $resource, $user)
                 return
                     <json:value json:array="true">
-                        <name>{$resource}</name>
+                        <name>{$resource/text()}</name>
                         <id>{$path}</id>
                         <permissions>{$permissions}</permissions>
                         <owner>{$owner}</owner>
@@ -258,10 +254,7 @@ function service:change-properties($resources as xs:string, $owner as xs:string?
         sm:chown($uri, $owner),
         sm:chgrp($uri, $group),
         sm:chmod($uri, service:permissions-from-form()),
-        if (doc-available($resource)) then
-            xmldb:set-mime-type($resource, $mime)
-        else
-            ()
+        xmldb:set-mime-type($resource, $mime)
     ),
     <response status="ok"/>
 };
@@ -308,11 +301,25 @@ declare %private function service:permissions-from-form() {
 };
 
 declare %private function service:list-collection-contents($collection as xs:string, $user as xs:string) {
+    
+    (
+        for $child in xmldb:get-child-collections($collection)
+        order by $child ascending
+        return
+            <collection>{$child}</collection>
+        ,
+        for $resource in xmldb:get-child-resources($collection)
+        order by $resource ascending
+        return
+            <resource>{$resource}</resource>
+    )
+    
+    (:
     let $subcollections := 
         for $child in xmldb:get-child-collections($collection)
         where sm:has-access(xs:anyURI(concat($collection, "/", $child)), "r")
         return
-            concat("/", $child)
+            $child
     let $resources :=
         for $r in xmldb:get-child-resources($collection)
         where sm:has-access(xs:anyURI(concat($collection, "/", $r)), "r")
@@ -322,6 +329,7 @@ declare %private function service:list-collection-contents($collection as xs:str
     order by $resource ascending
 	return
 		$resource
+	:)
 };
 
 declare %private function service:canWrite($collection as xs:string, $user as xs:string) as xs:boolean {

@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 xquery version "3.0";
 
 declare namespace exist = "http://exist.sourceforge.net/NS/exist";
+declare namespace json = "http://www.json.org";
 
 import module namespace request = "http://exist-db.org/xquery/request";
 import module namespace util = "http://exist-db.org/xquery/util";
@@ -34,142 +35,230 @@ import module namespace util = "http://exist-db.org/xquery/util";
 import module namespace usermanager = "http://exist-db.org/apps/dashboard/userManager2" at "userManager2.xqm";
 import module namespace jsjson = "http://johnsnelson/json" at "jsjson.xqm";
 
+declare variable $local:HTTP_OK := xs:integer(200);
+declare variable $local:HTTP_CREATED := xs:integer(201);
+declare variable $local:HTTP_NO_CONTENT := xs:integer(204);
+declare variable $local:HTTP_BAD_REQUEST := xs:integer(400);
+declare variable $local:HTTP_NOT_FOUND := xs:integer(404);
+declare variable $local:HTTP_METHOD_NOT_ALLOWED := xs:integer(405);
+declare variable $local:HTTP_INTERNAL_SERVER_ERROR := xs:integer(500);
+
+declare variable $exist:controller external;
 declare variable $exist:path external;
-    if(starts-with($exist:path, "/api/"))then(
+declare variable $exist:prefix external;
+
+declare variable $local:HTTP_API_BASE := replace(string-join((request:get-context-path(), $exist:prefix, $exist:controller, "api"), "/"), "//", "/"); 
+
+declare function local:get-user-location($user) as xs:string {
+    local:get-location(("user", $user))
+};
+
+declare function local:get-group-location($group) as xs:string {
+    local:get-location(("group", $group))
+};
+
+declare function local:get-location($postfix as xs:string+) {
+    string-join(($local:HTTP_API_BASE, $postfix), "/")
+};
+
+declare function local:list-users($user as xs:string?) as element(json:value) {
+    if($user)then
+        usermanager:list-users($user)
+    else
+        usermanager:list-users()
+};
+
+declare function local:list-groups($group as xs:string?) as element(json:value) {
+    if($group)then
+        usermanager:list-groups($group)
+    else
+        usermanager:list-groups()
+};
+
+declare function local:delete-user($user as xs:string) as element(deleted) {
+    (
+        usermanager:delete-user($user),
+        <deleted>
+            <user>{$user}</user>
+        </deleted>
+    )
+};
+
+declare function local:delete-group($group as xs:string) as element(deleted) {
+    (
+        usermanager:delete-group($group),
+        <deleted>
+            <group>{$group}</group>
+        </deleted>
+    )
+};
+
+declare function local:update-user($user as xs:string, $request-body) as element() {
+    if(usermanager:update-user($user, jsjson:parse-json($request-body)))then
+    (
+        response:set-header("Location", local:get-user-location($user)),
+        response:set-status-code($local:HTTP_OK),
         
-        (: API is in JSON :)
-        util:declare-option("exist:serialize", "method=json media-type=application/json"),
+        (: TODO ideally would like to set 204 above and not return and content in the body
+        however the controller.xql is not capable of doing that, as there is no dispatch/ignore
+        that just returns processing with an empty body.
+        :)
         
-        (: debugging :)
-        if($exist:path eq "/api/user/" and request:get-method() eq "GET")then
-            if(request:get-parameter("user", ()))then
-                usermanager:list-users(request:get-parameter("user", ()))
-            else
-                usermanager:list-users()
+        (: send back updated group json :)
+        usermanager:get-user($user)
+    ) else (
+        response:set-status-code($local:HTTP_INTERNAL_SERVER_ERROR),
+        <error>could not update group</error>
+    )
+};
+
+declare function local:update-group($group as xs:string, $request-body) as element() {
+    if(usermanager:update-group($group, jsjson:parse-json($request-body)))then
+    (
+        response:set-header("Location", local:get-group-location($group)),
+        response:set-status-code($local:HTTP_OK),
         
-        else if(starts-with($exist:path, "/api/user/"))then
-            let $user := replace($exist:path, "/api/user/", "") return
-                
-                if(request:get-method() eq "DELETE")then (
-                    usermanager:delete-user($user),
-                    <deleted>
-                        <user>{$user}</user>
-                    </deleted>
-                )
-                
-                else if(request:get-method() eq "POST")then 
-                (
-                    response:set-status-code(405),
-                    <error>expected PUT for User from dojox.data.JsonRestStore and not POST</error>
-                )
-                
-                else if(request:get-method() eq "PUT") then
-                    let $body := util:binary-to-string(request:get-data()) return
-                        if(usermanager:user-exists($user))then
-                            (: update user:)
-                            if(usermanager:update-user($user, jsjson:parse-json($body)))then
-                            (
-                                response:set-header("Location", concat("/exist/apps/dashboard/plugins/userManager2/api/user/", $user)),
-                                response:set-status-code(200),
-                                
-                                (: TODO ideally would like to set 204 above and not return and content in the body
-                                however the controller.xql is not capable of doing that, as there is no dispatch/ignore
-                                that just returns processing with an empty body.
-                                :)
-                                
-                                (: send back updated group json :)
-                                usermanager:get-user($user)
-                            ) else (
-                                response:set-status-code(500),
-                                <error>could not update group</error>
-                            )
-                        else
-                            (: create user :)
-                            let $user := usermanager:create-user(jsjson:parse-json($body)) return
-                                if($user)then
-                                (
-                                    response:set-header("Location", concat("/exist/apps/dashboard/plugins/userManager2/api/user/", $user)),
-                                    response:set-status-code(201),
-                                    
-                                    (: send back updated user json :)
-                                    usermanager:get-user($user)
-                                ) else (
-                                    response:set-status-code(500),
-                                    <error>could not create user</error>
-                                )
-                else
-                    if(usermanager:user-exists($user))then
-                        usermanager:get-user($user)
-                    else
-                    (
-                        response:set-status-code(404),
-                        <error>No such user: {$user}</error>
-                    )    
+        (: TODO ideally would like to set 204 above and not return and content in the body
+        however the controller.xql is not capable of doing that, as there is no dispatch/ignore
+        that just returns processing with an empty body.
+        :)
         
-        else if($exist:path eq "/api/group/")then
-            usermanager:list-groups()
-        
-        else if(starts-with($exist:path, "/api/group/"))then
-            let $group := replace($exist:path, "/api/group/", "") return
+        (: send back updated group json :)
+        usermanager:get-group($group)
+    ) else (
+        response:set-status-code($local:HTTP_INTERNAL_SERVER_ERROR),
+        <error>could not update group</error>
+    )
+};
+
+declare function local:create-user($user as xs:string, $request-body) as element() {
+    let $user := usermanager:create-user(jsjson:parse-json($request-body)) return
+        if($user)then
+        (
+            response:set-header("Location", local:get-user-location($user)),
+            response:set-status-code($local:HTTP_CREATED),
             
-            if(request:get-method() eq "DELETE")then (
-                usermanager:delete-group($group),
-                <deleted>
-                    <group>{$group}</group>
-                </deleted>
+            (: send back updated user json :)
+            usermanager:get-user($user)
+        ) else (
+            response:set-status-code($local:HTTP_INTERNAL_SERVER_ERROR),
+            <error>could not create user</error>
+        )
+};
+
+declare function local:create-group($user as xs:string, $request-body) as element() {
+    let $group := usermanager:create-group(jsjson:parse-json($request-body)) return
+        if($group)then
+        (
+            response:set-header("Location", local:get-group-location($group)),
+            response:set-status-code($local:HTTP_CREATED),
+            
+            (: send back updated group json :)
+            usermanager:get-group($group)
+        ) else (
+            response:set-status-code($local:HTTP_INTERNAL_SERVER_ERROR),
+            <error>could not create group</error>
+        )
+};
+
+declare function local:get-user($user as xs:string) as element() {
+    if(usermanager:user-exists($user))then
+        usermanager:get-user($user)
+    else
+    (
+        response:set-status-code($local:HTTP_NOT_FOUND),
+        <error>No such user: {$user}</error>
+    )    
+};
+
+declare function local:get-group($group as xs:string) as element() {
+    if(usermanager:group-exists($group))then
+        usermanager:get-group($group)
+    else
+    (
+        response:set-status-code($local:HTTP_NOT_FOUND),
+        <error>No such group: {$group}</error>
+    )
+};
+
+
+
+(: HTTP request dispatch... :)
+if(starts-with($exist:path, "/api/"))then(
+    
+    (: API is in JSON :)
+    util:declare-option("exist:serialize", "method=json media-type=application/json"),
+    
+    if($exist:path eq "/api/user/" and request:get-method() eq "GET")then
+        local:list-users(request:get-parameter("user", ()))
+    
+    else if(starts-with($exist:path, "/api/user/"))then
+        let $user := replace($exist:path, "/api/user/", "") return
+            
+            if(request:get-method() eq "DELETE")then
+                local:delete-user($user)
+            
+            else if(request:get-method() eq "POST")then 
+            (
+                response:set-status-code($local:HTTP_METHOD_NOT_ALLOWED),
+                <error>expected PUT for User from dojox.data.JsonRestStore and not POST</error>
             )
+            
+            else if(request:get-method() eq "PUT") then
+                let $body := util:binary-to-string(request:get-data()) return
+                    if(usermanager:user-exists($user))then
+                        (: update user:)
+                        local:update-user($user, $body)
+                    else
+                        local:create-user($user, $body)
+                        
+            else if(request:get-method() eq "GET") then
+                local:get-user($user)
+            
+            else
+            (
+                response:set-status-code($local:HTTP_METHOD_NOT_ALLOWED),
+                <error>Unsupported method: {request:get-method()}</error>
+            )
+                
+    
+    else if($exist:path eq "/api/group/")then
+        local:list-groups(request:get-parameter("group", ()))
+    
+    else if(starts-with($exist:path, "/api/group/"))then
+        let $group := replace($exist:path, "/api/group/", "") return
+        
+            if(request:get-method() eq "DELETE")then
+                local:delete-group($group)
             
             else if(request:get-method() eq "POST")then
             (
-                response:set-status-code(405),
+                response:set-status-code($local:HTTP_METHOD_NOT_ALLOWED),
                 <error>expected PUT for Group from dojox.data.JsonRestStore and not POST</error>
             )
             
             else if(request:get-method() eq "PUT") then
                 let $body := util:binary-to-string(request:get-data()) return
                     if(usermanager:group-exists($group))then
-                        (: update group :)
-                        if(usermanager:update-group($group, jsjson:parse-json($body)))then
-                        (
-                            response:set-header("Location", concat("/exist/apps/dashboard/plugins/userManager2/api/group/", $group)),
-                            response:set-status-code(200),
-                            
-                            (: TODO ideally would like to set 204 above and not return and content in the body
-                            however the controller.xql is not capable of doing that, as there is no dispatch/ignore
-                            that just returns processing with an empty body.
-                            :)
-                            
-                            (: send back updated group json :)
-                            usermanager:get-group($group)
-                        ) else (
-                            response:set-status-code(500),
-                            <error>could not update group</error>
-                        )
+                        local:update-group($group, $body)
                     else
-                        (: create group :)
-                        let $group := usermanager:create-group(jsjson:parse-json($body)) return
-                            if($group)then
-                            (
-                                response:set-header("Location", concat("/exist/apps/dashboard/plugins/userManager2/api/group/", $group)),
-                                response:set-status-code(201),
-                                
-                                (: send back updated group json :)
-                                usermanager:get-group($group)
-                            ) else (
-                                response:set-status-code(500),
-                                <error>could not create group</error>
-                            )
+                        local:create-group($group, $body)
+            else if(request:get-method() eq "GET") then
+                local:get-group($group)
+            
             else
-                if(usermanager:group-exists($group))then
-                    usermanager:get-group($group)
-                else
-                (
-                    response:set-status-code(404),
-                    <error>No such group: {$group}</error>
-                )
-        else
-            <pathWas>{$exist:path}</pathWas>
-    )else
+            (
+                response:set-status-code($local:HTTP_METHOD_NOT_ALLOWED),
+                <error>Unsupported method: {request:get-method()}</error>
+            )
+            
+    else
+        (: unkown URI path, not part of the API :)
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <cache-control cache="yes"/>
         </dispatch>
+) else
+    (: not an API URI path :)
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <cache-control cache="yes"/>
+    </dispatch>

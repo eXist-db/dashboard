@@ -60,6 +60,12 @@ declare function usermanager:list-users($pattern as xs:string) as element(json:v
     </json:value>
 };
 
+declare function usermanager:delete-user($user) as empty() {
+    
+    (: TODO implement secman module functions instead :)
+    xmldb:delete-user($user)
+};
+
 declare function usermanager:get-user($user) as element(json:value) {
     <json:value>
         <user>{$user}</user>
@@ -80,18 +86,26 @@ declare function usermanager:user-exists($user) as xs:boolean {
     secman:list-users() = $user
 };
 
-declare function usermanager:delete-user($user) as empty() {
-    
-    (: TODO implement secman module functions instead :)
-    xmldb:delete-user($user)
-};
-
 declare function usermanager:list-groups() as element(json:value) {
     <json:value>
         {
             for $group in secman:list-groups()
             return
                 usermanager:get-group($group)
+        }
+    </json:value>
+};
+
+declare function usermanager:list-groups($pattern as xs:string) as element(json:value) {
+    <json:value>
+        {
+            for $group in secman:list-groups()
+            return
+                if($pattern eq "*")then
+                    usermanager:get-group($group)
+                else if(ends-with($pattern, "*") and starts-with($group, substring-before($pattern, "*")))then
+                    usermanager:get-group($group)
+                else()
         }
     </json:value>
 };

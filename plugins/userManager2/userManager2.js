@@ -375,15 +375,36 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             query('#addUserToGroup').on("click", function(ev) {
                 
                 var addUserToGroupData = dijit.byId("addUserToGroup-form").get("value");
-                $this.groupMembersStore.newItem({
-                    member: addUserToGroupData.newgroupmember,
-                    isManager: false
-                });
+                var newMember = addUserToGroupData.newgroupmember;
                 
-                $this.groupMembersStore.save({
-                    onComplete: function() {
-                        $this.groupMembersGrid._refresh();
-                        changePage("newGroupPage");
+                var fnAddUserAndClose = function() {
+                    $this.groupMembersStore.newItem({
+                        member: newMember,
+                        isManager: false
+                    });
+                    
+                    $this.groupMembersStore.save({
+                        onComplete: function() {
+                            $this.groupMembersGrid._refresh();
+                            changePage("newGroupPage");
+                        }
+                    });
+                };
+                
+                $this.groupMembersStore.fetchItemByIdentity({
+                    identity: newMember,
+                    onItem: function(user) {
+                        if(user) {
+                            //user is already a group member, dont re-add just close page
+                            changePage("newGroupPage");
+                        } else {
+                            //user is not yet a group member, add them
+                            fnAddUserAndClose();
+                        }
+                    },
+                    onError: function() {
+                        //user is not yet a group member, add them
+                        fnAddUserAndClose();
                     }
                 });
             });

@@ -369,6 +369,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             });
            
             query('#addGroupMember').on("click", function(ev) {
+               setupAddUserToGroupForm();
                changePage("addUserToGroupPage"); 
             });
             
@@ -785,6 +786,10 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         registry.byId("groupname").set("disabled", false);
         
         registry.byId("groupdescription").set("value", "");
+    };
+    
+    function setupAddUserToGroupForm() {
+        registry.byId("newgroupmember").set("value", "");  
     };
     
     function setAvailableGroups(groupsStore, memberOfGroups) {

@@ -75,8 +75,10 @@ define([
                         selectionMode: "multi",
                         structure: layout,
                         autoWidth: false,
-                        autoHeight: false
-//                    onStyleRow: function(row) { $this.styleRow(row); }
+                        autoHeight: false,
+                        onStyleRow: function(row) {
+                            $this.styleRow($this.grid, row);
+                        }
                     },
                     document.createElement('div'));
                 
@@ -369,12 +371,20 @@ define([
                     });
             },
             
-            styleRow: function(row) {
-                var item = this.grid.getItem(row.index);
-                if (item && item.isCollection) {
-                    row.customClasses += " collection";
+            styleRow: function(grid, row) {
+                var item = grid.getItem(row.index);
+                if(item) {
+                    if(item.isCollection) {
+                        row.customClasses = "collectionRow " + row.customClasses;
+                    } else {
+                        row.customClasses += " dojoxGridRow";
+                        if(row.odd) {
+                            row.customClasses += " dojoxGridRowOdd";
+                        }
+                    }
                 }
-                this.grid.focus.styleRow(row);
+                grid.focus.styleRow(row);
+                grid.edit.styleRow(row);
             },
 
             openResource: function(item) {

@@ -10,6 +10,11 @@
 .browsing .browsing-container .collection {
   background: #EEE;
 }
+
+.browsing .browsing-container .collectionRow {
+    background: #e1ebe0;
+}
+
 .browsing .browsing-container #breadcrumb {
   height: 20px;
   width: 100%;

@@ -127,7 +127,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <label for="umask">umask:</label>
                         </span>
                         <span>
-                            <input name="umask" data-dojo-type="dijit.form.NumberSpinner" value="022" data-dojo-props="smallDelta:1, largeDelta:4, constraints:{min:0, max:777, places:0}" id="umask"/>
+                            <input name="umask" data-dojo-type="dijit.form.NumberSpinner" value="022" data-dojo-props="smallDelta:1, largeDelta:4, constraints:{min:0, max:777, places:0}, adjust: function(val, delta) { return octalAdjust(val, delta, this.constraints); }" id="umask"/>
+                            <!-- span data-dojo-type="dijit.Declaration" data-dojo-props="widgetClass:'OctalSpinner', mixins:['dijit.form.NumberSpinner']">
+                            </span>
+                            <input name="umask" id="umask" data-dojo-type="OctalSpinner" value="022"/ -->
                         </span>
                     </div>
                 </fieldset>

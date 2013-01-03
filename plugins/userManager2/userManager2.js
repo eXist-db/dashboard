@@ -41,6 +41,7 @@ define([ "plugins/base",
         "dijit/form/CheckBox",
         "dijit/form/ComboBox",
         "dijit/form/NumberSpinner",
+        "dijit/Declaration",
         "dijit/form/MultiSelect",
         "dijit/Toolbar",
         "dijit/layout/TabContainer",
@@ -999,3 +1000,26 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         });
     };
 });
+
+function octalAdjust(val, delta, constraints) {
+    var tc = constraints,
+    	v = isNaN(val),
+    	gotMax = !isNaN(tc.max),
+    	gotMin = !isNaN(tc.min)
+    ;
+    if(v && delta != 0){ // blank or invalid value and they want to spin, so create defaults
+    	val = (delta > 0) ?
+    		gotMin ? tc.min : gotMax ? tc.max : 0 :
+    		gotMax ? constraints.max : gotMin ? tc.min : 0
+    	;
+    }
+    var newval = val + delta;
+    if(v || isNaN(newval)){ return val; }
+    if(gotMax && (newval > tc.max)){
+    	newval = tc.max;
+    }
+    if(gotMin && (newval < tc.min)){
+    	newval = tc.min;
+    }
+    return newval;
+};

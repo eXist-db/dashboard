@@ -29,6 +29,15 @@ define([
 ],
     function(plugin, util, Uploader, declare, dom, domConstruct, domStyle, on, fx, lang, array, query, parser, registry, geometry, forms) {
 
+        function permissionsFormatter(permissions){
+            
+            if(permissions) {
+                return "<span class='permissionsCell'>" + permissions + "</span>";
+            } else {
+                return null;    
+            }
+        }
+
         //todo: fix intial value for breadcrumb - currently will be updated when dblclick occurs - when using keyboard it will never updated
         /**
          * Collection browser plugin.
@@ -61,11 +70,11 @@ define([
 
                 /*set up layout*/
                 var layout = [[
-                    {'name': 'Name', 'field': 'name', 'width': '30%'},
-                    {'name': 'Permissions', 'field': 'permissions', 'width': '20%'},
-                    {'name': 'Owner', 'field': 'owner', 'width': '10%'},
-                    {'name': 'Group', 'field': 'group', 'width': '10%'},
-                    {'name': 'Last-modified', 'field': 'last-modified', 'width': '30%'}
+                    {name: 'Name', field: 'name', width: '30%'},
+                    {name: 'Permissions', field: 'permissions', width: '20%', 'formatter': permissionsFormatter},
+                    {name: 'Owner', field: 'owner', width: '10%'},
+                    {name: 'Group', field: 'group', width: '10%'},
+                    {name: 'Last-modified', field: 'last-modified', width: '30%'}
                 ]];
 
                 /*create a new grid:*/
@@ -78,7 +87,8 @@ define([
                         autoHeight: false,
                         onStyleRow: function(row) {
                             $this.styleRow($this.grid, row);
-                        }
+                        },
+                        escapeHTMLInData: false
                     },
                     document.createElement('div'));
                 

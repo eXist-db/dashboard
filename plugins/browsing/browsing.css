@@ -15,6 +15,11 @@
     background: #e1ebe0;
 }
 
+.permissionsCell {
+    font-family: Monospace;
+    font-size: 11pt;
+}
+
 .browsing .browsing-container #breadcrumb {
   height: 20px;
   width: 100%;

@@ -384,6 +384,11 @@ define([
             styleRow: function(grid, row) {
                 var item = grid.getItem(row.index);
                 if(item) {
+                
+                    if(row.over) {
+                        row.customClasses += " dojoxGridRowOver";
+                    }
+                
                     if(item.isCollection) {
                         row.customClasses = "collectionRow " + row.customClasses;
                     } else {

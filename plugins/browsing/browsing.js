@@ -388,9 +388,15 @@ define([
                     if(row.over) {
                         row.customClasses += " dojoxGridRowOver";
                     }
+                    
+                    if(row.selected) {
+                        row.customClasses += " dojoxGridRowSelected";
+                    }
                 
                     if(item.isCollection) {
-                        row.customClasses = "collectionRow " + row.customClasses;
+                        if(!row.selected) {
+                            row.customClasses = "collectionRow " + row.customClasses;
+                        }
                     } else {
                         row.customClasses += " dojoxGridRow";
                         if(row.odd) {

@@ -88,7 +88,7 @@ function service:resources($collection as xs:string) {
                     <json:value json:array="true">
                         <name>{$resource/text()}</name>
                         <id>{$path}</id>
-                        <permissions>{string($permissions/@mode)}{if($permissions/sm:acl/@entries ne "0")then "+" else ""}</permissions>
+                        <permissions>{if($isCollection)then "c" else "-"}{string($permissions/@mode)}{if($permissions/sm:acl/@entries ne "0")then "+" else ""}</permissions>
                         <owner>{$owner}</owner>
                         <group>{$group}</group>
                         <last-modified>{$lastMod}</last-modified>

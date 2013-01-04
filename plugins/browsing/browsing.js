@@ -15,7 +15,13 @@ define([
     "dijit/registry",
     "dojo/dom-geometry",
     "dojo/dom-form",
+    "dijit/layout/ContentPane",
+    "dijit/layout/StackContainer",
+    "dijit/layout/StackController",
+    "dojo/data/ItemFileWriteStore",
     "dojox/grid/DataGrid",
+    "dojox/grid/EnhancedGrid",
+    "dojox/grid/enhanced/plugins/Menu",
     "dojo/data/ObjectStore",
     "dojo/store/Memory",
     "dojo/store/Cache",
@@ -42,7 +48,7 @@ define([
         /**
          * Collection browser plugin.
          */
-        var klass = declare(plugin, {
+        return declare(plugin, {
 
             pluginName:"Collection Browser",
             store: null,
@@ -53,6 +59,10 @@ define([
             clipboardCut: false,
             editor: null,
             contentHeight: 0,
+            permissionsStore : null,
+            permissionsGrid: null,
+            aclStore: null,
+            aclGrid: null,
             
             constructor: function(div) {
                 this.inherited(arguments);
@@ -84,7 +94,7 @@ define([
                         selectionMode: "multi",
                         structure: layout,
                         autoWidth: false,
-                        autoHeight: false,
+                        autoHeight: true,
                         onStyleRow: function(row) {
                             $this.styleRow($this.grid, row);
                         },
@@ -131,7 +141,29 @@ define([
                 /*append the new grid to the div*/
                 dom.byId("browsing-grid-container").appendChild(this.grid.domNode);
 
-                on(dom.byId("browsing-toolbar-properties"), "click", lang.hitch(this, "properties"));
+                /* on(dom.byId("browsing-toolbar-properties"), "click", lang.hitch(this, "properties")); */
+                query("#browsing-toolbar-properties").on("click", function(ev) {
+                    var items = $this.grid.selection.getSelected();
+                    if(items.length && items.length > 0) {
+                        var paths = new Array();
+                        for(var i = 0; i < items.length; i++) {
+                            var item = items[0];
+                            if(item.id != "..") {
+                                paths.push(item.id);
+                            }
+                        }
+                        
+                        if(paths.length > 0) {
+                            setupPropertiesForm(paths, $this.permissionsStore, $this.permissionsGrid, $this.aclStore, $this.aclGrid);
+                            changePage("propertiesPage");
+                        }
+                    }
+                });
+                
+                query("#closeProperties").on("click", function(ev) {
+                   changePage("browsingPage"); 
+                });
+                
                 on(dom.byId("browsing-toolbar-delete"), "click", lang.hitch(this, "delete"));
                 on(dom.byId("browsing-toolbar-new"), "click", lang.hitch(this, "createCollection"));
 
@@ -183,6 +215,95 @@ define([
                 
                 new Uploader(dom.byId("browsing-upload"), lang.hitch(this, "refresh"));
                 
+                /* start permissions grid */
+                this.permissionsStore = new dojo.data.ItemFileWriteStore({
+                    data: {
+                        label: "class",
+                        identifier: "class",
+                        items: [
+                            {
+                                "class": "User",
+                                read: false,
+                                write: false,
+                                execute: false
+                            },
+                            {
+                                "class": "Group",
+                                read: false,
+                                write: false,
+                                execute: false
+                            },
+                            {
+                                "class": "Other",
+                                read: false,
+                                write: false,
+                                execute: false
+                            }
+                        ]
+                    },
+                    clearOnClose: true
+                });
+    
+                var permissionsLayout = [[
+                  {name: 'Permission', field: 'class', width: '25%'},
+                  {name: 'Read', field: 'read', width: '25%', type: dojox.grid.cells.Bool, editable: true },
+                  {name: 'Write', field: 'write', width: '25%', type: dojox.grid.cells.Bool, editable: true },
+                  {name: 'Execute', field: 'execute', width: '25%', type: dojox.grid.cells.Bool, editable: true }
+                ]];
+                
+                this.permissionsGrid = new dojox.grid.DataGrid(
+                    {
+                        id: 'permissions-grid',
+                        store: this.permissionsStore,
+                        structure: permissionsLayout,
+                        autoWidth: false,
+                        autoHeight: true,             //TODO setting to true seems to solve the problem with them being shown and not having to click refresh, otherwise 12 is a good value
+                        selectionMode: "single"
+                    },
+                    document.createElement('div')
+                );
+                dojo.byId("permissions-grid-container").appendChild(this.permissionsGrid.domNode);
+                this.permissionsGrid.startup();
+                /* end permissions grid */
+                
+                /* start acl grid */
+                this.aclStore = new dojo.data.ItemFileWriteStore({
+                    data: {
+                        label: "index",
+                        identifier: "index",
+                        items: []
+                    },
+                    clearOnClose: true
+                });
+    
+                var aclLayout = [[
+                  {name: 'Target', field: 'target', width: '20%'},
+                  {name: 'Subject', field: 'who', width: '30%'},
+                  {name: 'Access', field: 'access_type', width: '20%'},
+                  {name: 'Read', field: 'read', width: '10%', type: dojox.grid.cells.Bool, editable: true },
+                  {name: 'Write', field: 'write', width: '10%', type: dojox.grid.cells.Bool, editable: true },
+                  {name: 'Execute', field: 'execute', width: '10%', type: dojox.grid.cells.Bool, editable: true }
+                ]];
+                
+                this.aclGrid = new dojox.grid.EnhancedGrid(
+                    {
+                        id: 'acl-grid',
+                        store: this.aclStore,
+                        structure: aclLayout,
+                        autoWidth: false,
+                        autoHeight: true,             //TODO setting to true seems to solve the problem with them being shown and not having to click refresh, otherwise 12 is a good value
+                        selectionMode: "single",
+                        plugins: {
+                            menus: {
+                                rowMenu:"acl-grid-Menu"
+                            }
+                        }
+                    },
+                    document.createElement('div')
+                );
+                dojo.byId("acl-grid-container").appendChild(this.aclGrid.domNode);
+                this.aclGrid.startup();
+                /* end acl grid */
                 
                 this.ready(function() {
                     // resizing and grid initialization after plugin becomes visible
@@ -208,6 +329,7 @@ define([
                 return null;
             },
 
+            /*
             properties: function() {
                 var $this = this;
                 var items = $this.grid.selection.getSelected();
@@ -234,7 +356,7 @@ define([
                         }
                     });
                 }
-            },
+            },*/
 
             applyProperties: function(dlg, resources) {
                 console.debug("applyProperties");
@@ -434,6 +556,89 @@ define([
                 console.log("Closed");
             }
         });
-
-        return klass;
+        
+        function changePage(pageId) {
+            var stack = registry.byId("browsingStack");
+            var page = registry.byId(pageId);
+            stack.selectChild(page);
+        };
+        
+        function setupPropertiesForm(resourcePaths, permissionsStore, permissionsGrid, aclStore, aclGrid) {
+            
+            var fnSetupPropertiesForm = function(data) {
+                query("#resourceName").innerHTML = data.path;
+                registry.byId("internetMediaType").set("value", data.internetMediaType);
+                //registry.byId("created").innerHTML = data.created;
+                //registry.byId("lastModified").innerHTML = data.lastModified;
+                registry.byId("owner").set("value", data.permission.owner);
+                registry.byId("group").set("value", data.permission.group);
+                
+                //reload the permissions store and grid
+                permissionsStore.close();
+                permissionsStore.data = {
+                    label: "class",
+                    identifier: "class",
+                    items: [
+                        {
+                            "class": "User",
+                            read: data.permission.mode.charAt(0) != '-',
+                            write: data.permission.mode.charAt(1) != '-',
+                            execute: data.permission.mode.charAt(2) != '-'
+                        },
+                        {
+                            "class": "Group",
+                            read: data.permission.mode.charAt(3) != '-',
+                            write: data.permission.mode.charAt(4) != '-',
+                            execute: data.permission.mode.charAt(5) != '-'
+                        },
+                        {
+                            "class": "Other",
+                            read: data.permission.mode.charAt(6) != '-',
+                            write: data.permission.mode.charAt(7) != '-',
+                            execute: data.permission.mode.charAt(8) != '-'
+                        }
+                    ]
+                };
+                permissionsStore.fetch();
+                permissionsGrid._refresh();
+                
+                
+                var aclItems = new Array();
+                for(var i = 0; i < data.permission.acl.ace.length; i++) {
+                    var ace = data.permission.acl.ace[i];
+                    aclItems.push({
+                        index: ace.index,
+                        target: ace.target,
+                        who: ace.who,
+                        access_type: ace.access_type,
+                        read: ace.mode.charAt(0) != '-',
+                        write: ace.mode.charAt(1) != '-',
+                        execute: ace.mode.charAt(2) != '-'
+                    });
+                }
+                
+                //reload the acl store and grid
+                aclStore.close();
+                aclStore.data = {
+                    label: "index",
+                    identifier: "index",
+                    items: aclItems
+                };
+                aclStore.fetch();
+                aclGrid._refresh();
+            };
+            
+            dojo.xhrGet({
+                url: "plugins/browsing/properties/",
+                handleAs: "json",
+                content: { resources: resourcePaths },
+                load: function(properties) {
+                    
+                    if(properties.length > 0) {
+                        //NOTE: we can only set the stuff up based on the first resource's properties!
+                        fnSetupPropertiesForm(properties[0]);
+                    }
+                }
+            });
+        };
     });

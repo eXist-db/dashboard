@@ -163,7 +163,32 @@ declare
     %rest:GET
     %rest:path("/properties/")
     %rest:query-param("resources", "{$resources}")
-function service:edit-properties($resources as xs:string*) {
+    %output:media-type("application/json")
+    %output:method("json")
+function service:edit-properties($resources as xs:string+) as element(json:value) {
+    
+    <json:value>
+    {
+        for $resource in $resources
+        let $permissions := sm:get-permissions(xs:anyURI($resource))
+        let $col-res-path := service:path-to-col-res-path($resource)
+        return
+            <json:value json:array="true">
+                <path>{$resource}</path>
+                <internetMediaType>{xmldb:get-mime-type($resource)}</internetMediaType>
+                {
+                    if(xmldb:collection-available($resource))then
+                        <created>{xmldb:created($resource)}</created>
+                    else
+                        <created>{xmldb:created($col-res-path[1], $col-res-path[2])}</created>
+                }
+                <lastModified>{xmldb:last-modified($col-res-path[1], $col-res-path[2])}</lastModified>
+                { service:force-json-array($permissions, xs:QName("sm:ace")) }
+            </json:value>
+    }
+    </json:value>
+    
+    (:
     let $props := service:get-properties($resources)
     let $users := service:get-users()
     return
@@ -224,6 +249,7 @@ function service:edit-properties($resources as xs:string*) {
                 <button type="submit" data-dojo-type="dijit.form.Button">Apply</button>
             </div>
         </form>
+        :)
 };
 
 declare
@@ -458,4 +484,39 @@ declare %private function service:get-permissions($perms as xs:string) {
             </td>
         </tr>
     </table>
+};
+
+declare %private function service:force-json-array($nodes as node()*, $element-names as xs:QName+) {
+   for $node in $nodes
+   return 
+      typeswitch($node)
+        case document-node()
+        return
+            document {
+                for $child in $node
+                return
+                    service:force-json-array($child/node(), $element-names)
+            }
+        case element()
+        return
+              element { name($node) } {
+                if(node-name($node) = $element-names)then
+                    attribute json:array { "true" }
+                else(),
+ 
+                for $att in $node/@*
+                return
+                    attribute {name($att)} {$att}
+                ,
+                for $child in $node
+                return
+                    service:force-json-array($child/node(), $element-names)
+              }
+        default
+        return
+            $node
+};
+
+declare %private function service:path-to-col-res-path($path as xs:string) {
+    (replace($path, "(.*)/.*", "$1"), replace($path, ".*/", ""))
 };

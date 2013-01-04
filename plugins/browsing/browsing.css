@@ -20,11 +20,15 @@
     font-size: 11pt;
 }
 
+.actionButtons {
+	float: right;
+}
+
 .browsing .browsing-container #breadcrumb {
   height: 20px;
-  width: 100%;
+  /* width: 100%; */
   font-size: 0.85em;
-  padding: 2px 5px;
+  padding-left: 4pt;
 }
 .browsing .browsing-container #browsing-grid {
   height: 300px;

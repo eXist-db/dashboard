@@ -11,6 +11,6 @@
     <target>dashboard</target>
     <prepare>pre-install.xql</prepare>
     <finish/>
-    <note>If you are updating to this version of eXide, you may need to bypass the browser's cache (and cookies). On most browsers, hold Ctrl (IE) or Shift (Firefox, Safari, Chrome) and click the reload button.</note>
+    <note/>
     <deployed>2012-12-24T19:55:46.335+01:00</deployed>
 </meta>

@@ -32,7 +32,7 @@ declare namespace json = "http://www.json.org";
 import module namespace request = "http://exist-db.org/xquery/request";
 import module namespace util = "http://exist-db.org/xquery/util";
 
-import module namespace usermanager = "http://exist-db.org/apps/dashboard/userManager2" at "userManager2.xqm";
+import module namespace usermanager = "http://exist-db.org/apps/dashboard/userManager" at "userManager.xqm";
 import module namespace jsjson = "http://johnsnelson/json" at "jsjson.xqm";
 
 declare variable $local:HTTP_OK := xs:integer(200);

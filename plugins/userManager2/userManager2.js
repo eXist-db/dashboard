@@ -59,7 +59,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
     /**
      * functions for user manager plugin
      * author: Adam Retter <adam.retter@googlemail.com>
-     * date: 2012-12-29
+     * date: 2013-01-22
      */
 
     /**
@@ -1013,7 +1013,33 @@ function octalAdjust(val, delta, constraints) {
     		gotMax ? constraints.max : gotMin ? tc.min : 0
     	;
     }
-    var newval = val + delta;
+    
+    var newval;
+    var sVal = val.toString();
+    var ews = sVal.indexOf("7", sVal.length - 1) != -1; //ends with a 7?
+    var ewss = sVal.length >= 2 && sVal.indexOf("77", sVal.length - 2) != -1; //ends with a 77?
+    var ewz = sVal.indexOf("0", sVal.length - 1) != -1; //ends with a 0?
+    var ewzz = sVal.length >= 2 && sVal.indexOf("00", sVal.length - 2) != -1; //ends with a 00?
+    
+    //calulate integer for octal number representation
+    if(delta == 1) {
+        if(ewss) {
+            newval = val + 23;
+        } else if(ews) {
+            newval = val + 3;
+        } else {
+            newval = val + 1;
+        }
+    } else if(delta == -1) {
+        if(ewzz) {
+            newval = val - 23;
+        } else if(ewz) {
+            newval = val - 3;
+        } else {
+            newval = val - 1;
+        }
+    }
+     
     if(v || isNaN(newval)){ return val; }
     if(gotMax && (newval > tc.max)){
     	newval = tc.max;

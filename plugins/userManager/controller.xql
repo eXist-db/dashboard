@@ -34,6 +34,7 @@ import module namespace util = "http://exist-db.org/xquery/util";
 
 import module namespace usermanager = "http://exist-db.org/apps/dashboard/userManager" at "userManager.xqm";
 import module namespace jsjson = "http://johnsnelson/json" at "jsjson.xqm";
+import module namespace login-helper="http://exist-db.org/apps/dashboard/login-helper" at "../../modules/login-helper.xql";
 
 declare variable $local:HTTP_OK := xs:integer(200);
 declare variable $local:HTTP_CREATED := xs:integer(201);
@@ -48,6 +49,8 @@ declare variable $exist:path external;
 declare variable $exist:prefix external;
 
 declare variable $local:HTTP_API_BASE := replace(string-join((request:get-context-path(), $exist:prefix, $exist:controller, "api"), "/"), "//", "/"); 
+
+declare variable $login := login-helper:get-login-method();
 
 declare function local:get-user-location($user) as xs:string {
     local:get-location(("user", $user))
@@ -182,7 +185,7 @@ declare function local:get-group($group as xs:string) as element() {
 };
 
 
-
+$login("org.exist.login", (), true()),
 (: HTTP request dispatch... :)
 if(starts-with($exist:path, "/api/"))then(
     

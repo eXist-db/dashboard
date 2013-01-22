@@ -64,8 +64,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
 
     /**
      * TODO
-     *  1) UMASK currently expressed as an Integer - need to subclass the NumberSpinner - how to do that? see: http://dojotoolkit.org/reference-guide/1.8/dijit/Declaration.html
-     *  2) Add validation to form fields!
+     *  1) Add validation to form fields!
      */
 
 
@@ -452,9 +451,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                     } else {
                         oldUser.password = newUserData.password;
                     }
-                    
                     oldUser.disabled = disabled;
-                    oldUser.umask = newUserData.umask;
+                    oldUser.umask = parseInt(newUserData.umask.toString(), 8); //need to convert from octal for display back to int
                     oldUser.groups = memberOfGroups;
                     
                     //save the updated user
@@ -720,7 +718,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         registry.byId("password").set("value", "password");
         registry.byId("passwordRepeat").set("value", "password");
         registry.byId("disabled").set("checked", user.disabled);
-        registry.byId("umask").set("value", parseInt(user.umask).toString(8)); //need to convert from int to octal for display?
+        registry.byId("umask").set("value", parseInt(user.umask).toString(8)); //need to convert from int to octal for display
 
         var memberOfGroups = query("#memberOfGroups");
         dojo.forEach(user.groups, function(group) {
@@ -905,7 +903,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
             description: newUserData.userdescription,
             password: newUserData.password,
             disabled: disabled,
-            umask: newUserData.umask,
+            umask: parseInt(newUserData.umask.toString(), 8), //need to convert from octal for display back to int
             groups: memberOfGroups  
         });
         

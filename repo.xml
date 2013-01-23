@@ -11,6 +11,6 @@
     <target>dashboard</target>
     <prepare>pre-install.xql</prepare>
     <finish/>
-    <note/>
-    <deployed>2012-12-24T19:55:46.335+01:00</deployed>
+    <note>If you are updating the dashboard, you may need to bypass the browser's cache (and cookies). On most browsers, hold Ctrl (IE) or Shift (Firefox, Safari, Chrome) and click the reload button.</note>
+    <deployed>2013-01-23T00:13:21.843+01:00</deployed>
 </meta>

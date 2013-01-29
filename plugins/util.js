@@ -45,7 +45,7 @@ function(dom, construct, domForm, connect, on, query, registry) {
         },
         
         message: function(title, message, label, callback) {
-            if (typeof label == "function") {
+            if (!label || typeof label == "function") {
                 callback = label;
                 label = "Close";
             }

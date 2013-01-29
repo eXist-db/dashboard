@@ -115,7 +115,7 @@ define([
                         $this.store.close();
                         $this.grid.setStore($this.store, { collection: $this.collection });
                     } else {
-                        $this.openResource(item);
+                        $this.openResource(item.id);
                     }
                 });
 
@@ -530,14 +530,34 @@ define([
                 grid.edit.styleRow(row);
             },
 
-            openResource: function(item) {
-                if (!this.editor) {
-                    this.editor = window.open("../eXide/index.html", "eXide");
-                    this.editor.eXide_onload = function(eXide) {
-                        eXide.findDocument(item.id);
-                    };
+            openResource: function(path) {
+                var exide = window.open("", "eXide");
+                if (exide && !exide.closed) {
+                    
+                    // check if eXide is really available or it's an empty page
+                    var app = exide.eXide;
+                    if (app) {
+                        // eXide is there
+                        exide.eXide.app.findDocument(path);
+
+                        exide.focus();
+                        setTimeout(function() {
+                            if (dojo.isIE ||
+                                (typeof exide.eXide.app.hasFocus == "function" && !exide.eXide.app.hasFocus())) {
+                                util.message("Open Resource", "Opened code in existing eXide window.");
+                            }
+                        }, 200);
+                    } else {
+                        window.eXide_onload = function() {
+                            exide.eXide.app.findDocument(path);
+                        };
+                        // empty page
+                        var href = window.location.href;
+                        href = href.substring(0, href.indexOf("/dashboard")) + "/eXide/index.html";
+                        exide.location = href;
+                    }
                 } else {
-                    this.editor.eXide.app.findDocument(item.id);
+                    util.message("Open Resource", "Failed to start eXide in new window.");
                 }
             },
             

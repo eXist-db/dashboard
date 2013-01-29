@@ -159,7 +159,7 @@ function(registry, plugin, util, Uploader, declare, lang, dom, domConstruct, on,
                 dlg.set("content", "<p>Installing application <abbrev>" + name + "</abbrev> ...");
                 var note = query(".installation-note", app)[0];
                 if (note) {
-                    util.message("Installation Note", note.innerHTML, function() {
+                    util.message("Installation Note", note.innerHTML, "Continue", function() {
                         self.doInstallOrRemove(form, dlg);
                     });
                 } else {

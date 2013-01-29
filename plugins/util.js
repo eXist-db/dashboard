@@ -3,11 +3,12 @@ define([
     "dojo/dom-construct",
     "dojo/dom-form",
     "dojo/_base/connect",
+    "dojo/on",
     "dojo/query",
     "dijit/registry",
     "dijit/Dialog"
 ],
-function(dom, construct, domForm, connect, query, registry) {
+function(dom, construct, domForm, connect, on, query, registry) {
     
     return {
         
@@ -43,9 +44,19 @@ function(dom, construct, domForm, connect, query, registry) {
             dialog.show();
         },
         
-        message: function(title, message, callback) {
+        message: function(title, message, label, callback) {
+            if (typeof label == "function") {
+                callback = label;
+                label = "Close";
+            }
             var dialog = new dijit.Dialog({
                 title: title
+            });
+            on(dialog, "hide", function(ev) {
+                dialog.destroyRecursive();
+                if (callback) {
+                    callback();
+                }
             });
             var div = construct.create('div', {
                 style: 'width: 400px;'
@@ -55,13 +66,9 @@ function(dom, construct, domForm, connect, query, registry) {
             });
             div.appendChild(msg);
             var closeButton = new dijit.form.Button({
-                label: "Close",
+                label: label,
                 onClick: function() {
                     dialog.hide();
-                    dialog.destroyRecursive();
-                    if (callback) {
-                        callback();
-                    }
                 }
             });
             div.appendChild(closeButton.domNode);

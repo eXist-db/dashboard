@@ -153,7 +153,7 @@
 */
 
 }
-#inlineAppArea .packageManager #listWrapper .packageIconArea:hover .appFunctions {
+#inlineAppArea .packageManager #listWrapper .package:hover .appFunctions {
   display: inline-block;
 }
 #inlineAppArea .packageManager #listWrapper .shortTitle h3 {

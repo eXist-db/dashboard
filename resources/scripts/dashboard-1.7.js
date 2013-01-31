@@ -21,9 +21,6 @@ require(["dijit/registry",
     "dijit/form/Form",
     "dijit/form/ValidationTextBox",
     "dijit/form/DropDownButton",
-    "dojox/form/Uploader",
-    "dojox/form/uploader/FileList",
-    "dojox/form/uploader/plugins/Flash",
     "dojo/NodeList-manipulate",
     "dojo/NodeList-fx"],
     function (registry, aspect, on, keys, domConstruct, dom, domStyle, topic, query, domClass, event, baseFx, dialog, tooltip, flip, easing, fx, source, ready, popup, form) {
@@ -33,7 +30,8 @@ require(["dijit/registry",
         var login = null;
         var callbackFunction = null;
         var updating = false;
-
+        var hasFocus = true;
+        
         // ##################### opening an app group ##########################
         // ##################### opening an app group ##########################
         // ##################### opening an app group ##########################
@@ -411,22 +409,34 @@ require(["dijit/registry",
                     }
                 });
             });
-            // Uploading local application archives
-            // TBD: move following code to package manager?!?
-            /*
-             var uploader = registry.byId("uploader");
-             var uploadDlg = registry.byId("uploadDialog");
-             aspect.after(uploader, "onBegin", function(e) {
-                 status("Uploading package ...");
-             });
 
-             aspect.after(uploader, "onComplete", function(e) {
-                 uploadDlg.hide();
-                 hideStatus();
-                 updateInstalledApps();
-             });
-             */
-
+            on(window, "focus", function(e) {
+                if (!hasFocus) {
+                    dojo.xhrPost({
+                        url: "login",
+                        handleAs: "json",
+                        load: function(data) {
+                            if (data.user) {
+                                login = data.user;
+                                registry.byId("user").set("label", login);
+                                domStyle.set("login-dialog-form", "display", "none");
+                                domStyle.set("login-dialog-logout", "display", "block");
+                            } else {
+                                domStyle.set("login-dialog-form", "display", "block");
+                                domStyle.set("login-dialog-logout", "display", "none");
+                                registry.byId("user").set("label", "Not logged in");
+                                login = null;
+                            }
+                        }
+                    });
+                }
+                hasFocus = true;
+            });
+            
+            on(window, "blur", function(e) {
+                hasFocus = false;
+            });
+            
             // listen to changes of installed packages
             topic.subscribe("packages-changed", updateInstalledApps);
             

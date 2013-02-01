@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="xar" name="dashboard">
-    <property name="project.version" value="0.2.8"/>
+    <property name="project.version" value="0.2.9"/>
     <property name="project.app" value="dashboard"/>
     <property name="build.dir" value="build"/>
     <property name="server.url" value="http://demo.exist-db.org/exist/apps/public-repo/public/"/>
-
     <target name="xar">
         <mkdir dir="${build.dir}"/>
         <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="${build.dir}/*"/>
     </target>
-
     <target name="upload">
         <input message="Enter password:" addproperty="server.pass" defaultvalue="">
             <handler type="secure"/>
         </input>
-    	<property name="xar" value="${project.app}-${project.version}.xar"/>
-    	<exec executable="curl">
-    		<arg line="-T ${build.dir}/${xar} -u admin:${server.pass} ${server.url}/${xar}"/>
-    	</exec>
+        <property name="xar" value="${project.app}-${project.version}.xar"/>
+        <exec executable="curl">
+            <arg line="-T ${build.dir}/${xar} -u admin:${server.pass} ${server.url}/${xar}"/>
+        </exec>
     </target>
 </project>

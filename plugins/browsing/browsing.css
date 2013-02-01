@@ -26,9 +26,9 @@
 
 .browsing .browsing-container #breadcrumb {
   height: 20px;
-  /* width: 100%; */
+  width: 100%;
   font-size: 0.85em;
-  padding-left: 4pt;
+  padding: 2px 5px;
 }
 .browsing .browsing-container #browsing-grid {
   height: 300px;
@@ -101,7 +101,7 @@
 }
 #browsing-upload-dialog .overall-progress .bar {
   height: 18px;
-  background: url(/exist/apps/dashboard/plugins/browsing/images/progressbar.gif);
+  background: url(images/progressbar.gif);
 }
 #browsing-upload-dialog .overall-progress .progress-label {
   position: absolute;
@@ -136,5 +136,5 @@
 }
 #browsing-upload-dialog .queue .files tr td.progress .bar {
   height: 18px;
-  background: url(/exist/apps/dashboard/plugins/browsing/images/progressbar.gif);
+  background: url(images/progressbar.gif);
 }

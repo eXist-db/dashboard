@@ -4,11 +4,11 @@
 #inlineAppArea .packageManager #packageManagerToolbar {
   height: 36px;
   /*
-                    background: @lightGreyBase;
-                    font-size: 0.7em;
-                    color:#efefed;
-            text-align: center;
-        */
+            background: @lightGreyBase;
+            font-size: 0.7em;
+            color:#efefed;
+    text-align: center;
+*/
 
 }
 #inlineAppArea .packageManager #packageManagerToolbar > * {
@@ -42,18 +42,18 @@
   height: 500px;
   width: 100%;
   /*ul li:focus{
-                .toolbar{
-                    display:inline-block;
-                    text-align:center;
-                    width:100%;
+    .toolbar{
+        display:inline-block;
+        text-align:center;
+        width:100%;
 
-                    .toobarBtn{
-                        img {
-                            width: 32px;
-                        }
-                    }
-                }
-            }*/
+        .toobarBtn{
+            img {
+                width: 32px;
+            }
+        }
+    }
+}*/
 
 }
 #inlineAppArea .packageManager #listWrapper ul {
@@ -136,8 +136,8 @@
 #inlineAppArea .packageManager #listWrapper .packageIconArea .appFunctions {
   display: none;
   position: absolute;
-  top: -20px;
-  right: -20px;
+  top: 0px;
+  right: 0px;
   z-index: 20;
 }
 #inlineAppArea .packageManager #listWrapper .packageIconArea .appFunctions .deleteApp,
@@ -147,10 +147,10 @@
   border: none;
   background: none;
   /*
-                        img{
-                            width: 16px;
-                        }
-*/
+                                    img{
+                                        width: 16px;
+                                    }
+            */
 
 }
 #inlineAppArea .packageManager #listWrapper .package:hover .appFunctions {
@@ -184,7 +184,7 @@
   font-size: 1.2em;
   display: block;
   margin-top: 5px;
-  src: local('Quicksand'), local('Quicksand'), url('/exist/apps/dashboard/plugins/packageManager/sKd0EMYPAh5PYCRKSryvW7O3LdcAZYWl9Si6vvxL-qU.woff') format('truetype');
+  src: local('Quicksand'), local('Quicksand'), url('sKd0EMYPAh5PYCRKSryvW7O3LdcAZYWl9Si6vvxL-qU.woff') format('truetype');
 }
 #inlineAppArea .packageManager #listWrapper .shortView .packageIconArea .appIcon {
   height: 50%;
@@ -251,7 +251,7 @@
 }
 #package-upload-dialog .overall-progress .bar {
   height: 18px;
-  background: url(/exist/apps/dashboard/plugins/packageManager/images/progressbar.gif);
+  background: url(images/progressbar.gif);
 }
 #package-upload-dialog .overall-progress .progress-label {
   position: absolute;
@@ -286,5 +286,5 @@
 }
 #package-upload-dialog .queue .files tr td.progress .bar {
   height: 18px;
-  background: url(/exist/apps/dashboard/plugins/packageManager/images/progressbar.gif);
+  background: url(images/progressbar.gif);
 }

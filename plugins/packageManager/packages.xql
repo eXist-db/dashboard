@@ -216,7 +216,12 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                 return
                                     if (packages:is-newer($available, $installed)) then (
                                         <p class="upgrade">Installed version: {$installed}. Available: {$available}.
-                                            <a href="#" class="show-changes" data-version="{$available}">Changes</a>
+                                        {
+                                            if ($app/changelog/change[@version = $available]) then
+                                                <a href="#" class="show-changes" data-version="{$available}">Changes</a>
+                                            else
+                                                ()
+                                        }
                                         </p>,
                                         <div class="changes" style="display: none;">
                                         { $app/changelog/change[@version = $available]/node() }

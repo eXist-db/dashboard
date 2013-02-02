@@ -11,18 +11,8 @@ declare option exist:serialize "method=json media-type=application/json";
 
 declare variable $backup:BACKUP_DIR := "export";
 
-declare function backup:get-directory() {
-    let $home := system:get-exist-home()
-    return
-        if (ends-with($home, "WEB-INF")) then
-            concat($home, "/data/", $backup:BACKUP_DIR)
-        else
-            concat($home, "/webapp/WEB-INF/data/", $backup:BACKUP_DIR)
-};
-
 declare function backup:list() {
-    let $dir := backup:get-directory()
-    let $backups := backups:list($dir)/exist:backup
+    let $backups := backups:list($backup:BACKUP_DIR)/exist:backup
     return (
         response:set-header("Content-Range", "items 0-" || count($backups) || "/" || count($backups)),
         if (empty($backups)) then
@@ -59,12 +49,11 @@ declare function backup:trigger() {
 };
 
 declare function backup:retrieve() {
-    let $backupDir := backup:get-directory()
     let $archive := request:get-parameter("archive", ())
     return
         if ($archive) then (
             response:set-header("Content-Disposition", concat("attachment; filename=", $archive)),
-            backups:retrieve($backupDir, $archive)
+            backups:retrieve($backup:BACKUP_DIR, $archive)
         ) else
             ()
 

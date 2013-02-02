@@ -18,6 +18,7 @@
             <ul>
                 <li>Display change log for updated packages</li>
                 <li>Show size of installable package</li>
+                <li>Small improvements to backup plugin</li>
             </ul>
         </change>
     </changelog>

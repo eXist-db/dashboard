@@ -61,7 +61,7 @@ function(dom, construct, domForm, connect, on, query, registry) {
             var div = construct.create('div', {
                 style: 'width: 400px;'
 			}, dialog.containerNode, "last");
-            var msg = construct.create("p", {
+            var msg = construct.create("div", {
                 innerHTML: message
             });
             div.appendChild(msg);

@@ -117,6 +117,10 @@ function(registry, plugin, util, Uploader, declare, lang, dom, domConstruct, on,
             var self = this;
             query("#packageList li").forEach(function (app) {
                 self.initToolbar(app);
+                query(".show-changes", app).connect("onclick", function (ev) {
+                    var changes = query(".changes", app)[0];
+                    util.message("Changes in " + this.getAttribute("data-version"), changes.innerHTML, "OK");
+                });
             });
         },
         

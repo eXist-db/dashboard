@@ -47,7 +47,11 @@ declare %private function packages:installed-apps($format as xs:string?) as elem
     packages:scan-repo(
         function ($app, $expathXML, $repoXML) {
             if ($format = "manager" or $repoXML//repo:type = "application") then
-                let $icon := repo:get-resource($app, "icon.png")
+                let $icon :=
+                    let $iconRes := repo:get-resource($app, "icon.png")
+                    let $hasIcon := exists($iconRes)
+                    return
+                        $hasIcon
                 let $app-url :=
                     if ($repoXML//repo:target) then
                         let $target := 
@@ -76,7 +80,7 @@ declare %private function packages:installed-apps($format as xs:string?) as elem
                         <website>{$repoXML//repo:website/text()}</website>
                         <version>{$expathXML//expath:package/@version/string()}</version>
                         <license>{$repoXML//repo:license/text()}</license>
-                        <icon>{if (exists($icon)) then 'modules/get-icon.xql?package=' || $app else 'resources/images/package.png'}</icon>
+                        <icon>{if ($icon) then 'modules/get-icon.xql?package=' || $app else 'resources/images/package.png'}</icon>
                         <url>{$app-url}</url>
                         <type>{$repoXML//repo:type/text()}</type>
                     </app>
@@ -95,8 +99,10 @@ declare %private function packages:scan-repo($callback as function(xs:string, el
 };
 
 declare %private function packages:get-package-meta($app as xs:string, $name as xs:string) {
-    let $meta := repo:get-resource($app, $name)
-    let $data := if (exists($meta)) then util:binary-to-string($meta) else ()
+    let $data :=
+        let $meta := repo:get-resource($app, $name)
+        return
+            if (exists($meta)) then util:binary-to-string($meta) else ()
     return
         if (exists($data)) then
             util:parse($data)
@@ -208,12 +214,23 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                 let $installed := $app/@installed/string()
                                 let $available := $app/@available/string()
                                 return
-                                    if (packages:is-newer($available, $installed)) then
-                                        <p class="upgrade">Installed version: {$installed}. Available: {$available}</p>
-                                    else
+                                    if (packages:is-newer($available, $installed)) then (
+                                        <p class="upgrade">Installed version: {$installed}. Available: {$available}.
+                                            <a href="#" class="show-changes" data-version="{$available}">Changes</a>
+                                        </p>,
+                                        <div class="changes" style="display: none;">
+                                        { $app/changelog/change[@version = $available]/node() }
+                                        </div>
+                                    ) else
                                         ()
                             else
                                 <p>Version: {$app/version/text()}</p>
+                        }
+                        {
+                            if ($app/@size) then
+                                <p>Size: { $app/@size idiv 1024 }k</p>
+                            else
+                                ()
                         }
                         {
                             if ($app/requires) then

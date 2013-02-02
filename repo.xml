@@ -12,5 +12,14 @@
     <prepare>pre-install.xql</prepare>
     <finish/>
     <note>If you are updating the dashboard, you may need to bypass the browser's cache (and cookies). On most browsers, hold Ctrl (IE) or Shift (Firefox, Safari, Chrome) and click the reload button.</note>
-    <deployed>2013-01-23T00:13:21.843+01:00</deployed>
+    <changelog>
+        <change xmlns="" version="0.3.0">
+            <h3>Package Manager:</h3>
+            <ul>
+                <li>Display change log for updated packages</li>
+                <li>Show size of installable package</li>
+            </ul>
+        </change>
+    </changelog>
+    <deployed>2013-02-01T19:12:04.228+01:00</deployed>
 </meta>

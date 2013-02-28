@@ -4,10 +4,15 @@
     <property name="project.app" value="dashboard"/>
     <property name="build.dir" value="build"/>
     <property name="server.url" value="http://demo.exist-db.org/exist/apps/public-repo/public/"/>
+    <target name="clean">
+      <delete dir="${build.dir}"/>
+    </target>
+
     <target name="xar">
         <mkdir dir="${build.dir}"/>
         <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="${build.dir}/*"/>
     </target>
+
     <target name="upload">
         <input message="Enter password:" addproperty="server.pass" defaultvalue="">
             <handler type="secure"/>

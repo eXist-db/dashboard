@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="xar" name="dashboard">
+<project default="all" name="dashboard">
     <property name="project.version" value="0.3.0"/>
     <property name="project.app" value="dashboard"/>
     <property name="build.dir" value="build"/>
@@ -8,6 +8,9 @@
       <delete dir="${build.dir}"/>
     </target>
 
+    <target name="all" depends="xar"/>
+    <target name="rebuild" depends="clean,xar"/>
+    
     <target name="xar">
         <mkdir dir="${build.dir}"/>
         <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="${build.dir}/*"/>

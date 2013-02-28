@@ -4,6 +4,11 @@
     <property name="project.app" value="dashboard"/>
     <property name="build.dir" value="build"/>
     <property name="server.url" value="http://demo.exist-db.org/exist/apps/public-repo/public/"/>
+
+    <condition property="git.commit" value="${git.commit}" else="">
+      <isset property="git.commit" />      
+    </condition>
+
     <target name="clean">
       <delete dir="${build.dir}"/>
     </target>
@@ -13,7 +18,7 @@
     
     <target name="xar">
         <mkdir dir="${build.dir}"/>
-        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="${build.dir}/*"/>
+        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}${git.commit}.xar" excludes="${build.dir}/*"/>
     </target>
 
     <target name="upload">

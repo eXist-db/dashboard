@@ -19,18 +19,13 @@
     
     <target name="xar">
         <mkdir dir="${build.dir}"/>
-        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}${git.commit}.xar">
-            <fileset dir=".">
-                <include name="*.*"/>
-                <include name="modules/**"/>
-                <include name="plugins/**"/>
-                <include name="resources/**"/>
-                <include name="templates/**"/>
-                <exclude name=".git*"/>
-                <exclude name="*.tmpl"/>
-                <exclude name="*.properties"/>
-                <exclude name="${webdriver.dir}/**"/>
-            </fileset>
+        <zip destfile="${build.dir}/${project.app}-${project.version}${git.commit}.xar">
+          <fileset dir=".">
+            <exclude name=".git*"/>
+            <exclude name="*.tmpl"/>
+            <exclude name="*.properties"/>
+            <exclude name="${webdriver.dir}/**"/>
+          </fileset>
         </zip>
 
     </target>

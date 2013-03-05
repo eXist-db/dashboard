@@ -3,6 +3,7 @@
     <property name="project.version" value="0.3.0"/>
     <property name="project.app" value="dashboard"/>
     <property name="build.dir" value="build"/>
+    <property name="webdriver.dir" value="dashboard-webdriver"/>
     <property name="server.url" value="http://demo.exist-db.org/exist/apps/public-repo/public/"/>
 
     <condition property="git.commit" value="${git.commit}" else="">
@@ -18,7 +19,20 @@
     
     <target name="xar">
         <mkdir dir="${build.dir}"/>
-        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}${git.commit}.xar" excludes="${build.dir}/*"/>
+        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}${git.commit}.xar">
+            <fileset dir=".">
+                <include name="*.*"/>
+                <include name="modules/**"/>
+                <include name="plugins/**"/>
+                <include name="resources/**"/>
+                <include name="templates/**"/>
+                <exclude name=".git*"/>
+                <exclude name="*.tmpl"/>
+                <exclude name="*.properties"/>
+                <exclude name="${webdriver.dir}/**"/>
+            </fileset>
+        </zip>
+
     </target>
 
     <target name="upload">

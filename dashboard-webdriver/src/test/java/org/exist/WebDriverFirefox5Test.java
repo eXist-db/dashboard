@@ -6,15 +6,19 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 
 import java.net.URL;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * {@link RemoteWebDriver} test running Selenium tests with <a href="http://saucelabs.com/ondemand">Sauce OnDemand</a>.
@@ -73,6 +77,21 @@ public class WebDriverFirefox5Test implements SauceOnDemandSessionIdProvider {
     public void dashboardTitleFirefox5() throws Exception {
         driver.get("http://demo.exist-db.org/exist/apps/dashboard/");
         assertEquals("Dashboard", driver.getTitle());
+    }
+
+    @Test
+    public void dashboardFindAdminWebApplicationFirefox5() throws Exception {
+        //driver.findElement(By.id("eab07ced-6a67-4f4c-90ae-62946a76386e")).click();
+        driver.get("http://demo.exist-db.org/exist/apps/dashboard/");
+        List<WebElement> allButtons = driver.findElements(By.xpath("//button"));
+        boolean awaFound = false;
+        for (WebElement button : allButtons) {
+            if (button.getAttribute("title").equals("Admin Web Application")) {
+                awaFound = true;
+                break;
+            }
+        }
+        assertTrue(awaFound);
     }
 
     @After

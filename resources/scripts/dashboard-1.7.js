@@ -36,7 +36,7 @@ require(["dijit/registry",
         // ##################### opening an app group ##########################
         // ##################### opening an app group ##########################
         // ##################### opening an app group ##########################
-        running = false; //flag used with animations to prevent them from being interrupted by new events
+        var running = false; //flag used with animations to prevent them from being interrupted by new events
 
         /**
          * Check if user is logged in and a member of the dba group.
@@ -70,7 +70,7 @@ require(["dijit/registry",
                         if(selectTag != parentitem){
                             domStyle.set(selectTag,"opacity","0");
                             domStyle.set(selectTag,"display","inline-block");
-                            var isRunning = running;
+
                             var anim1 = baseFx.fadeIn({
                                 node:selectTag,
                                 duration:300,
@@ -99,7 +99,7 @@ require(["dijit/registry",
                     domClass.destroy(appListElement,"appGroupOpen");
 
                     var openGroup = query("#appList > .appGroup")[0];
-                    var openGroupList = query("#appList > .appGroup > ul")[0]
+                    var openGroupList = query("#appList > .appGroup > ul")[0];
                     //hide
                     domStyle.set(openGroupList,"display","none");
                     //move group back
@@ -124,7 +124,7 @@ require(["dijit/registry",
                                 onEnd:function() {
                                     running=false;
                                 }
-                            })
+                            });
                             fx.combine([anim1,anim2]).play();
                         }
                     });
@@ -211,9 +211,6 @@ require(["dijit/registry",
             anim.play();
         }
 
-        function displayResult(data) {
-
-        }
         /**
          * Initialize the tooltips showing app details and
          * providing access to install/remove actions.
@@ -420,6 +417,7 @@ require(["dijit/registry",
                         form.reset();
                     },
                     error: function(error) {
+                        console.debug("error: ", error);
                         status("Logout failed");
                     }
                 });

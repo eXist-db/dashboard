@@ -1,4 +1,4 @@
-![Dashboard logo](/eXist-db/dashboard/raw/master/icon.png)
+![Dashboard logo](https://raw.github.com/eXist-db/dashboard/master/icon.png)
 
 eXist-db Dashboard
 ==================

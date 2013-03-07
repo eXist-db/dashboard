@@ -134,8 +134,8 @@ require(["dijit/registry",
 
                     //place and show group contents
                     //prepare a <li class="appGroup"> to hold the sublist
-                    var groupListItem = domConstruct.create("li",{});
-                    domClass.add(groupListItem,"appGroup");
+                    // var groupListItem = domConstruct.create("li",{class:"appGroup"});
+                    var groupListItem = domConstruct.create("li",{className:"appGroup"});
                     domConstruct.place(groupListItem, parentitem, "after");
 
                     //look for <ul> below current appGroupItem (the one that called this function) - should be present and hidden with style="display:none;"
@@ -156,21 +156,29 @@ require(["dijit/registry",
             var anim = query("li.package", appListElement).fadeOut({duration: 200});
             aspect.after(anim, "onEnd", function() {
                 query("li", appListElement).remove(".package");
+                var appListElementTmp = appListElement;
                 xhr.get({
                     url: "plugins/packageManager/packages/?plugins=true&format=all&type=local",
                     handleAs:"text",
                     load: function(data){
                         // console.debug("init tooltips done  ", data);
+                        // var last = query("li", appListElement);
+
                         domConstruct.place(data, appListElement, "last");
                         query("#appList li").forEach(function (app) {
                             initTooltips(app);
                         });
+                        // console.debug("init tooltips done ");
+
                         var anim = query("#appList li").fadeIn();
                         anim.play();
                         hideStatus();
+                        // console.debug("anim and hide status done");
 
                         //attach click handler to application buttons
+
                         query("#appList li > button").on("click",function(ev) {
+                            // console.debug("add on click handler");
                             ev.preventDefault();
                             //todo: handle the opening of the app
                             var link = this.getAttribute("data-exist-appurl");
@@ -190,17 +198,22 @@ require(["dijit/registry",
                             }
                         });
                         updating = false;
+
                     },
                     error: function(error, ioargs) {
+                        // console.dirxml(error); 
                         console.debug("error:", error, " ioargs:",ioargs);
-                         updating = false;
-                         status("Error while retrieving package list");
+                        updating = false;
+                        status("Error while retrieving package list");
                     }
                 });
             });
             anim.play();
         }
 
+        function displayResult(data) {
+
+        }
         /**
          * Initialize the tooltips showing app details and
          * providing access to install/remove actions.
@@ -459,7 +472,7 @@ require(["dijit/registry",
                         closeApp();
                         break;
                     default:
-                        // console.debug("default behavior e.charOrCode:",charCode, " dojo.keys.ESCAPE:",dojo.keys.ESCAPE);
+                    // console.debug("default behavior e.charOrCode:",charCode, " dojo.keys.ESCAPE:",dojo.keys.ESCAPE);
                 }
             });
 

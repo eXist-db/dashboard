@@ -23,7 +23,7 @@ body {
   background: linear-gradient(top, #afafaf 0%, #f5f5f5 100%);
   /* W3C */
 
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#7d7e7d', endColorstr='#0e0e0e', GradientType=0);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#aeaeae', endColorstr='#f5f5f5', GradientType=0);
   /* IE6-9 */
 
   font-size: 100%;
@@ -278,7 +278,7 @@ body #content #appList #existIcon {
   background-color: #cfcfcf;
 }
 body #content #appList #existIcon #logo {
-  background: url("../images/existdb.png") no-repeat center center;
+  background: url("/exist/apps/dashboard/resources/css/../images/existdb.png") no-repeat center center;
   width: 330px;
   height: 150px;
   opacity: 0.8;

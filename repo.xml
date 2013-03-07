@@ -21,6 +21,11 @@
                 <li>Small improvements to backup plugin</li>
             </ul>
         </change>
+        <change xmlns="" version="0.3.1">
+            <ul>
+                <li>Fixed too dark background on IE</li>
+            </ul>
+        </change>
     </changelog>
-    <deployed>2013-02-01T19:12:04.228+01:00</deployed>
+    <deployed>2013-03-07T18:26:14.579+01:00</deployed>
 </meta>

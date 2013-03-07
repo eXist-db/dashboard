@@ -10,20 +10,6 @@
 .browsing .browsing-container .collection {
   background: #EEE;
 }
-
-.browsing .browsing-container .collectionRow {
-    background: #e1ebe0;
-}
-
-.permissionsCell {
-    font-family: Monospace;
-    font-size: 11pt;
-}
-
-.actionButtons {
-	float: right;
-}
-
 .browsing .browsing-container #breadcrumb {
   height: 20px;
   width: 100%;
@@ -98,10 +84,11 @@
 #browsing-upload-dialog .overall-progress {
   position: relative;
   width: 100%;
+  margin-top: 20px;
 }
 #browsing-upload-dialog .overall-progress .bar {
   height: 18px;
-  background: url(images/progressbar.gif);
+  background: url(/exist/apps/dashboard/plugins/browsing/images/progressbar.gif);
 }
 #browsing-upload-dialog .overall-progress .progress-label {
   position: absolute;
@@ -136,5 +123,5 @@
 }
 #browsing-upload-dialog .queue .files tr td.progress .bar {
   height: 18px;
-  background: url(images/progressbar.gif);
+  background: url(/exist/apps/dashboard/plugins/browsing/images/progressbar.gif);
 }

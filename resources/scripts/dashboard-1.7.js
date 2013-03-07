@@ -19,11 +19,12 @@ require(["dijit/registry",
     "dojo/ready",
     "dijit/popup",
     "dijit/form/Form",
+    "dojo/_base/xhr",
     "dijit/form/ValidationTextBox",
     "dijit/form/DropDownButton",
     "dojo/NodeList-manipulate",
     "dojo/NodeList-fx"],
-    function (registry, aspect, on, keys, domConstruct, dom, domStyle, topic, query, domClass, event, baseFx, dialog, tooltip, flip, easing, fx, source, ready, popup, form) {
+    function (registry, aspect, on, keys, domConstruct, dom, domStyle, topic, query, domClass, event, baseFx, dialog, tooltip, flip, easing, fx, source, ready, popup, form,xhr) {
 
         var openPlugin = null;
         var openPopup = null;
@@ -154,12 +155,11 @@ require(["dijit/registry",
             var anim = query("li.package", appListElement).fadeOut({duration: 200});
             aspect.after(anim, "onEnd", function() {
                 query("li", appListElement).remove(".package");
-
-                dojo.xhrGet({
+                xhr.get({
                     url: "plugins/packageManager/packages/?plugins=true&format=all&type=local",
-                    handleAs: "text",
-                    load: function(data) {
-                        var last = query("li:last", appListElement);
+                    handleAs:"text",
+                    load: function(data){
+                        // console.debug("init tooltips done  ", data);
                         domConstruct.place(data, appListElement, "last");
                         query("#appList li").forEach(function (app) {
                             initTooltips(app);
@@ -191,9 +191,10 @@ require(["dijit/registry",
                         updating = false;
                     },
                     error: function(error, ioargs) {
-                        updating = false;
-                        status("Error while retrieving package list");
-                    }
+                        console.debug("error:", error, " ioargs:",ioargs);
+                         updating = false;
+                         status("Error while retrieving package list");
+                    }                    
                 });
             });
             anim.play();
@@ -253,7 +254,7 @@ require(["dijit/registry",
             var link = "plugins/" + name + "/" + name + ".html";
             var container = dom.byId("inlineApp");
             domConstruct.empty(container);
-            dojo.xhrGet({
+            xhr.get({
                 url: link,
                 load: function(data) {
                     domConstruct.place(data, container, "only");
@@ -350,7 +351,7 @@ require(["dijit/registry",
 
             // Login and logout
             login = registry.byId("user").get("label"); // get current user
-            console.log("Login %s", login);
+            console.log("Login: %s", login);
             if (login == "Not logged in") {
                 login = null;
             }
@@ -363,7 +364,7 @@ require(["dijit/registry",
                 e.preventDefault();
                 login = query("input[name='user']", form).val();
                 dom.byId("login-message").innerHTML = "Contacting server...";
-                dojo.xhrPost({
+                xhr.post({
                     url: "login",
                     form: form,
                     handleAs: "json",
@@ -394,7 +395,7 @@ require(["dijit/registry",
             });
             on(dom.byId("logout"), "click", function(e) {
                 e.preventDefault();
-                dojo.xhrPost({
+                xhr.post({
                     url: "login?logout=true",
                     load: function(data) {
                         login = null;
@@ -412,7 +413,7 @@ require(["dijit/registry",
 
             on(window, "focus", function(e) {
                 if (!hasFocus) {
-                    dojo.xhrPost({
+                    xhr.post({
                         url: "login",
                         handleAs: "json",
                         load: function(data) {

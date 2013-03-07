@@ -26,6 +26,11 @@
                 <li>Fixed too dark background on IE</li>
             </ul>
         </change>
+        <change xmlns="" version="0.3.1">
+            <ul>
+                <li>Fixed xhr issues in dashboard-1.7.js</li>
+            </ul>
+        </change>
     </changelog>
     <deployed>2013-03-07T18:26:14.579+01:00</deployed>
 </meta>

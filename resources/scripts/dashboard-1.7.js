@@ -32,7 +32,7 @@ require(["dijit/registry",
         var callbackFunction = null;
         var updating = false;
         var hasFocus = true;
-        
+
         // ##################### opening an app group ##########################
         // ##################### opening an app group ##########################
         // ##################### opening an app group ##########################
@@ -134,7 +134,8 @@ require(["dijit/registry",
 
                     //place and show group contents
                     //prepare a <li class="appGroup"> to hold the sublist
-                    var groupListItem = domConstruct.create("li",{class:"appGroup"});
+                    var groupListItem = domConstruct.create("li",{});
+                    domClass.add(groupListItem,"appGroup");
                     domConstruct.place(groupListItem, parentitem, "after");
 
                     //look for <ul> below current appGroupItem (the one that called this function) - should be present and hidden with style="display:none;"
@@ -194,7 +195,7 @@ require(["dijit/registry",
                         console.debug("error:", error, " ioargs:",ioargs);
                          updating = false;
                          status("Error while retrieving package list");
-                    }                    
+                    }
                 });
             });
             anim.play();
@@ -433,14 +434,14 @@ require(["dijit/registry",
                 }
                 hasFocus = true;
             });
-            
+
             on(window, "blur", function(e) {
                 hasFocus = false;
             });
-            
+
             // listen to changes of installed packages
             topic.subscribe("packages-changed", updateInstalledApps);
-            
+
             // display installed apps
             updateInstalledApps();
 

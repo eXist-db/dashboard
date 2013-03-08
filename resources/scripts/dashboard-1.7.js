@@ -19,11 +19,12 @@ require(["dijit/registry",
     "dojo/ready",
     "dijit/popup",
     "dijit/form/Form",
+    "dojo/_base/xhr",
     "dijit/form/ValidationTextBox",
     "dijit/form/DropDownButton",
     "dojo/NodeList-manipulate",
     "dojo/NodeList-fx"],
-    function (registry, aspect, on, keys, domConstruct, dom, domStyle, topic, query, domClass, event, baseFx, dialog, tooltip, flip, easing, fx, source, ready, popup, form) {
+    function (registry, aspect, on, keys, domConstruct, dom, domStyle, topic, query, domClass, event, baseFx, dialog, tooltip, flip, easing, fx, source, ready, popup, form,xhr) {
 
         var openPlugin = null;
         var openPopup = null;
@@ -31,11 +32,11 @@ require(["dijit/registry",
         var callbackFunction = null;
         var updating = false;
         var hasFocus = true;
-        
+
         // ##################### opening an app group ##########################
         // ##################### opening an app group ##########################
         // ##################### opening an app group ##########################
-        running = false; //flag used with animations to prevent them from being interrupted by new events
+        var running = false; //flag used with animations to prevent them from being interrupted by new events
 
         /**
          * Check if user is logged in and a member of the dba group.
@@ -69,7 +70,7 @@ require(["dijit/registry",
                         if(selectTag != parentitem){
                             domStyle.set(selectTag,"opacity","0");
                             domStyle.set(selectTag,"display","inline-block");
-                            var isRunning = running;
+
                             var anim1 = baseFx.fadeIn({
                                 node:selectTag,
                                 duration:300,
@@ -98,7 +99,7 @@ require(["dijit/registry",
                     domClass.destroy(appListElement,"appGroupOpen");
 
                     var openGroup = query("#appList > .appGroup")[0];
-                    var openGroupList = query("#appList > .appGroup > ul")[0]
+                    var openGroupList = query("#appList > .appGroup > ul")[0];
                     //hide
                     domStyle.set(openGroupList,"display","none");
                     //move group back
@@ -123,7 +124,7 @@ require(["dijit/registry",
                                 onEnd:function() {
                                     running=false;
                                 }
-                            })
+                            });
                             fx.combine([anim1,anim2]).play();
                         }
                     });
@@ -133,7 +134,8 @@ require(["dijit/registry",
 
                     //place and show group contents
                     //prepare a <li class="appGroup"> to hold the sublist
-                    var groupListItem = domConstruct.create("li",{class:"appGroup"});
+                    // var groupListItem = domConstruct.create("li",{class:"appGroup"});
+                    var groupListItem = domConstruct.create("li",{className:"appGroup"});
                     domConstruct.place(groupListItem, parentitem, "after");
 
                     //look for <ul> below current appGroupItem (the one that called this function) - should be present and hidden with style="display:none;"
@@ -154,22 +156,29 @@ require(["dijit/registry",
             var anim = query("li.package", appListElement).fadeOut({duration: 200});
             aspect.after(anim, "onEnd", function() {
                 query("li", appListElement).remove(".package");
-
-                dojo.xhrGet({
+                var appListElementTmp = appListElement;
+                xhr.get({
                     url: "plugins/packageManager/packages/?plugins=true&format=all&type=local",
-                    handleAs: "text",
-                    load: function(data) {
-                        var last = query("li:last", appListElement);
+                    handleAs:"text",
+                    load: function(data){
+                        // console.debug("init tooltips done  ", data);
+                        // var last = query("li", appListElement);
+
                         domConstruct.place(data, appListElement, "last");
                         query("#appList li").forEach(function (app) {
                             initTooltips(app);
                         });
+                        // console.debug("init tooltips done ");
+
                         var anim = query("#appList li").fadeIn();
                         anim.play();
                         hideStatus();
+                        // console.debug("anim and hide status done");
 
                         //attach click handler to application buttons
+
                         query("#appList li > button").on("click",function(ev) {
+                            // console.debug("add on click handler");
                             ev.preventDefault();
                             //todo: handle the opening of the app
                             var link = this.getAttribute("data-exist-appurl");
@@ -189,8 +198,11 @@ require(["dijit/registry",
                             }
                         });
                         updating = false;
+
                     },
                     error: function(error, ioargs) {
+                        // console.dirxml(error); 
+                        console.debug("error:", error, " ioargs:",ioargs);
                         updating = false;
                         status("Error while retrieving package list");
                     }
@@ -253,7 +265,7 @@ require(["dijit/registry",
             var link = "plugins/" + name + "/" + name + ".html";
             var container = dom.byId("inlineApp");
             domConstruct.empty(container);
-            dojo.xhrGet({
+            xhr.get({
                 url: link,
                 load: function(data) {
                     domConstruct.place(data, container, "only");
@@ -350,7 +362,7 @@ require(["dijit/registry",
 
             // Login and logout
             login = registry.byId("user").get("label"); // get current user
-            console.log("Login %s", login);
+            console.log("Login: %s", login);
             if (login == "Not logged in") {
                 login = null;
             }
@@ -363,7 +375,7 @@ require(["dijit/registry",
                 e.preventDefault();
                 login = query("input[name='user']", form).val();
                 dom.byId("login-message").innerHTML = "Contacting server...";
-                dojo.xhrPost({
+                xhr.post({
                     url: "login",
                     form: form,
                     handleAs: "json",
@@ -394,7 +406,7 @@ require(["dijit/registry",
             });
             on(dom.byId("logout"), "click", function(e) {
                 e.preventDefault();
-                dojo.xhrPost({
+                xhr.post({
                     url: "login?logout=true",
                     load: function(data) {
                         login = null;
@@ -405,6 +417,7 @@ require(["dijit/registry",
                         form.reset();
                     },
                     error: function(error) {
+                        console.debug("error: ", error);
                         status("Logout failed");
                     }
                 });
@@ -412,7 +425,7 @@ require(["dijit/registry",
 
             on(window, "focus", function(e) {
                 if (!hasFocus) {
-                    dojo.xhrPost({
+                    xhr.post({
                         url: "login",
                         handleAs: "json",
                         load: function(data) {
@@ -432,14 +445,14 @@ require(["dijit/registry",
                 }
                 hasFocus = true;
             });
-            
+
             on(window, "blur", function(e) {
                 hasFocus = false;
             });
-            
+
             // listen to changes of installed packages
             topic.subscribe("packages-changed", updateInstalledApps);
-            
+
             // display installed apps
             updateInstalledApps();
 
@@ -457,7 +470,7 @@ require(["dijit/registry",
                         closeApp();
                         break;
                     default:
-                        // console.debug("default behavior e.charOrCode:",charCode, " dojo.keys.ESCAPE:",dojo.keys.ESCAPE);
+                    // console.debug("default behavior e.charOrCode:",charCode, " dojo.keys.ESCAPE:",dojo.keys.ESCAPE);
                 }
             });
 

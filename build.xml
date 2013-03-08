@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="all" name="dashboard">
-    <property name="project.version" value="0.3.0"/>
+    <property name="project.version" value="0.3.2"/>
     <property name="project.app" value="dashboard"/>
     <property name="build.dir" value="build"/>
     <property name="webdriver.dir" value="dashboard-webdriver"/>

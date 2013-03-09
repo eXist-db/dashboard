@@ -1,3 +1,4 @@
-
+# .gitignore
 *.xar
+target/
 dashboard.iml

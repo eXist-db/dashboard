@@ -281,7 +281,7 @@ require(["dijit/registry",
             domStyle.set("inlineAppArea","display","inline-block");
         }
 
-        function closeApp(n) {
+        function closeApp() {
             if (openPlugin) {
                 openPlugin.close();
                 openPlugin = null;
@@ -465,13 +465,8 @@ require(["dijit/registry",
             on(document,"keypress",function(evt){
                 var charCode=evt.charCode? evt.charCode : evt.keyCode;
                 // console.debug("keypress: charCode: ",charCode, " keys:",keys);
-                switch(charCode){
-                    case keys.ESCAPE:
-                        closeApp();
-                        break;
-                    default:
-                    // console.debug("default behavior e.charOrCode:",charCode, " dojo.keys.ESCAPE:",dojo.keys.ESCAPE);
-                }
+                if(charCode == keys.ESCAPE) { closeApp();}
+                // console.debug("default behavior e.charOrCode:",charCode, " dojo.keys.ESCAPE:",dojo.keys.ESCAPE);                
             });
 
             // hide the splash screen

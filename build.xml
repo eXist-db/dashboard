@@ -21,6 +21,7 @@
         <mkdir dir="${build.dir}"/>
         <zip destfile="${build.dir}/${project.app}-${project.version}${git.commit}.xar">
           <fileset dir=".">
+            <exclude name="${build.dir}/*"/>
             <exclude name=".git*"/>
             <exclude name="*.tmpl"/>
             <exclude name="*.properties"/>

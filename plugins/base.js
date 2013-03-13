@@ -26,6 +26,7 @@ function(declare, array, ready, query, fx, registry, parser) {
          * has initialized its UI.
          */
         ready: function(callback) {
+            // console.debug("base.ready");
             var div = query(".inline-app", this.container)[0];
             var anim = fx.fadeIn({
                 node: div,
@@ -53,6 +54,7 @@ function(declare, array, ready, query, fx, registry, parser) {
         },
         
         actionEnd: function() {
+            // console.debug("baseActionEnd");
             this.standby.hide();
         },
         

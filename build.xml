@@ -1,13 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="xar" name="dashboard">
+<project default="all" name="dashboard">
     <property name="project.version" value="0.3.2"/>
     <property name="project.app" value="dashboard"/>
     <property name="build.dir" value="build"/>
+    <property name="webdriver.dir" value="dashboard-webdriver"/>
     <property name="server.url" value="http://demo.exist-db.org/exist/apps/public-repo/public/"/>
+
+    <condition property="git.commit" value="${git.commit}" else="">
+      <isset property="git.commit" />      
+    </condition>
+
+    <target name="clean">
+      <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="all" depends="xar"/>
+    <target name="rebuild" depends="clean,xar"/>
+    
     <target name="xar">
         <mkdir dir="${build.dir}"/>
-        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="${build.dir}/*"/>
+        <zip destfile="${build.dir}/${project.app}-${project.version}${git.commit}.xar">
+          <fileset dir=".">
+            <exclude name=".git*"/>
+            <exclude name="*.tmpl"/>
+            <exclude name="*.properties"/>
+            <exclude name="${webdriver.dir}/**"/>
+          </fileset>
+        </zip>
+
     </target>
+
     <target name="upload">
         <input message="Enter password:" addproperty="server.pass" defaultvalue="">
             <handler type="secure"/>

@@ -2,6 +2,7 @@
 <project default="all" name="dashboard">
     <property name="project.version" value="0.3.2"/>
     <property name="project.app" value="dashboard"/>
+    <property name="dependency.shared.version" value="0.2.4"/>
     <property name="build.dir" value="build"/>
     <property name="webdriver.dir" value="dashboard-webdriver"/>
     <property name="server.url" value="http://demo.exist-db.org/exist/apps/public-repo/public/"/>
@@ -12,6 +13,7 @@
 
     <target name="clean">
       <delete dir="${build.dir}"/>
+      <delete file="expath-pkg.xml"/>
     </target>
 
     <target name="all" depends="xar"/>
@@ -19,6 +21,12 @@
     
     <target name="xar">
         <mkdir dir="${build.dir}"/>
+	<copy file="expath-pkg.xml.tmpl" tofile="expath-pkg.xml" filtering="true" overwrite="true">
+	<filterset>
+          <filter token="project.version" value="${project.version}"/>
+          <filter token="dependency.shared.version" value="${dependency.shared.version}"/>
+	</filterset>
+	</copy>
         <zip destfile="${build.dir}/${project.app}-${project.version}${git.commit}.xar">
           <fileset dir=".">
             <exclude name="${build.dir}/*"/>

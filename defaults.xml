@@ -63,6 +63,14 @@
         <url>plugin:packageManager</url>
         <type>plugin</type>
     </app>
+    <app status="installed" role="dba">
+        <title>Scheduler</title>
+        <abbrev>scheduler</abbrev>
+        <version>0.1</version>
+        <icon>resources/images/package.png</icon>
+        <url>plugin:scheduler</url>
+        <type>plugin</type>
+    </app>
     <!--app status="installed" role="dba">
         <title>User Manager</title>
         <abbrev>userManager</abbrev>

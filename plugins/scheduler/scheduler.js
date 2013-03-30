@@ -38,8 +38,8 @@ define([
                 this.inherited(arguments);
                 var $this = this;
 
-               $this.loadCSS("plugins/scheduler/scheduler.css");
-
+                this.loadCSS("plugins/scheduler/scheduler.css");
+                this.tabContainer = registry.byId("scheduler-tab-container");
                 // json data store
                 var restStore = new dojo.store.JsonRest({ target: "plugins/scheduler/contents/running/" });
                 console.log("Running Data: ", restStore);
@@ -59,6 +59,8 @@ define([
                 this.runningGrid = new dojox.grid.DataGrid(
                     {
                         id: 'running-xqueries-grid',
+                        title: 'Running XQueries',
+                        style: 'height:100%',
                         structure: layout,
                         autoWidth: false,
                         autoHeight: true,
@@ -69,7 +71,7 @@ define([
                 this.runningGrid.setStore(this.runningStore);
                 
                 /*append the new grid to the div*/
-                dom.byId("scheduler-tab-1").appendChild(this.runningGrid.domNode);
+                this.tabContainer.addChild(this.runningGrid);
 
                 // json data store
                 var jobsRestStore = new dojo.store.JsonRest({ target: "plugins/scheduler/contents/jobs/" });
@@ -89,6 +91,8 @@ define([
                 this.jobsGrid = new dojox.grid.DataGrid(
                     {
                         id: 'running-jobs-grid',
+                        title: 'Running Jobs',
+                        style: 'height:100%',
                         noDataMessage: 'There are no running jobs!',
                         structure: layout,
                         autoWidth: false,
@@ -100,7 +104,7 @@ define([
                 this.jobsGrid.setStore(this.jobsStore);
                 
                 /*append the new grid to the div*/
-                dom.byId("scheduler-tab-2").appendChild(this.jobsGrid.domNode);
+                this.tabContainer.addChild(this.jobsGrid);
 
                 // json data store
                 var scheduledRestStore = new dojo.store.JsonRest({ target: "plugins/scheduler/contents/scheduled/" });
@@ -121,6 +125,8 @@ define([
                 this.scheduledGrid = new dojox.grid.DataGrid(
                     {
                         id: 'scheduled-xqueries-grid',
+                        title: 'Scheduled Jobs',
+                        style: 'height:100%',
                         noDataMessage: 'No scheduled jobs found!',
                         structure: layout,
                         autoWidth: false,
@@ -132,23 +138,17 @@ define([
                 this.scheduledGrid.setStore(this.scheduledStore);
 
                 /*append the new grid to the div*/
-                dom.byId("scheduler-tab-3").appendChild(this.scheduledGrid.domNode);
+                this.tabContainer.addChild(this.scheduledGrid);
 
- /*
-                this.tab = dom.byId("scheduler-tab-container");
-               
                //var arr = parser.instantiate([dom.byId("scheduler-tab-container")], {data-dojo-type: "dijit.layout.TabContainer"});
-                dom.byId("scheduler-tab-container").watch("selectedChildWidget", function(name, oval, nval){
+                this.tabContainer.watch("selectedChildWidget", function(name, oval, nval){
                    console.log("selected child changed from ", oval, " to ", nval); 
-                });
- */               
+                });             
 
                 this.ready(function() {
                     // resizing and grid initialization after plugin becomes visible
-                    $this.runningGrid.startup();
-                    $this.jobsGrid.startup();
-                    $this.scheduledGrid.startup();
-                    $this.tab.startup();
+                    $this.tabContainer.startup();
+                    $this.tabContainer.resize();
                 });
             },
 

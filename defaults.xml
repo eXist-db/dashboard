@@ -71,14 +71,14 @@
         <url>plugin:scheduler</url>
         <type>plugin</type>
     </app>
-    <!--app status="installed" role="dba">
+    <app status="installed" role="dba">
         <title>User Manager</title>
         <abbrev>userManager</abbrev>
         <version>2.0</version>
         <icon>plugins/userManager/icon.png</icon>
         <url>plugin:userManager</url>
         <type>plugin</type>
-    </app-->
+    </app>
     <!--app status="installed" role="dba">
         <title>Query Profiling</title>
         <abbrev>profiling</abbrev>

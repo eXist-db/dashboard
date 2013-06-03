@@ -716,7 +716,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
         registry.byId("password").set("value", "password");
         registry.byId("passwordRepeat").set("value", "password");
         registry.byId("disabled").set("checked", user.disabled);
-        registry.byId("umask").set("value", parseInt(user.umask).toString(8)); //need to convert from int to octal for display
+        registry.byId("umask").set("value", zeroPadUmaskString(parseInt(user.umask).toString(8))); //need to convert from int to octal for display
 
         var memberOfGroups = query("#memberOfGroups");
         dojo.forEach(user.groups, function(group) {
@@ -1043,5 +1043,16 @@ function octalAdjust(val, delta, constraints) {
     if(gotMin && (newval < tc.min)){
     	newval = tc.min;
     }
-    return newval;
+
+    return zeroPadUmaskString(newval.toString());
+};
+
+function zeroPadUmaskString(umask) {
+    if(umask.length < 2) {
+        return "00" + umask;
+    } else if(umask.length < 3) {
+        return "0" + umask;
+    } else {
+        return umask;
+    }  
 };

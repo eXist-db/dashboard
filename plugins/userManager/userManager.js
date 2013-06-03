@@ -503,10 +503,8 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
                 
                 //callback here changes the screen back after creating the user
                 var fnAfterCreateUser = function() {
-                    //resetNewUserForm();
-                    //changePage("userGroupPage");
-                    
-                    //TODO if we uncomment the lines above, then when we move back to the grid, it is empty. Why?
+                    resetNewUserForm();
+                    changePage("userGroupPage");
                 };
                 
                 /* 1) create user with personal group if required? */

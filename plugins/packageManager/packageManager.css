@@ -4,11 +4,11 @@
 #inlineAppArea .packageManager #packageManagerToolbar {
   height: 36px;
   /*
-            background: @lightGreyBase;
-            font-size: 0.7em;
-            color:#efefed;
-    text-align: center;
-*/
+                    background: @lightGreyBase;
+                    font-size: 0.7em;
+                    color:#efefed;
+            text-align: center;
+        */
 
 }
 #inlineAppArea .packageManager #packageManagerToolbar > * {
@@ -42,18 +42,18 @@
   height: 500px;
   width: 100%;
   /*ul li:focus{
-    .toolbar{
-        display:inline-block;
-        text-align:center;
-        width:100%;
+                .toolbar{
+                    display:inline-block;
+                    text-align:center;
+                    width:100%;
 
-        .toobarBtn{
-            img {
-                width: 32px;
-            }
-        }
-    }
-}*/
+                    .toobarBtn{
+                        img {
+                            width: 32px;
+                        }
+                    }
+                }
+            }*/
 
 }
 #inlineAppArea .packageManager #listWrapper ul {
@@ -136,8 +136,8 @@
 #inlineAppArea .packageManager #listWrapper .packageIconArea .appFunctions {
   display: none;
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: -20px;
+  right: -20px;
   z-index: 20;
 }
 #inlineAppArea .packageManager #listWrapper .packageIconArea .appFunctions .deleteApp,
@@ -147,10 +147,10 @@
   border: none;
   background: none;
   /*
-                                    img{
-                                        width: 16px;
-                                    }
-            */
+                        img{
+                            width: 16px;
+                        }
+*/
 
 }
 #inlineAppArea .packageManager #listWrapper .package:hover .appFunctions {

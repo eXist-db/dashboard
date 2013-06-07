@@ -40,7 +40,6 @@ else if (ends-with($exist:resource, ".xql")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         { $login("org.exist.login", (), true()) }
         <set-attribute name="$exist:path" value="{$exist:path}"/>
-        <cache-control cache="yes"/>
     </dispatch>
     
 else if (starts-with($exist:path, "/contents") or starts-with($exist:path, "/properties")) then

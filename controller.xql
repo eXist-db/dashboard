@@ -31,7 +31,6 @@ else if (matches($exist:path, ".xql/?$")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         { $login("org.exist.login", (), true()) }
         <set-attribute name="$exist:path" value="{$exist:path}"/>
-        <cache-control cache="yes"/>
     </dispatch>
 
 else if ($exist:resource = "login") then (

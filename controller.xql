@@ -16,7 +16,12 @@ declare variable $exist:root external;
 
 declare variable $login := login-helper:get-login-method();
 
-if ($exist:path = "/") then
+if ($exist:path eq '') then
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <redirect url="{concat(request:get-uri(), '/')}"/>
+    </dispatch>
+    
+else if ($exist:path = "/") then
     (: forward root path to index.xql :)
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <redirect url="index.html"/>

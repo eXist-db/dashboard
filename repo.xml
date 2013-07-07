@@ -41,6 +41,11 @@
                 <li>Small fixes</li>
             </ul>
         </change>
+        <change xmlns="" version="0.3.6">
+            <ul>
+                <li>Allow an XQuery to be killed from scheduler plugin</li>
+            </ul>
+        </change>
     </changelog>
     <deployed>2013-07-06T19:48:05.794+02:00</deployed>
 </meta>

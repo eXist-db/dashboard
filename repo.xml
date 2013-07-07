@@ -44,7 +44,7 @@
         <change xmlns="" version="0.3.6">
             <ul>
                 <li>Allow an XQuery to be killed from scheduler plugin</li>
-                <li>Package manager: move packages for which updates are available to the top of the package list.
+                <li>Package manager: move packages for which updates are available to the top of the package list.</li>
             </ul>
         </change>
     </changelog>

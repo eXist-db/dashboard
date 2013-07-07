@@ -162,59 +162,66 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
     return
         switch ($format)
             case "manager" return
-                <li tabindex="0" class="package {if ($app/@status = 'installed') then 'installed' else 'notInstalled'} {$app/type}">
-                    <div class="packageIconArea">
-                    {
-                        if ($app/@status = "installed" and $app/type = 'application') then
-                            <a href="{$url}" target="_blank" title="click to open application"><img class="appIcon" src="{$icon}"/></a>
-                        else
-                            <img class="appIcon" src="{$icon}"/>
-                    }
-                    <div class="appFunctions">
-                    {
-                        
-                        if ($app/@status = "installed") then
-                                <form action="">
-                                    <input type="hidden" name="package-url" value="{$app/@path}"/>
-                                    <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
-                                    <input type="hidden" name="action" value="remove"/>
-                                    <input type="hidden" name="type" value="application"/>
-                                    <button class="toobarBtn deleteApp" title="Uninstall">
-                                        <img src="plugins/packageManager/images/deleteApp1.png"/>
-                                    </button>
-                                </form>
-                        else
-                                <form action="">
-                                    <input type="hidden" name="package-url" value="{$app/name}"/>
-                                    <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
-                                    <input type="hidden" name="action" value="install"/>
-                                    <input type="hidden" name="type" value="application"/>
-                                    <button class="toobarBtn installApp" title="Install">
-                                        <img src="plugins/packageManager/images/dbplus2.png" alt="Install" title="Install"/>
-                                    </button>
-                                </form>
-
-                    }
-                    </div>
-                    </div>
-                    {
-                        switch ($app/type)
-                            case ('application') return
-                                <img src="resources/images/app.gif" class="ribbon" alt="application" title="This is an application"/>
-                            case ('library') return
-                                <img src="resources/images/library2.gif" class="ribbon" alt="library" title="This is a library"/>
-                            case ('plugin') return
-                                <img src="resources/images/plugin2.gif" class="ribbon" alt="plugin" title="This is a plugin"/>
-                            default return ()
-                    }
-                    <div class="shortTitle">
-                        <h3>{$app/title/text()}</h3>
+                let $installed := $app/@installed/string()
+                let $available := $app/@available/string()
+                let $hasNewer := 
+                    if ($app/@available) then
+                        packages:is-newer($available, $installed)
+                    else
+                        false()
+                return
+                    <li tabindex="0" data-name="{$app/name/string()}"
+                        class="package {if ($app/@status = 'installed') then 'installed' else 'notInstalled'} {$app/type}">
+                        { if ($hasNewer) then attribute data-update { "true" } else () }
+                        <div class="packageIconArea">
                         {
-                            if ($app/@available) then
-                                let $installed := $app/@installed/string()
-                                let $available := $app/@available/string()
-                                return
-                                    if (packages:is-newer($available, $installed)) then (
+                            if ($app/@status = "installed" and $app/type = 'application') then
+                                <a href="{$url}" target="_blank" title="click to open application"><img class="appIcon" src="{$icon}"/></a>
+                            else
+                                <img class="appIcon" src="{$icon}"/>
+                        }
+                        <div class="appFunctions">
+                        {
+                            
+                            if ($app/@status = "installed") then
+                                    <form action="">
+                                        <input type="hidden" name="package-url" value="{$app/@path}"/>
+                                        <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
+                                        <input type="hidden" name="action" value="remove"/>
+                                        <input type="hidden" name="type" value="application"/>
+                                        <button class="toobarBtn deleteApp" title="Uninstall">
+                                            <img src="plugins/packageManager/images/deleteApp1.png"/>
+                                        </button>
+                                    </form>
+                            else
+                                    <form action="">
+                                        <input type="hidden" name="package-url" value="{$app/name}"/>
+                                        <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
+                                        <input type="hidden" name="action" value="install"/>
+                                        <input type="hidden" name="type" value="application"/>
+                                        <button class="toobarBtn installApp" title="Install">
+                                            <img src="plugins/packageManager/images/dbplus2.png" alt="Install" title="Install"/>
+                                        </button>
+                                    </form>
+    
+                        }
+                        </div>
+                        </div>
+                        {
+                            switch ($app/type)
+                                case ('application') return
+                                    <img src="resources/images/app.gif" class="ribbon" alt="application" title="This is an application"/>
+                                case ('library') return
+                                    <img src="resources/images/library2.gif" class="ribbon" alt="library" title="This is a library"/>
+                                case ('plugin') return
+                                    <img src="resources/images/plugin2.gif" class="ribbon" alt="plugin" title="This is a plugin"/>
+                                default return ()
+                        }
+                        <div class="shortTitle">
+                            <h3>{$app/title/text()}</h3>
+                            {
+                                if ($app/@available) then
+                                    if ($hasNewer) then (
                                         <p class="upgrade">Installed version: {$installed}. Available: {$available}.
                                         {
                                             if ($app/changelog/change[@version = $available]) then
@@ -228,102 +235,102 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                         </div>
                                     ) else
                                         ()
-                            else
-                                <p>Version: {$app/version/text()}</p>
-                        }
+                                else
+                                    <p>Version: {$app/version/text()}</p>
+                            }
+                            {
+                                if ($app/@size) then
+                                    <p>Size: { $app/@size idiv 1024 }k</p>
+                                else
+                                    ()
+                            }
+                            {
+                                if ($app/requires) then
+                                    <p class="requires">Requires eXist-db {$app/requires/@version/string()}</p>
+                                else
+                                    ()
+                            }
+                        </div>
                         {
-                            if ($app/@size) then
-                                <p>Size: { $app/@size idiv 1024 }k</p>
-                            else
-                                ()
-                        }
-                        {
-                            if ($app/requires) then
-                                <p class="requires">Requires eXist-db {$app/requires/@version/string()}</p>
-                            else
-                                ()
-                        }
-                    </div>
-                    {
-                        if ($app/note) then
-                            (: Installation notes are shown if user clicks on install :)
-                            <p class="installation-note" style="display: none">{ $app/note/node() }</p>
-                        else
-                            ()
-                    }
-                    <table>
-                        <tr class="title">
-                            <th>Title:</th>
-                            <td>{ $app/title/text() }</td>
-                        </tr>
-                        <tr>
-                            <th>Short:</th>
-                            <td>{ $app/abbrev/text() }</td>
-                        </tr>
-                        <tr>
-                            <th>Name (URI):</th>
-                            <td>{ $app/name/string() }</td>
-                        </tr>
-                        <tr>
-                            <th>Description:</th>
-                            <td>{ $app/description/text() }</td>
-                        </tr>
-                        <tr>
-                            <th>Author(s):</th>
-                            <td>
-                                <ul>
-                                {
-                                    for $author in $app/author
-                                    return
-                                        <li>{$author/text()}</li>
-                                }
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Version:</th>
-                            <td>{ $app/version/text() }</td>
-                        </tr>
-                        <tr>
-                            <th>License:</th>
-                            <td>{ $app/license/text() }</td>
-                        </tr>
-                        {
-                            if ($app/website != "") then
-                                <tr>
-                                    <th>Website:</th>
-                                    <td><a href="{$app/website}">{ $app/website/text() }</a></td>
-                                </tr>
+                            if ($app/note) then
+                                (: Installation notes are shown if user clicks on install :)
+                                <p class="installation-note" style="display: none">{ $app/note/node() }</p>
                             else
                                 ()
                         }
-                        {
-                            if ($app/other/version) then
-                                <tr>
-                                    <th colspan="2">Other Versions:</th>
-                                </tr>
-                            else
-                                ()
-                        }
-                        {
-                            for $version in $app/other/version
-                            return
-                                <tr>
-                                    <th>{$version/@version/string()}</th>
-                                    <td>
-                                        <form action="">
-                                            <input type="hidden" name="package-url" value="{$app/name}"/>
-                                            <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
-                                            <input type="hidden" name="version" value="{$version/@version}"/>
-                                            <input type="hidden" name="action" value="install"/>
-                                            <input type="hidden" name="type" value="application"/>
-                                            <button class="installApp" title="Install">Install</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                        }
-                    </table>
-                </li>
+                        <table>
+                            <tr class="title">
+                                <th>Title:</th>
+                                <td>{ $app/title/text() }</td>
+                            </tr>
+                            <tr>
+                                <th>Short:</th>
+                                <td>{ $app/abbrev/text() }</td>
+                            </tr>
+                            <tr>
+                                <th>Name (URI):</th>
+                                <td>{ $app/name/string() }</td>
+                            </tr>
+                            <tr>
+                                <th>Description:</th>
+                                <td>{ $app/description/text() }</td>
+                            </tr>
+                            <tr>
+                                <th>Author(s):</th>
+                                <td>
+                                    <ul>
+                                    {
+                                        for $author in $app/author
+                                        return
+                                            <li>{$author/text()}</li>
+                                    }
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Version:</th>
+                                <td>{ $app/version/text() }</td>
+                            </tr>
+                            <tr>
+                                <th>License:</th>
+                                <td>{ $app/license/text() }</td>
+                            </tr>
+                            {
+                                if ($app/website != "") then
+                                    <tr>
+                                        <th>Website:</th>
+                                        <td><a href="{$app/website}">{ $app/website/text() }</a></td>
+                                    </tr>
+                                else
+                                    ()
+                            }
+                            {
+                                if ($app/other/version) then
+                                    <tr>
+                                        <th colspan="2">Other Versions:</th>
+                                    </tr>
+                                else
+                                    ()
+                            }
+                            {
+                                for $version in $app/other/version
+                                return
+                                    <tr>
+                                        <th>{$version/@version/string()}</th>
+                                        <td>
+                                            <form action="">
+                                                <input type="hidden" name="package-url" value="{$app/name}"/>
+                                                <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
+                                                <input type="hidden" name="version" value="{$version/@version}"/>
+                                                <input type="hidden" name="action" value="install"/>
+                                                <input type="hidden" name="type" value="application"/>
+                                                <button class="installApp" title="Install">Install</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                            }
+                        </table>
+                    </li>
             default return
                 if ($app/abbrev = $packages:HIDE) then
                     ()

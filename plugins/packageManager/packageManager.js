@@ -148,7 +148,7 @@ function(registry, plugin, util, Uploader, declare, lang, dom, domConstruct, on,
             query("form", app).connect("onsubmit", function (ev) {
                 // console.debug("form.onsubmit ");
                 ev.preventDefault();
-                console.log("Form submitted");
+                //console.log("Form submitted");
                 self.installOrRemove(app, this);
             });
         },
@@ -251,6 +251,16 @@ function(registry, plugin, util, Uploader, declare, lang, dom, domConstruct, on,
                             handleAs: "text",
                             load: function(data) {
                                 domConstruct.place(data, appListElement, "last");
+                                query("li", appListElement).forEach(function (app) {
+                                    var name = app.getAttribute("data-name");
+                                    var update = app.getAttribute("data-update");
+                                    if (name && update) {
+                                        app.parentNode.removeChild(app);
+                                        query("li[data-name='" + name + "']", appListElement).forEach(function(old) {
+                                            domConstruct.place(app, appListElement, "first");
+                                        });
+                                    }
+                                });
                                 self.initHandlers();
                             }
                         });

@@ -125,3 +125,8 @@
   height: 18px;
   background: url(/exist/apps/dashboard/plugins/scheduler/images/progressbar.gif);
 }
+.iconRefresh {
+    width: 16px;
+    height: 16px;
+    background: url(/exist/apps/dashboard/plugins/browsing/images/arrow_refresh.png);
+}

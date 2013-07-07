@@ -9,6 +9,16 @@ declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace rest="http://exquery.org/ns/restxq";
 
 declare
+    %rest:DELETE
+    %rest:path("/contents/running/{$id}")
+    %output:media-type("application/json")
+    %output:method("json")
+function service:kill($id) {
+    system:kill-running-xquery(xs:int($id)),
+    <response status="ok"/>
+};
+
+declare
     %rest:GET
     %rest:path("/contents/running/")
     %output:media-type("application/json")
@@ -28,7 +38,7 @@ function service:get-running-xqueries() {
             let $id 	:= $xquery/@id
             let $type 	:= $xquery/@sourceType
             let $key 	:= $xquery/system:sourceKey/text()
-            let $src    := if( $type != "String" or string-length( $key ) < $xqueries:MAX-STRING-KEY-LENGTH ) then $key else concat( substring( $key, 0, $xqueries:MAX-STRING-KEY-LENGTH - 1 ), "..." )
+            let $src    := if( $type != "String" or string-length( $key ) < 1024 ) then $key else concat( substring( $key, 0, $xqueries:MAX-STRING-KEY-LENGTH - 1 ), "..." )
             let $started  := $xquery/@started
             let $status := if( $xquery/@terminating = "true" ) then "terminating" else "running"
                 

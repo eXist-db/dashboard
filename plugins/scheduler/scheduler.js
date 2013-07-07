@@ -1,7 +1,9 @@
 define([ 
-    "plugins/base", 
+    "plugins/base",
+    "plugins/util",
     "dojo/_base/declare", 
     "dojo/dom", 
+    "dojo/on",
     "dojo/_base/array", 
     "dojo/query",
     "dojo/_base/fx", 
@@ -11,8 +13,11 @@ define([
     "dojo/data/ObjectStore",
     "dojo/store/JsonRest",
     "dijit/layout/TabContainer", 
-    "dijit/layout/ContentPane" ], 
-    function(plugin, declare, dom, array, query, baseFx, registry, parser, DataGrid, ObjectStore, JsonRest, TabContainer, ContentPane) {
+    "dijit/layout/ContentPane",
+    "dijit/layout/StackContainer",
+    "dijit/Toolbar",
+    "dijit/form/Button"], 
+    function(plugin, util, declare, dom, on, array, query, baseFx, registry, parser, DataGrid, ObjectStore, JsonRest, TabContainer, ContentPane) {
 
         //todo: fix intial value for breadcrumb - currently will be updated when dblclick occurs - when using keyboard it will never updated
         /**
@@ -54,11 +59,37 @@ define([
                     {name: 'Started', field: 'started', width: '20%'},
                     {name: 'Status', field: 'status', width: '10%'}
                 ]];
-
+                
+                var runningContainer = new ContentPane({
+                    title: "Running XQueries",
+                    content: "<div></div>"
+                });
+                
+                /*append the new grid to the div*/
+                this.tabContainer.addChild(runningContainer);
+                
+                var runningToolbar = new dijit.Toolbar();
+                
+                var killBtn = new dijit.form.Button({
+                    label: "kill",
+                    showLabel: false,
+                    iconClass: "dijitIconDelete"
+                });
+                runningToolbar.addChild(killBtn);
+                
+                var refreshBtn = new dijit.form.Button({
+                    label: "refresh",
+                    showLabel: false,
+                    iconClass: "iconRefresh"
+                });
+                runningToolbar.addChild(refreshBtn);
+                
+                runningContainer.domNode.appendChild(runningToolbar.domNode);
+                
                 /*create a new grid:*/
                 this.runningGrid = new dojox.grid.DataGrid(
                     {
-                        id: 'running-xqueries-grid',
+                        id: "running-xqueries-grid",
                         title: 'Running XQueries',
                         style: 'height:100%',
                         structure: layout,
@@ -66,13 +97,43 @@ define([
                         autoHeight: true,
                         escapeHTMLInData: false
                     },
-                    document.createElement('div'));
+                    document.createElement("div"));
                 
                 this.runningGrid.setStore(this.runningStore);
                 
-                /*append the new grid to the div*/
-                this.tabContainer.addChild(this.runningGrid);
-
+                runningContainer.domNode.appendChild(this.runningGrid.domNode);
+                
+                on(killBtn, "click", function(ev) {
+                    ev.preventDefault();
+                    var selected = $this.runningGrid.selection.getSelected();
+                    util.confirm("Kill XQuery?", "Are you sure you want to kill the selected XQuery?",
+                        function() {
+                            $this.actionStart();
+                            dojo.xhrDelete({
+                                url: "plugins/scheduler/contents/running/" + selected[0].id,
+                                handleAs: "json",
+                                load: function(data) {
+                                    console.log("data: %o", data);
+                                    if (data.status != "ok") {
+                                        util.message("Kill Failed!", "Query could not be killed.");
+                                    } else {
+                                        $this.runningGrid.selection.deselectAll();
+                                    }
+                                    $this.refresh();
+                                    $this.actionEnd();
+                                },
+                                error: function() {
+                                    util.message("Server error!", "Error while communicating to the server.");
+                                }
+                            });
+                        }
+                    );
+                });
+                on(refreshBtn, "click", function(ev) {
+                    ev.preventDefault();
+                    $this.refresh();
+                });
+                
                 // json data store
                 var jobsRestStore = new dojo.store.JsonRest({ target: "plugins/scheduler/contents/jobs/" });
                 console.log("jobs Data: ", jobsRestStore);

@@ -31,12 +31,16 @@
                 <li>Fixed xhr issues in dashboard-1.7.js</li>
             </ul>
         </change>
-	<change xmlns="" version="0.3.3">
-		<ul>
-			<li>Fixed and Enabled the UserManager plugin</li>
-		</ul>
-	</change>
-
+        <change xmlns="" version="0.3.3">
+            <ul>
+                <li>Fixed and Enabled the UserManager plugin</li>
+            </ul>
+        </change>
+        <change xmlns="" version="0.3.5">
+            <ul>
+                <li>Small fixes</li>
+            </ul>
+        </change>
     </changelog>
-    <deployed>2013-03-07T23:04:03.264+01:00</deployed>
+    <deployed>2013-07-06T19:48:05.794+02:00</deployed>
 </meta>

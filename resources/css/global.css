@@ -278,7 +278,7 @@ body #content #appList #existIcon {
   background-color: #cfcfcf;
 }
 body #content #appList #existIcon #logo {
-  background: url("/exist/apps/dashboard/resources/css/../images/existdb.png") no-repeat center center;
+  background: url("../images/existdb.png") no-repeat center center;
   width: 330px;
   height: 150px;
   opacity: 0.8;

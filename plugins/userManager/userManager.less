@@ -2,12 +2,88 @@
 
 
 .userManager {
-    position: relative;
+  position: relative;
+
+  label{
+    display: block;
+    float: left;
+    margin-right: 15px;
+    text-align: right;
+    width: 276px !important;
+
+  }
+
+  fieldset {
+    border: thin solid #cdcdcd;
+    margin: 3px;
+    border-right: none;
+    border-left: none;
+    background: #e3e3e3;
+  }
 
 }
 
 .hint {
-    float: right;
-    margin: 4px 0 0 20px;
-    font-size: 85%;
+  color: steelblue;
+  margin: 0 auto;
+  width: 100%;
+  float: left;
+  text-align: center;
 }
+
+
+#groupContainer{
+  float:left;
+  width:100%;
+  margin-top:10px;
+
+  >div{
+    float:left;
+  }
+
+  label{
+    text-align:left;
+  }
+
+  select{
+    width:200px;
+  }
+
+  .availableGroupsContainer, .memberOfGroupsContainer{
+    width:40%;
+
+  }
+
+  .availableGroupsContainer{
+
+    label{
+      text-align:right;
+    }
+
+    .controldiv{
+      text-align:right;
+    }
+
+    select{
+      text-align:right;
+    }
+
+  }
+
+  .memberOfGroupsContainer{
+
+    label{
+      text-align:left;
+    }
+    .controldiv{
+      text-align:left;
+    }
+  }
+
+  .groupMembershipActionsContainer{
+    margin-top:70px;
+  }
+
+}
+
+

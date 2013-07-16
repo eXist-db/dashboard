@@ -69,7 +69,7 @@ function(plugin, declare, dom, domStyle, on, array, query, fx, parser, registry)
 
 
     return declare(plugin, {
-        pluginName:"User Manager2",
+        pluginName:"User Manager",
         usersStore: null,
         usersGrid: null,
         groupsStore: null,

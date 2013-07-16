@@ -71,7 +71,9 @@ define([
             query(".download", this.container).on("click", function(ev) {
                 ev.preventDefault();
                 var items = $this.grid.selection.getSelected();
-                window.location.href = "plugins/backup/backup.xql?action=retrieve&archive=" + items[0].name;
+                var href = window.location.href;
+                href = href.replace(/^(.*)\/exist\/(.*)\/[^\/]*$/, "$1/exist/rest/db/$2");
+                window.location.href = href + "/plugins/backup/backup.xql?action=retrieve&archive=" + items[0].name;
             });
             
             var form = dom.byId("backup-form");

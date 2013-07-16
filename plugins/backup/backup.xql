@@ -50,12 +50,14 @@ declare function backup:trigger() {
 
 declare function backup:retrieve() {
     let $archive := request:get-parameter("archive", ())
-    return
+    return (
+        request:set-attribute("betterform.filter.ignoreResponseBody", "true"),
         if ($archive) then (
             response:set-header("Content-Disposition", concat("attachment; filename=", $archive)),
             backups:retrieve($backup:BACKUP_DIR, $archive)
         ) else
             ()
+    )
 
 };
 

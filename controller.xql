@@ -16,6 +16,7 @@ declare variable $exist:root external;
 
 declare variable $login := login-helper:get-login-method();
 
+request:set-attribute("betterform.filter.ignoreResponseBody", "true"),
 if ($exist:path eq '') then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <redirect url="{concat(request:get-uri(), '/')}"/>
@@ -31,7 +32,7 @@ else if ($exist:resource = "get-icon.xql") then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <cache-control cache="yes"/>
     </dispatch>
-
+    
 else if (matches($exist:path, ".xql/?$")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         { $login("org.exist.login", (), true()) }

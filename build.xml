@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="all" name="dashboard">
-    <property name="project.version" value="0.3.6"/>
+    <property name="project.version" value="0.3.7"/>
     <property name="project.app" value="dashboard"/>
     <property name="dependency.shared.version" value="0.3.4"/>
     <property name="build.dir" value="build"/>

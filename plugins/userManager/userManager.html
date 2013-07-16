@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 Copyright (c) 2012, Adam Retter
 All rights reserved.
@@ -37,16 +36,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <div id="userManager-grid-container">
                             <div data-dojo-type="dijit.Menu" id="userManager-grid-Menu" style="display:none;">
                                 <div data-dojo-type="dijit.MenuItem" id="newUserItem">New User...</div>
-                                <div data-dojo-type="dijit.MenuItem" id="editUserItem" disabled="true">Edit User...</div>
-                                <div data-dojo-type="dijit.MenuItem" id="removeUserItem" disabled="true">Remove User</div>
+                                <div data-dojo-type="dijit.MenuItem" id="editUserItem">Edit User...</div>
+                                <div data-dojo-type="dijit.MenuItem" id="removeUserItem">Remove User</div>
                             </div>
                         </div>
                     </div>
                     <div class="actionButtons">
-                        <button id="uCloseButton" data-dojo-type="dijit.form.Button">Close</button>
-                        <button id="createUser" data-dojo-type="dijit.form.Button">Create</button>
-                        <span class="hint">Right click to edit user</span>
+                        <!--<button id="uCloseButton" data-dojo-type="dijit.form.Button">Close</button>-->
+                        <button id="createUser" data-dojo-type="dijit.form.Button">Create User</button>
                     </div>
+                    <span class="hint">Right click on table to edit users</span>
                 </div>
                 <div title="Groups" data-dojo-type="dijit.layout.ContentPane">
                     <div class="groupManager-list">
@@ -56,16 +55,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <div id="groupManager-grid-container">
                             <div data-dojo-type="dijit.Menu" id="groupManager-grid-Menu" style="display:none;">
                                 <div data-dojo-type="dijit.MenuItem" id="newGroupItem">New Group...</div>
-                                <div data-dojo-type="dijit.MenuItem" id="editGroupItem" disabled="true">Edit Group...</div>
-                                <div data-dojo-type="dijit.MenuItem" id="removeGroupItem" disabled="true">Remove Group</div>
+                                <div data-dojo-type="dijit.MenuItem" id="editGroupItem">Edit Group...</div>
+                                <div data-dojo-type="dijit.MenuItem" id="removeGroupItem">Remove Group</div>
                             </div>
                         </div>
                     </div>
                     <div class="actionButtons">
-                        <button id="gCloseButton" data-dojo-type="dijit.form.Button">Close</button>
-                        <button id="createGroup" data-dojo-type="dijit.form.Button">Create</button>
-                        <span class="hint">Right click to edit group</span>
+                        <!--<button id="gCloseButton" data-dojo-type="dijit.form.Button">Close</button>-->
+                        <button id="createGroup" data-dojo-type="dijit.form.Button">Create Group</button>
                     </div>
+                    <span class="hint">Right click on table to edit groups</span>
                 </div>
             </div>
         </div>
@@ -136,7 +135,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </span>
                     </div>
                 </fieldset>
-                <fieldset>
+                <fieldset id="groups">
                     <div>
                         <span>
                             <label for="personalGroup">Create personal user group:</label>
@@ -145,12 +144,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <input name="personalGroup" data-dojo-type="dijit.form.CheckBox" value="true" checked="checked" id="personalGroup"/>
                         </span>
                     </div>
-                    <div>
+                    <div id="groupContainer">
                         <div class="availableGroupsContainer">
                             <div>
                                 <label for="availableGroups">Available Groups:</label>
                             </div>
-                            <div>
+                            <div class="controldiv">
                                 <select data-dojo-type="dijit.form.MultiSelect" id="availableGroups" name="availableGroups" size="10"/>
                             </div>
                         </div>
@@ -162,14 +161,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <div>
                                 <label for="availableGroups">Member of Groups:</label>
                             </div>
-                            <div>
+                            <div class="controldiv">
                                 <select data-dojo-type="dijit.form.MultiSelect" id="memberOfGroups" name="memberOfGroups" size="10"/>
                             </div>
                         </div>
                     </div>
                 </fieldset>
                 <div class="actionButtons">
-                    <button id="closeNewUser" data-dojo-type="dijit.form.Button">Close</button>
+                    <button id="closeNewUser" data-dojo-type="dijit.form.Button">Cancel</button>
                     <button id="createNewUser" data-dojo-type="dijit.form.Button">Create</button>
                     <button id="saveEditedUser" data-dojo-type="dijit.form.Button">Save</button>
                 </div>
@@ -213,7 +212,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     </div>
                 </fieldset>
                 <div class="actionButtons">
-                    <button id="closeNewGroup" data-dojo-type="dijit.form.Button">Close</button>
+                    <button id="closeNewGroup" data-dojo-type="dijit.form.Button">Cancel</button>
                     <button id="createNewGroup" data-dojo-type="dijit.form.Button">Create</button>
                     <button id="saveEditedGroup" data-dojo-type="dijit.form.Button">Save</button>
                 </div>

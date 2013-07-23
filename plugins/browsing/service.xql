@@ -407,7 +407,7 @@ declare %private function service:get-property-map($resource as xs:string) as ma
                     "owner" := xmldb:get-owner($components[2], $components[3]),
                     "group" := xmldb:get-group($components[2], $components[3]),
                     "last-modified" := 
-                        format-dateTime(xmldb:created($components[2], $components[3]), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]"),
+                        format-dateTime(xmldb:last-modified($components[2], $components[3]), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]"),
                     "permissions" := xmldb:permissions-to-string(xmldb:get-permissions($components[2], $components[3])),
                     "mime" := xmldb:get-mime-type(xs:anyURI($resource))
                 }

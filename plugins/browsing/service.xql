@@ -78,7 +78,7 @@ function service:resources($collection as xs:string) {
                     if ($isCollection) then
                         format-dateTime(xmldb:created($path), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]")
                     else
-                        format-dateTime(xmldb:created($collection, $resource), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]")
+                        format-dateTime(xmldb:last-modified($collection, $resource), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]")
                 let $canWrite :=
                     if ($isCollection) then
                         service:canWrite($path, $user)

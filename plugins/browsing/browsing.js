@@ -225,19 +225,25 @@ define([
                                 "class": "User",
                                 read: false,
                                 write: false,
-                                execute: false
+                                execute: false,
+                                special: false,
+                                specialLabel: 'SetUID:'
                             },
                             {
                                 "class": "Group",
                                 read: false,
                                 write: false,
-                                execute: false
+                                execute: false,
+                                special: false,
+                                specialLabel: 'SetGID:'
                             },
                             {
                                 "class": "Other",
                                 read: false,
                                 write: false,
-                                execute: false
+                                execute: false,
+                                special: false,
+                                specialLabel: 'Sticky:'
                             }
                         ]
                     },
@@ -246,9 +252,11 @@ define([
     
                 var permissionsLayout = [[
                   {name: 'Permission', field: 'class', width: '25%'},
-                  {name: 'Read', field: 'read', width: '25%', type: dojox.grid.cells.Bool, editable: true },
-                  {name: 'Write', field: 'write', width: '25%', type: dojox.grid.cells.Bool, editable: true },
-                  {name: 'Execute', field: 'execute', width: '25%', type: dojox.grid.cells.Bool, editable: true }
+                  {name: 'Read', field: 'read', width: '10%', type: dojox.grid.cells.Bool, editable: true },
+                  {name: 'Write', field: 'write', width: '10%', type: dojox.grid.cells.Bool, editable: true },
+                  {name: 'Execute', field: 'execute', width: '25%', type: dojox.grid.cells.Bool, editable: true },
+                  {name: 'Special', field: 'specialLabel', width: '10%', type: dojox.grid.cells.String, editable: false },
+                  {name: ' ', field: 'special', width: '15%', type: dojox.grid.cells.Bool, editable: true }
                 ]];
                 
                 this.permissionsGrid = new dojox.grid.DataGrid(
@@ -603,19 +611,25 @@ define([
                             "class": "User",
                             read: data.permission.mode.charAt(0) != '-',
                             write: data.permission.mode.charAt(1) != '-',
-                            execute: data.permission.mode.charAt(2) != '-'
+                            execute: data.permission.mode.charAt(2) == 'x' || data.permission.mode.charAt(2) == 's',
+                            special: data.permission.mode.toLowerCase().charAt(2) == 's',
+                            specialLabel: 'SetUID:'
                         },
                         {
                             "class": "Group",
                             read: data.permission.mode.charAt(3) != '-',
                             write: data.permission.mode.charAt(4) != '-',
-                            execute: data.permission.mode.charAt(5) != '-'
+                            execute: data.permission.mode.charAt(5) == 'x' || data.permission.mode.charAt(5) == 's',
+                            special: data.permission.mode.toLowerCase().charAt(5) == 's',
+                            specialLabel: 'SetGID:'
                         },
                         {
                             "class": "Other",
                             read: data.permission.mode.charAt(6) != '-',
                             write: data.permission.mode.charAt(7) != '-',
-                            execute: data.permission.mode.charAt(8) != '-'
+                            execute: data.permission.mode.charAt(8) == 'x' || data.permission.mode.charAt(8) == 't',
+                            special: data.permission.mode.toLowerCase().charAt(8) == 't',
+                            specialLabel: 'Sticky:'
                         }
                     ]
                 };

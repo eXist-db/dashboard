@@ -624,17 +624,19 @@ define([
                 
                 
                 var aclItems = new Array();
-                for(var i = 0; i < data.permission.acl.ace.length; i++) {
-                    var ace = data.permission.acl.ace[i];
-                    aclItems.push({
-                        index: ace.index,
-                        target: ace.target,
-                        who: ace.who,
-                        access_type: ace.access_type,
-                        read: ace.mode.charAt(0) != '-',
-                        write: ace.mode.charAt(1) != '-',
-                        execute: ace.mode.charAt(2) != '-'
-                    });
+                if(data.permission.acl.hasOwnProperty("ace")) {
+                    for(var i = 0; i < data.permission.acl.ace.length; i++) {
+                        var ace = data.permission.acl.ace[i];
+                        aclItems.push({
+                            index: ace.index,
+                            target: ace.target,
+                            who: ace.who,
+                            access_type: ace.access_type,
+                            read: ace.mode.charAt(0) != '-',
+                            write: ace.mode.charAt(1) != '-',
+                            execute: ace.mode.charAt(2) != '-'
+                        });
+                    }
                 }
                 
                 //reload the acl store and grid

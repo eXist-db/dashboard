@@ -84,7 +84,7 @@ define([
                     {name: 'Permissions', field: 'permissions', width: '20%', 'formatter': permissionsFormatter},
                     {name: 'Owner', field: 'owner', width: '10%'},
                     {name: 'Group', field: 'group', width: '10%'},
-                    {name: 'Last-modified', field: 'last-modified', width: '30%'}
+                    {name: 'Last-modified', field: 'lastModified', width: '30%'}
                 ]];
 
                 /*create a new grid:*/
@@ -145,17 +145,51 @@ define([
                 query("#browsing-toolbar-properties").on("click", function(ev) {
                     var items = $this.grid.selection.getSelected();
                     if(items.length && items.length > 0) {
-                        var paths = new Array();
-                        for(var i = 0; i < items.length; i++) {
-                            var item = items[0];
-                            if(item.id != "..") {
-                                paths.push(item.id);
+                        setupPropertiesForm(items[0], $this);
+                        changePage("propertiesPage");
+                    }
+                });
+                
+                query("#saveProperties").on("click", function(ev) {
+                   
+                    //do we need to save basic permissions?
+                    if($this.permissionsStore.isDirty()) {
+                    
+                        //save basic properties
+                        $this.permissionsStore.save({
+                            onComplete: function() {
+                                
+                                //do we also need to save ACEs
+                                if($this.aclStore.isDirty()) {
+                                    //save ACEs
+                                    $this.aclStore.save({
+                                       onComplete: function() {
+                                           $this.grid._refresh(); //update the main grid
+                                           changePage("browsingPage");
+                                       } 
+                                    });
+                                } else {
+                                    //no changes to ACEs
+                                    $this.grid._refresh(); //update the main grid (as basic permissions have changed)
+                                    changePage("browsingPage");
+                                }
                             }
-                        }
-                        
-                        if(paths.length > 0) {
-                            setupPropertiesForm(paths, $this.permissionsStore, $this.permissionsGrid, $this.aclStore, $this.aclGrid);
-                            changePage("propertiesPage");
+                        });
+                    } else {
+                    
+                        //do we need to save ACEs?
+                        if($this.aclStore.isDirty()) {
+                            
+                            //save ACEs
+                            $this.aclStore.save({
+                               onComplete: function() {
+                                   $this.grid._refresh(); //update the main grid
+                                    changePage("browsingPage");
+                               } 
+                            });
+                        } else {
+                            //no changes to ACEs
+                            changePage("browsingPage");
                         }
                     }
                 });
@@ -219,10 +253,9 @@ define([
                 this.permissionsStore = new dojo.data.ItemFileWriteStore({
                     data: {
                         label: "class",
-                        identifier: "class",
                         items: [
                             {
-                                "class": "User",
+                                "id": "User",
                                 read: false,
                                 write: false,
                                 execute: false,
@@ -230,7 +263,7 @@ define([
                                 specialLabel: 'SetUID:'
                             },
                             {
-                                "class": "Group",
+                                "id": "Group",
                                 read: false,
                                 write: false,
                                 execute: false,
@@ -238,7 +271,7 @@ define([
                                 specialLabel: 'SetGID:'
                             },
                             {
-                                "class": "Other",
+                                "id": "Other",
                                 read: false,
                                 write: false,
                                 execute: false,
@@ -251,11 +284,11 @@ define([
                 });
     
                 var permissionsLayout = [[
-                  {name: 'Permission', field: 'class', width: '25%'},
+                  {name: 'Permission', field: 'id', width: '25%'},
                   {name: 'Read', field: 'read', width: '10%', type: dojox.grid.cells.Bool, editable: true },
                   {name: 'Write', field: 'write', width: '10%', type: dojox.grid.cells.Bool, editable: true },
                   {name: 'Execute', field: 'execute', width: '25%', type: dojox.grid.cells.Bool, editable: true },
-                  {name: 'Special', field: 'specialLabel', width: '10%', type: dojox.grid.cells.String, editable: false },
+                  {name: 'Special', field: 'specialLabel', width: '10%', editable: false },
                   {name: ' ', field: 'special', width: '15%', type: dojox.grid.cells.Bool, editable: true }
                 ]];
                 
@@ -591,90 +624,41 @@ define([
             stack.selectChild(page);
         };
         
-        function setupPropertiesForm(resourcePaths, permissionsStore, permissionsGrid, aclStore, aclGrid) {
+        function setupPropertiesForm(item, $this) {
             
-            var fnSetupPropertiesForm = function(data) {
-                query("#resourceName").innerHTML = data.path;
-                registry.byId("internetMediaType").set("value", data.internetMediaType);
-                //registry.byId("created").innerHTML = data.created;
-                //registry.byId("lastModified").innerHTML = data.lastModified;
-                registry.byId("owner").set("value", data.permission.owner);
-                registry.byId("group").set("value", data.permission.group);
-                
-                //reload the permissions store and grid
-                permissionsStore.close();
-                permissionsStore.data = {
-                    label: "class",
-                    identifier: "class",
-                    items: [
-                        {
-                            "class": "User",
-                            read: data.permission.mode.charAt(0) != '-',
-                            write: data.permission.mode.charAt(1) != '-',
-                            execute: data.permission.mode.charAt(2) == 'x' || data.permission.mode.charAt(2) == 's',
-                            special: data.permission.mode.toLowerCase().charAt(2) == 's',
-                            specialLabel: 'SetUID:'
-                        },
-                        {
-                            "class": "Group",
-                            read: data.permission.mode.charAt(3) != '-',
-                            write: data.permission.mode.charAt(4) != '-',
-                            execute: data.permission.mode.charAt(5) == 'x' || data.permission.mode.charAt(5) == 's',
-                            special: data.permission.mode.toLowerCase().charAt(5) == 's',
-                            specialLabel: 'SetGID:'
-                        },
-                        {
-                            "class": "Other",
-                            read: data.permission.mode.charAt(6) != '-',
-                            write: data.permission.mode.charAt(7) != '-',
-                            execute: data.permission.mode.charAt(8) == 'x' || data.permission.mode.charAt(8) == 't',
-                            special: data.permission.mode.toLowerCase().charAt(8) == 't',
-                            specialLabel: 'Sticky:'
-                        }
-                    ]
-                };
-                permissionsStore.fetch();
-                permissionsGrid._refresh();
-                
-                
-                var aclItems = new Array();
-                if(data.permission.acl.hasOwnProperty("ace")) {
-                    for(var i = 0; i < data.permission.acl.ace.length; i++) {
-                        var ace = data.permission.acl.ace[i];
-                        aclItems.push({
-                            index: ace.index,
-                            target: ace.target,
-                            who: ace.who,
-                            access_type: ace.access_type,
-                            read: ace.mode.charAt(0) != '-',
-                            write: ace.mode.charAt(1) != '-',
-                            execute: ace.mode.charAt(2) != '-'
-                        });
-                    }
-                }
-                
-                //reload the acl store and grid
-                aclStore.close();
-                aclStore.data = {
-                    label: "index",
-                    identifier: "index",
-                    items: aclItems
-                };
-                aclStore.fetch();
-                aclGrid._refresh();
-            };
+            registry.byId("resourceName").set("value", item.name);
+            registry.byId("internetMediaType").set("value", item.internetMediaType);
+            registry.byId("created").set("value", item.created);
+            registry.byId("lastModified").set("value", item.lastModified);
+            registry.byId("owner").set("value", item.owner);
+            registry.byId("group").set("value", item.group);
             
-            dojo.xhrGet({
-                url: "plugins/browsing/properties/",
-                handleAs: "json",
-                content: { resources: resourcePaths },
-                load: function(properties) {
-                    
-                    if(properties.length > 0) {
-                        //NOTE: we can only set the stuff up based on the first resource's properties!
-                        fnSetupPropertiesForm(properties[0]);
-                    }
-                }
+            //reload the permissions store and grid
+            $this.permissionsStore.close();
+            var propertiesStore = new dojo.store.Cache(
+                new dojo.store.JsonRest({
+                    target: "plugins/browsing/permissions/" + item.id.replace(/\//g, '...') + "/"
+                }),
+                new dojo.store.Memory()
+            );
+            $this.permissionsStore = new dojo.data.ObjectStore({
+                objectStore: propertiesStore
             });
+            $this.permissionsGrid.setStore($this.permissionsStore);
+            
+            
+            //reload the acl store and grid
+            $this.aclStore.close();
+            var aclPropertiesStore = new dojo.store.Cache(
+                new dojo.store.JsonRest({
+                    target: "plugins/browsing/acl/" + item.id.replace(/\//g, '...') + "/"
+                }),
+                new dojo.store.Memory()
+            );
+            $this.aclStore = new dojo.data.ObjectStore({
+                objectStore: aclPropertiesStore
+            });
+            $this.aclGrid.setStore($this.aclStore);
+
         };
     });

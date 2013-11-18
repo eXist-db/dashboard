@@ -125,3 +125,11 @@
   height: 18px;
   background: url(/exist/apps/dashboard/plugins/browsing/images/progressbar.gif);
 }
+
+.labelBox {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;     
+}

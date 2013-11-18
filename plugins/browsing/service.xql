@@ -3,6 +3,7 @@ xquery version "3.0";
 module namespace service="http://exist-db.org/apps/dashboard/service";
 
 import module namespace sm = "http://exist-db.org/xquery/securitymanager";
+import module namespace jsjson = "http://johnsnelson/json" at "../userManager/jsjson.xqm";
 
 declare namespace json="http://www.json.org";
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
@@ -53,50 +54,98 @@ function service:resources($collection as xs:string) {
             replace($collection, "^(.*)/[^/]+/?$", "$1")
     return (
         response:set-header("Content-Range", "items 0-" || count($subset) + 1 || "/" || count($resources) + 1),
-        <json:value>
-            <json:value json:array="true">
-                <name>..</name>
-                <id>{$parent}</id>
-                <permissions></permissions>
-                <owner></owner>
-                <group></group>
-                <last-modified></last-modified>
-                <writable json:literal="true"></writable>
-                <isCollection json:literal="true">true</isCollection>
-            </json:value>
-        {
+        <json:value> {
+            service:resource-xml($collection, ".", true(), $user),
+            if($collection ne "/db")then
+                service:resource-xml($parent, "..", true(), $user)
+            else(),  
+        
             for $resource in $subset
-            let $isCollection := local-name($resource) eq "collection"
+            let $is-collection := local-name($resource) eq "collection"
             let $path := string-join(($collection, $resource), "/")
-            (: where sm:has-access(xs:anyURI($path), "r") :) (: TODO: why this check? should be on opening the thing not listing it! :)
-            (: order by $resource ascending :) (: already ordered by service:list-collection-contents(...) :)
             return
-                let $permissions := sm:get-permissions(xs:anyURI($path))/sm:permission
-                let $owner := string($permissions/@owner)
-                let $group := string($permissions/@group)
-                let $lastMod := 
-                    if ($isCollection) then
-                        format-dateTime(xmldb:created($path), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]")
-                    else
-                        format-dateTime(xmldb:last-modified($collection, $resource), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]")
-                let $canWrite :=
-                    if ($isCollection) then
-                        service:canWrite($path, $user)
-                    else
-                        service:canWriteResource($collection, $resource, $user)
-                return
-                    <json:value json:array="true">
-                        <name>{$resource/text()}</name>
-                        <id>{$path}</id>
-                        <permissions>{if($isCollection)then "c" else "-"}{string($permissions/@mode)}{if($permissions/sm:acl/@entries ne "0")then "+" else ""}</permissions>
-                        <owner>{$owner}</owner>
-                        <group>{$group}</group>
-                        <last-modified>{$lastMod}</last-modified>
-                        <writable json:literal="true">{$canWrite}</writable>
-                        <isCollection json:literal="true">{$isCollection}</isCollection>
-                    </json:value>
+                service:resource-xml($path, (), $is-collection, $user)
         }
         </json:value>
+    )
+};
+
+declare
+    %private
+function service:resource-xml($path as xs:string, $name as xs:string?, $is-collection as xs:boolean, $user as xs:string) as element(json:value) {
+    let $permission := sm:get-permissions(xs:anyURI($path))/sm:permission,
+    $collection := replace($path, "(.*)/.*", "$1"),
+    $resource := replace($path, ".*/(.*)", "$1"),
+    $created := 
+        if($is-collection) then
+            format-dateTime(xmldb:created($path), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]")
+        else
+            format-dateTime(xmldb:created($collection, $resource), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]")
+       ,
+    $last-modified :=
+                if($is-collection) then
+                    $created
+                else
+                    format-dateTime(xmldb:last-modified($collection, $resource), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]")
+                ,
+    $internet-media-type :=
+        if($is-collection) then
+            "<Collection>"
+        else
+            xmldb:get-mime-type(xs:anyURI($path))
+        ,
+    $can-write :=
+        if($is-collection) then
+            service:canWrite($path, $user)
+        else
+            service:canWriteResource($collection, $resource, $user)
+    return
+    
+        <json:value json:array="true">
+            <name>{if($name)then $name else replace($path, ".*/(.*)", "$1")}</name>
+            <id>{$path}</id>
+            <permissions>{if($is-collection)then "c" else "-"}{string($permission/@mode)}{if($permission/sm:acl/@entries ne "0")then "+" else ""}</permissions>
+            <owner>{string($permission/@owner)}</owner>
+            <group>{string($permission/@group)}</group>
+            <internetMediaType>{$internet-media-type}</internetMediaType>
+            <created>{$created}</created>
+            <lastModified>{$last-modified}</lastModified>
+            <writable json:literal="true">{$can-write}</writable>
+            <isCollection json:literal="true">{$is-collection}</isCollection>
+        </json:value>
+};
+
+declare
+    %private
+function service:permissions-classes-xml($permission as element(sm:permission)) as element(class)+ {
+    let $chars := for $ch in string-to-codepoints($permission/@mode)
+        return codepoints-to-string($ch)
+    return
+    (
+        <class>
+            <id>User</id>
+            <read json:literal="true">{$chars[1] = "r"}</read>
+            <write json:literal="true">{$chars[2] = "w"}</write>
+            <execute json:literal="true">{$chars[3] = ("x", "s")}</execute>
+            <special json:literal="true">{$chars[3] = ("s", "S")}</special>
+            <specialLabel>SetUID</specialLabel>
+        </class>,
+        <class>
+            <id>Group</id>
+            <read json:literal="true">{$chars[4] = "r"}</read>
+            <write json:literal="true">{$chars[5] = "w"}</write>
+            <execute json:literal="true">{$chars[6] = ("x", "s")}</execute>
+            <special json:literal="true">{$chars[6] = ("s", "S")}</special>
+            <specialLabel>SetGID</specialLabel>
+        </class>,
+        <class>
+            <id>Other</id>
+            <read json:literal="true">{$chars[7] = "r"}</read>
+            <write json:literal="true">{$chars[8] = "w"}</write>
+            <execute json:literal="true">{$chars[9] = ("x", "t")}</execute>
+            <special json:literal="true">{$chars[9] = ("t", "T")}</special>
+            <specialLabel>Sticky</specialLabel>
+        </class>
     )
 };
 
@@ -161,95 +210,107 @@ function service:create-collection($collection as xs:string, $create as xs:strin
 
 declare
     %rest:GET
-    %rest:path("/properties/")
-    %rest:query-param("resources", "{$resources}")
+    %rest:path("/permissions/{$id}/{$class}")
     %output:media-type("application/json")
     %output:method("json")
-function service:edit-properties($resources as xs:string+) as element(json:value) {
-    
-    <json:value>
-    {
-        for $resource in $resources
-        let $permissions := sm:get-permissions(xs:anyURI($resource))
-        let $col-res-path := service:path-to-col-res-path($resource)
-        return
-            <json:value json:array="true">
-                <path>{$resource}</path>
-                <internetMediaType>{xmldb:get-mime-type($resource)}</internetMediaType>
-                {
-                    if(xmldb:collection-available($resource))then
-                        <created>{xmldb:created($resource)}</created>
-                    else
-                        <created>{xmldb:created($col-res-path[1], $col-res-path[2])}</created>
-                }
-                <lastModified>{xmldb:last-modified($col-res-path[1], $col-res-path[2])}</lastModified>
-                { service:force-json-array($permissions, xs:QName("sm:ace")) }
-            </json:value>
-    }
-    </json:value>
-    
-    (:
-    let $props := service:get-properties($resources)
-    let $users := service:get-users()
+function service:get-permissions($id as xs:string, $class as xs:string) as element(json:value) {
+    let $path := service:id-to-path($id),
+    $permissions := sm:get-permissions(xs:anyURI($path))/sm:permission
     return
-        <form id="browsing-dialog-form" action="" data-dojo-type="dijit.form.Form">
-            {
-                if ($props("mime") != "") then
-                    <div class="control-group">
-                        <label for="mime">Mime:</label>
-                        <input type="text" data-dojo-type="dijit.form.TextBox" name="mime"
-                            value="{$props('mime')}"/>
-                    </div>
-                else
-                    ()
-            }
-            <div class="control-group">
-                <label for="owner">Owner:</label>
-                <select data-dojo-type="dijit.form.Select" name="owner">
-                {
-                    for $user in $users
-                    order by $user
-                    return
-                        <option value="{$user}">
-                        {
-                            if ($user = $props("owner")) then
-                                attribute selected { "selected" }
-                            else
-                                (),
-                            $user
-                        }
-                        </option>
-                }
-                </select>
-            </div>
-            <div class="control-group">
-                <label for="group">Group:</label>
-                <select data-dojo-type="dijit.form.Select" name="group">
-                {
-                    for $group in sm:get-groups()
-                    order by $group
-                    return
-                        <option value="{$group}">
-                        {
-                            if ($group = $props("group")) then
-                                attribute selected { "selected" }
-                            else
-                                (),
-                            $group
-                        }
-                        </option>
-                }
-                </select>
-            </div>
-            <fieldset>
-                <legend>Permissions</legend>
-                { service:get-permissions($props("permissions")) }
-            </fieldset>
-            <div class="control-group">
-                <button type="submit" data-dojo-type="dijit.form.Button">Apply</button>
-            </div>
-        </form>
-        :)
+       <json:value>
+        { 
+            for $c in service:permissions-classes-xml($permissions)[if(string-length($class) eq 0)then true() else id = $class] return
+                <json:value json:array="true">{
+                    $c/child::element()
+                }</json:value>
+        }
+        </json:value>
+};
+
+declare
+    %rest:PUT
+    %rest:path("/permissions/{$id}/{$class}")
+    %output:media-type("application/json")
+    %output:method("json")
+function service:save-permissions($id as xs:string, $class as xs:string) {
+    let $recv-permissions := jsjson:parse-json(util:base64-decode(request:get-data())),
+    $path := service:id-to-path($id)
+    return
+    
+        let $cs :=
+            if($recv-permissions/pair[@name eq "id"] eq "User") then
+                ("u", if($recv-permissions/pair[@name eq "special"] eq "true") then "+s" else "-s")
+            else if($recv-permissions/pair[@name eq "id"] eq "Group") then
+                ("g", if($recv-permissions/pair[@name eq "special"] eq "true") then "+s" else "-s")
+            else if($recv-permissions/pair[@name eq "id"] eq "Other") then
+                ("o", if($recv-permissions/pair[@name eq "special"] eq "true") then "+t" else "-t")
+            else(),
+            
+        $c := $cs[1], (: received class :)
+        $s := $cs[2], (: received special :)
+            
+        $r := 
+            concat(if($recv-permissions/pair[@name eq "read"] eq "true") then
+                "+"
+            else 
+                "-"
+            ,"r"),
+        
+        $w :=
+            concat(if($recv-permissions/pair[@name eq "write"] eq "true") then
+                "+"
+            else 
+                "-"
+            ,"w"),
+            
+        $x :=
+            concat(if($recv-permissions/pair[@name eq "execute"] eq "true") then
+                "+"
+            else 
+                "-"
+            ,"x")
+            
+        return
+            if(not(empty($cs))) then
+            (
+                sm:chmod(xs:anyURI($path), $c || $r || "," || $c || $w || "," || $c || $x || "," || $c || $s),
+                <response status="ok"/>
+            )
+            else
+                <response status="fail">
+                    <message>Invalid class to set permissons for!</message>
+                </response>
+};
+
+declare
+    %rest:GET
+    %rest:path("/acl/{$id}/{$acl-id}")
+    %output:media-type("application/json")
+    %output:method("json")
+function service:get-acl($id as xs:string, $acl-id as xs:string) as element(json:value) {
+    let $path := service:id-to-path($id),
+    $permissions := sm:get-permissions(xs:anyURI($path))/sm:permission
+    return
+       <json:value>
+        { 
+            for $ace in $permissions/sm:acl/sm:ace[if(string-length($acl-id) eq 0)then true() else @index eq $acl-id] return
+                <json:value json:array="true">
+                    <id>{$ace/string(@index)}</id>
+                    <target>{$ace/string(@target)}</target>
+                    <who>{$ace/string(@who)}</who>
+                    <access_type>{$ace/string(@access_type)}</access_type>
+                    <read json:literal="true">{$ace/contains(@mode, "r")}</read>
+                    <write json:literal="true">{$ace/contains(@mode, "w")}</write>
+                    <execute json:literal="true">{$ace/contains(@mode, "x")}</execute>
+                </json:value>
+        }
+        </json:value>
+};
+
+declare
+    %private
+function service:id-to-path($id as xs:string) as xs:string {
+    replace($id, "\.\.\.", "/")
 };
 
 declare
@@ -425,65 +486,15 @@ declare %private function service:get-users() {
     )
 };
 
-declare %private function service:checkbox($name as xs:string, $test as xs:boolean) {
+declare
+    %private
+function service:checkbox($name as xs:string, $test as xs:boolean) {
     <input type="checkbox" name="{$name}"
         data-dojo-type="dijit.form.CheckBox">
     {
         if ($test) then attribute checked { 'checked' } else ()
     }
     </input>
-};
-
-declare %private function service:get-permissions($perms as xs:string) {
-    <table>
-        <tr>
-            <th>User</th>
-            <th>Group</th>
-            <th>World</th>
-        </tr>
-        <tr>
-            <td>
-                { service:checkbox("ur", substring($perms, 1, 1) = "r") }
-                read
-            </td>
-            <td>
-                { service:checkbox("gr", substring($perms, 4, 1) = "r") }
-                read
-            </td>
-            <td>
-                { service:checkbox("wr", substring($perms, 7, 1) = "r") }
-                read
-            </td>
-        </tr>
-        <tr>
-            <td>
-                { service:checkbox("uw", substring($perms, 2, 1) = "w") }
-                write
-            </td>
-            <td>
-                { service:checkbox("gw", substring($perms, 5, 1) = "w") }
-                write
-            </td>
-            <td>
-                { service:checkbox("ww", substring($perms, 8, 1) = "w") }
-                write
-            </td>
-        </tr>
-        <tr>
-            <td>
-                { service:checkbox("ux", substring($perms, 3, 1) = "x") }
-                execute
-            </td>
-            <td>
-                { service:checkbox("gx", substring($perms, 6, 1) = "x") }
-                execute
-            </td>
-            <td>
-                { service:checkbox("wx", substring($perms, 9, 1) = "x") }
-                execute
-            </td>
-        </tr>
-    </table>
 };
 
 declare %private function service:force-json-array($nodes as node()*, $element-names as xs:QName+) {

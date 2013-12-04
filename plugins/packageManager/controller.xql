@@ -18,6 +18,7 @@ declare variable $exist:root external;
 
 declare variable $login := login-helper:get-login-method();
 
+request:set-attribute("betterform.filter.ignoreResponseBody", "true"),
 if (ends-with($exist:path, ".html")) then
     (: the html page is run through view.xql to expand templates :)
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

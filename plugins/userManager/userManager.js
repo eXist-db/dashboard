@@ -415,15 +415,15 @@ define([ "plugins/base",
                 });
 
                 query("#createUser").on("click", function(ev) {
-                    dojo.style(dojo.byId("saveEditedUser"), "display", "none");
-                    dojo.style(dojo.byId("createNewUser"), "display", "block");
+                    domStyle.set(registry.byId("saveEditedUser").domNode, "display", "none");
+                    domStyle.set(registry.byId("createNewUser").domNode, "display", "block");
                     setupNewUserForm($this.groupsStore);
                     changePage("newUserPage");
                 });
 
                 query("#newUserItem").on("click", function(ev) {
-                    dojo.style(dojo.byId("saveEditedUser"), "display", "none");
-                    dojo.style(dojo.byId("createNewUser"), "display", "block");
+                    domStyle.set(registry.byId("saveEditedUser").domNode, "display", "none");
+                    domStyle.set(registry.byId("createNewUser").domNode, "display", "block");
                     setupNewUserForm($this.groupsStore);
                     changePage("newUserPage");
                 });
@@ -541,8 +541,8 @@ define([ "plugins/base",
                 });
 
                 query("#editUserItem").on("click", function(ev) {
-                    dojo.style(dojo.byId("createNewUser"), "display", "none");
-                    dojo.style(dojo.byId("saveEditedUser"), "display", "block");
+                    domStyle.set(registry.byId("createNewUser").domNode, "display", "none");
+                    domStyle.set(registry.byId("saveEditedUser").domNode, "display", "block");
                     var items = $this.usersGrid.selection.getSelected();
                     if(items.length) {
                         setupEditUserForm(items[0], $this.groupsStore);
@@ -551,22 +551,22 @@ define([ "plugins/base",
                 });
 
                 query("#createGroup").on("click", function(ev) {
-                    dojo.style(dojo.byId("saveEditedGroup"), "display", "none");
-                    dojo.style(dojo.byId("createNewGroup"), "display", "block");
+                    domStyle.set(registry.byId("saveEditedGroup").domNode, "display", "none");
+                    domStyle.set(registry.byId("createNewGroup").domNode, "display", "block");
                     setupNewGroupForm($this.groupMembersStore, $this.groupMembersGrid);
                     changePage("newGroupPage");
                 });
 
                 query("#newGroupItem").on("click", function(ev) {
-                    dojo.style(dojo.byId("saveEditedGroup"), "display", "none");
-                    dojo.style(dojo.byId("createNewGroup"), "display", "block");
+                    domStyle.set(registry.byId("saveEditedGroup").domNode, "display", "none");
+                    domStyle.set(registry.byId("createNewGroup").domNode, "display", "block");
                     setupNewGroupForm($this.groupMembersStore, $this.groupMembersGrid);
                     changePage("newGroupPage");
                 });
 
                 query("#editGroupItem").on("click", function(ev) {
-                    dojo.style(dojo.byId("createNewGroup"), "display", "none");
-                    dojo.style(dojo.byId("saveEditedGroup"), "display", "block");
+                    domStyle.set(registry.byId("createNewGroup").domNode, "display", "none");
+                    domStyle.set(registry.byId("saveEditedGroup").domNode, "display", "block");
                     var items = $this.groupsGrid.selection.getSelected();
                     if(items.length) {
                         setupEditGroupForm(items[0], $this.groupMembersStore, $this.groupMembersGrid);

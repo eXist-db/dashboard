@@ -27,6 +27,7 @@ function packages:get($type as xs:string?, $format as xs:string?, $plugins as xs
         if ($type = "local") then $apps else packages:public-repo-contents($apps)
     let $apps := if ($format = "manager") then $apps except $apps[@removable="no"] else $apps
     for $app in $apps
+    order by upper-case($app/title/text())
     return
        packages:display($config:REPO, $app, $format)
 };

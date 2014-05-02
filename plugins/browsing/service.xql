@@ -52,11 +52,10 @@ function service:resources($collection as xs:string) {
             "/db"
         else
             replace($collection, "^(.*)/[^/]+/?$", "$1")
-    let $totalcount := count($resources) + (if($collection eq "/db") then 1 else 2)
+    let $totalcount := count($resources) + (if($collection eq "/db") then 0 else 1)
     return (
         response:set-header("Content-Range", "items 0-" || count($subset) + 1 || "/" || $totalcount),
         <json:value> {
-            service:resource-xml($collection, ".", true(), $user),
             if($collection ne "/db")then
                 service:resource-xml($parent, "..", true(), $user)
             else(),  

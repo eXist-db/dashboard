@@ -289,11 +289,20 @@ declare
     %output:method("json")
 function service:get-acl($id as xs:string, $acl-id as xs:string) as element(json:value) {
     let $path := service:id-to-path($id),
+    $new := <json:value json:array="true">
+                <id></id>
+                <target></target>
+                <who></who>
+                <access_type></access_type>
+                <read></read>
+                <write></write>
+                <execute></execute>
+            </json:value>,
     $permissions := sm:get-permissions(xs:anyURI($path))/sm:permission
     return
-       <json:value>
+       <json:value>           
         { 
-            for $ace in $permissions/sm:acl/sm:ace[if(string-length($acl-id) eq 0)then true() else @index eq $acl-id] return
+            for $ace in ($new,$permissions/sm:acl/sm:ace[if(string-length($acl-id) eq 0)then true() else @index eq $acl-id]) return
                 <json:value json:array="true">
                     <id>{$ace/string(@index)}</id>
                     <target>{$ace/string(@target)}</target>
@@ -318,18 +327,16 @@ declare
     %rest:path("/properties/")
     %rest:form-param("owner", "{$owner}")
     %rest:form-param("group", "{$group}")
-    %rest:form-param("resources", "{$resources}")
+    %rest:form-param("resource", "{$resource}")
     %rest:form-param("mime", "{$mime}")
     %output:media-type("application/json")
     %output:method("json")
-function service:change-properties($resources as xs:string, $owner as xs:string?, $group as xs:string?, $mime as xs:string?) {
-    for $resource in $resources
+function service:change-properties($resource as xs:string, $owner as xs:string, $group as xs:string, $mime as xs:string) {
     let $uri := xs:anyURI($resource)
     return (
         sm:chown($uri, $owner),
         sm:chgrp($uri, $group),
-        sm:chmod($uri, service:permissions-from-form()),
-        xmldb:set-mime-type($resource, $mime)
+        xmldb:set-mime-type($uri,$mime)
     ),
     <response status="ok"/>
 };
@@ -530,4 +537,52 @@ declare %private function service:force-json-array($nodes as node()*, $element-n
 
 declare %private function service:path-to-col-res-path($path as xs:string) {
     (replace($path, "(.*)/.*", "$1"), replace($path, ".*/", ""))
+};
+
+declare
+    %rest:GET
+    %rest:path("/groups/")
+    %output:media-type("application/json")
+    %output:method("json")
+function service:groups() {
+    let $groups :=  sm:list-groups()
+    return (
+        
+        <json:value>{
+            
+            for $g in $groups
+            
+            return
+        <json:value json:array="true">
+            <label>{$g}</label>
+            <id>{$g}</id>
+            <selected json:literal="true">false</selected>
+        </json:value>
+        }
+       </json:value>
+    )
+};
+
+declare
+    %rest:GET
+    %rest:path("/users/")
+    %output:media-type("application/json")
+    %output:method("json")
+function service:users() {
+    let $users :=  sm:list-users()
+    return (
+        
+        <json:value>{
+            
+            for $g in $users
+            
+            return
+        <json:value json:array="true">
+            <label>{$g}</label>
+            <id>{$g}</id>
+            <selected json:literal="true">false</selected>
+        </json:value>
+        }
+       </json:value>
+    )
 };

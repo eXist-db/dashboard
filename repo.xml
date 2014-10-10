@@ -53,6 +53,12 @@
                 <li>Display ACL ACEs Collection Browser</li>
             </ul>
         </change>
+        <change xmlns="" version="0.4.1">
+            <ul>
+                <li>Release for eXist-db 2.2</li>
+                <li>Removal of link to old web admin</li>
+            </ul>
+        </change>
     </changelog>
     <deployed>2013-07-06T19:48:05.794+02:00</deployed>
 </meta>

@@ -28,7 +28,7 @@ function service:delete-resources($resources as xs:string*) {
         <response status="ok"/>
     } catch * {
         <response status="fail">
-            <message>{$err:message}</message>
+            <message>{$err:description}</message>
         </response>
     }
 };

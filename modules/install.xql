@@ -19,10 +19,11 @@ declare %private function install:require-dba($func as function() as item()*) {
 
 let $action := request:get-parameter("action", "install")
 let $package-url := request:get-parameter("package-url", ())
-let $repo-url := request:get-parameter("repo-url", ())
+let $repo-url := request:get-parameter("repo-url", $config:DEFAULTREPO)
 let $version := request:get-parameter("version", ())
 let $server-url := $config:REPO
 let $upload := request:get-uploaded-file-name("uploadedfiles[]")
+
 return
     install:require-dba(function() {
         if (exists($upload)) then
@@ -59,9 +60,9 @@ return
                         then (
                             try {
                                 if (empty($func)) then
-                                    apputil:install-from-repo($package-url, (), $server-url)
+                                    apputil:install-from-repo($package-url, (), $repo-url)
                                 else
-                                    $func($package-url, (), $server-url, $version)
+                                    $func($package-url, (), $repo-url, $version)
                             } catch * {
                                 <status>
                                     <error>{$err:description}</error>

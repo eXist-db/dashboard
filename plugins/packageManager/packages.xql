@@ -25,9 +25,12 @@ function packages:get($type as xs:string?, $format as xs:string?, $plugins as xs
     let $apps := packages:default-apps($plugins) | packages:installed-apps($format)
     let $apps := 
         if ($type = "local") then $apps else packages:public-repo-contents($apps)
+        
     let $apps := if ($format = "manager") then $apps except $apps[@removable="no"] else $apps
     for $app in $apps
+     
     order by upper-case($app/title/text())
+         
     return 
          packages:display($config:DEFAULTREPO, $app, $format)
 (:        for $repo in $config:REPO/url:)
@@ -53,10 +56,10 @@ declare %private function packages:installed-apps($format as xs:string?) as elem
             if ($format = "manager" or $repoXML//repo:type = "application") then
                 let $icon :=
                     let $iconRes := repo:get-resource($app, "icon.png")
-                    let $hasIcon := exists($iconRes)
+                    let $iconSvgRes := repo:get-resource($app, "icon.svg")
+                    let $hasIcon := exists(($iconRes, $iconSvgRes))
                     return
                         $hasIcon
-                let $log := util:log-system-out(($app, " " , $icon))        
                 let $app-url :=
                     if ($repoXML//repo:target) then
                         let $target := 
@@ -196,7 +199,7 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             if ($app/@status = "installed") then
                                     <form action="">
                                         <input type="hidden" name="package-url" value="{$app/@path}"/>
-                                        <input type="hidden" name="repo-url" value="{$app/@repo}"/>
+                                        {if($app/@repo) then <input type="hidden" name="repo-url" value="{$app/@repo}"/> else ()}
                                         <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
                                         <input type="hidden" name="action" value="remove"/>
                                         <input type="hidden" name="type" value="application"/>
@@ -207,7 +210,7 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             else
                                     <form action="">
                                         <input type="hidden" name="package-url" value="{$app/name}"/>
-                                        <input type="hidden" name="repo-url" value="{$app/@repo}"/>
+                                        {if($app/@repo) then <input type="hidden" name="repo-url" value="{$app/@repo}"/> else ()}
                                         <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
                                         <input type="hidden" name="action" value="install"/>
                                         <input type="hidden" name="type" value="application"/>
@@ -332,6 +335,7 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                         <td>
                                             <form action="">
                                                 <input type="hidden" name="package-url" value="{$app/name}"/>
+                                                 {if($app/@repo) then <input type="hidden" name="repo-url" value="{$app/@repo}"/> else ()}
                                                 <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
                                                 <input type="hidden" name="version" value="{$version/@version}"/>
                                                 <input type="hidden" name="action" value="install"/>

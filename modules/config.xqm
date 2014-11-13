@@ -35,7 +35,9 @@ declare variable $config:expath-descriptor := doc(concat($config:app-root, "/exp
 
 declare variable $config:SETTINGS := doc($config:app-root || "/configuration.xml")/settings;
 
-declare variable $config:REPO := xs:anyURI($config:SETTINGS/repository);
+declare variable $config:REPO := $config:SETTINGS//repository[not(@active = 'false')];
+declare variable $config:DEFAULTREPO := xs:anyURI(($config:REPO[@default="true"], $config:REPO)[1]/url);
+
 
 (:~
  : Resolve the given path using the current application context.

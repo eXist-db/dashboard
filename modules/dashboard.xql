@@ -27,3 +27,14 @@ declare function dash:list-apps($node as node(), $model as map(*)) {
         packages:get("local", "manager", false())
     }
 };
+
+declare %templates:wrap function dash:list-repo($node as node(), $model as map(*)) {
+    
+    for  $repo at $index in $config:REPO
+    return
+        <div>
+            <label for="repo-url-{$index}">{data($repo/label)}</label>
+            <input id="repo-url-{$index}" type="text" readonly="" name="repo-url" data-dojo-type="dijit.form.ValidationTextBox" data-dojo-props="regExp:'(http|ftp|https):\/\/.*', required:true, invalidMessage:'Invalid URI.'" style="width: 100%;" value="{$repo/url}/public/apps.xml"/>
+        </div>
+
+};

@@ -19,6 +19,7 @@ declare %private function install:require-dba($func as function() as item()*) {
 
 let $action := request:get-parameter("action", "install")
 let $package-url := request:get-parameter("package-url", ())
+let $repo-url := request:get-parameter("repo-url", ())
 let $version := request:get-parameter("version", ())
 let $server-url := $config:REPO
 let $upload := request:get-uploaded-file-name("uploadedfiles[]")
@@ -28,7 +29,7 @@ return
             <result>
             {
                 try {
-                    let $docName := apputil:upload(xs:anyURI($server-url))
+                    let $docName := apputil:upload(xs:anyURI(($server-url[@default='true' or position() = 1]/url)[position() = 1]))
                     return
                         <json:value json:array="true">
                             <file>{$docName}</file>
@@ -53,16 +54,22 @@ return
                 default return
                     (: Use dynamic lookup for backwards compatibility :)
                     let $func := function-lookup(xs:QName("apputil:install-from-repo"), 4)
-                    return
-                        try {
-                            if (empty($func)) then
-                                apputil:install-from-repo($package-url, (), $server-url)
-                            else
-                                $func($package-url, (), $server-url, $version)
-                        } catch * {
-                            <status>
-                                <error>{$err:description}</error>
-                                <trace>{$exerr:xquery-stack-trace}</trace>
-                            </status>
-                        }
+                    return 
+                        if($repo-url = $server-url/url)
+                        then (
+                            try {
+                                if (empty($func)) then
+                                    apputil:install-from-repo($package-url, (), $server-url)
+                                else
+                                    $func($package-url, (), $server-url, $version)
+                            } catch * {
+                                <status>
+                                    <error>{$err:description}</error>
+                                    <trace>{$exerr:xquery-stack-trace}</trace>
+                                </status>
+                            }
+                        ) 
+                        else    <status>
+                                    <error>server-url not authorized</error>
+                                </status>
     })

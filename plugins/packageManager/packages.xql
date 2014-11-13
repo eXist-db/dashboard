@@ -56,8 +56,7 @@ declare %private function packages:installed-apps($format as xs:string?) as elem
             if ($format = "manager" or $repoXML//repo:type = "application") then
                 let $icon :=
                     let $iconRes := repo:get-resource($app, "icon.png")
-                    let $iconSvgRes := repo:get-resource($app, "icon.svg")
-                    let $hasIcon := exists(($iconRes, $iconSvgRes))
+                    let $hasIcon := exists($iconRes)
                     return
                         $hasIcon
                 let $app-url :=

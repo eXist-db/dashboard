@@ -5,11 +5,9 @@
             <label>exist-db public repo</label>
             <url>http://demo.exist-db.org/exist/apps/public-repo</url>
         </repository>
-        <repository active="true">
-            <label>my public public repo</label>
-             <!-- <url>http://demo.exist-db.org/exist/apps/public-repo</url> -->
-            <url>http://localhost:8088/app/public-repo</url>
-        </repository>
-<!--    <repository>http://localhost:8080/exist/apps/public-repo</repository>-->
-    </repositories>
+<!-- <repository active="true">
+    <label>my public public repo</label>
+    <url>http://localhost:8088/app/public-repo</url>
+</repository>
+ -->    </repositories>
 </settings>

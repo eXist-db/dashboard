@@ -333,10 +333,11 @@ declare
     %output:method("json")
 function service:change-properties($resource as xs:string, $owner as xs:string, $group as xs:string, $mime as xs:string) {
     let $uri := xs:anyURI($resource)
+    let $isCollection := xmldb:collection-available($resource)
     return (
         sm:chown($uri, $owner),
         sm:chgrp($uri, $group),
-        xmldb:set-mime-type($uri,$mime)
+        if ($isCollection) then () else xmldb:set-mime-type($uri,$mime)
     ),
     <response status="ok"/>
 };

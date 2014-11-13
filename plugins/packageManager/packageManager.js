@@ -160,7 +160,6 @@ function(registry, plugin, util, Uploader, declare, lang, dom, domConstruct, on,
             var myApp = app;
             var action = query("input[name = 'action']", form).val();
             var name = query("input[name = 'abbrev']", form).val();
-            var name = query("input[name = 'abbrev']", form).val();
             var dlg = registry.byId("actionDialog");
             if (action === "install") {
                 self.actionStart();

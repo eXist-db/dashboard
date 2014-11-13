@@ -167,7 +167,7 @@ define([
                     
                     if (changes) {
                         var params = {
-                            resource: registry.byId("resourceName").getValue(),
+                            resource: $this.itemId,
                             owner: registry.byId("owner").getValue(), 
                             group : registry.byId("group").getValue(),
                             mime: registry.byId("internetMediaType").getValue()};
@@ -181,7 +181,7 @@ define([
                             },
                             error: function() {
                                 $this.actionEnd();
-                                util.message("Server Error", "An error occurred while communicating to the server!");
+                                util.message("Server Error", "An error occurred while communicating with the server!");
                             }
                         });
                     }
@@ -675,6 +675,7 @@ define([
             registry.byId("internetMediaType").set("value", item.internetMediaType);
             registry.byId("created").set("value", item.created);
             registry.byId("lastModified").set("value", item.lastModified);
+            $this.itemId = item.id;
             $this.originalOwner = item.owner;
             $this.originalGroup = item.group;
             $this.originalMime = item.internetMediaType;

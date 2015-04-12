@@ -22,9 +22,9 @@ function service:delete-resources($resources as xs:string*) {
             if (xmldb:collection-available($resource)) then
                 xmldb:remove($resource)
             else
-                let $split := text:groups($resource, "^(.*)/([^/]+)$")
+                let $split := analyze-string($resource, "^(.*)/([^/]+)$")//fn:group/string()
                 return
-                    xmldb:remove($split[2], $split[3]),
+                    xmldb:remove($split[1], $split[2]),
         <response status="ok"/>
     } catch * {
         <response status="fail">
@@ -176,13 +176,13 @@ function service:copyOrMove($target as xs:string, $sources as xs:string*, $actio
                             default return
                                 xmldb:copy($source, $target)
                     else
-                        let $split := text:groups($source, "^(.*)/([^/]+)$")
+                        let $split := analyze-string($source, "^(.*)/([^/]+)$")//fn:group/string()
                         return
                             switch ($action)
                                 case "move" return
-                                    xmldb:move($split[2], $target, $split[3])
+                                    xmldb:move($split[1], $target, $split[2])
                                 default return
-                                    xmldb:copy($split[2], $target, $split[3]),
+                                    xmldb:copy($split[1], $target, $split[2]),
                     <response status="ok"/>
             ) else
                 <response status="fail">
@@ -462,14 +462,14 @@ declare %private function service:get-property-map($resource as xs:string) as ma
                 "mime" := xmldb:get-mime-type(xs:anyURI($resource))
             }
         else
-            let $components := text:groups($resource, "^(.*)/([^/]+)$")
+            let $components := analyze-string($resource, "^(.*)/([^/]+)$")//fn:group/string()
             return
                 map {
-                    "owner" := xmldb:get-owner($components[2], $components[3]),
-                    "group" := xmldb:get-group($components[2], $components[3]),
+                    "owner" := xmldb:get-owner($components[1], $components[2]),
+                    "group" := xmldb:get-group($components[1], $components[2]),
                     "last-modified" := 
-                        format-dateTime(xmldb:last-modified($components[2], $components[3]), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]"),
-                    "permissions" := xmldb:permissions-to-string(xmldb:get-permissions($components[2], $components[3])),
+                        format-dateTime(xmldb:last-modified($components[1], $components[2]), "[MNn] [D00] [Y0000] [H00]:[m00]:[s00]"),
+                    "permissions" := xmldb:permissions-to-string(xmldb:get-permissions($components[1], $components[2])),
                     "mime" := xmldb:get-mime-type(xs:anyURI($resource))
                 }
 };

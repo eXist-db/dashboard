@@ -113,7 +113,7 @@ declare %private function packages:get-package-meta($app as xs:string, $name as 
 
 declare %private function packages:public-repo-contents($installed as element(app)*) {
     try {
-        let $url := $config:REPO || "/public/apps.xml"
+        let $url := $config:REPO || "/public/apps.xml?version=" || packages:get-version()
         (: EXPath client module does not work properly. No idea why. :)
 (:        let $request :=:)
 (:            <http:request method="get" href="{$url}" timeout="10">:)
@@ -144,6 +144,10 @@ declare %private function packages:public-repo-contents($installed as element(ap
     } catch * {
         util:log("WARN", "Error while retrieving app packages: " || $err:description)
     }
+};
+
+declare %private function packages:get-version() {
+    (util:system-property("product-semver"), util:system-property("product-version"))[1]
 };
 
 declare %private function packages:display($repoURL as xs:anyURI?, $app as element(app), $format as xs:string?) {

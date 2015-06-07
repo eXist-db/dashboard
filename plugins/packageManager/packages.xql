@@ -113,7 +113,8 @@ declare %private function packages:get-package-meta($app as xs:string, $name as 
 
 declare %private function packages:public-repo-contents($installed as element(app)*) {
     try {
-        let $url := $config:REPO || "/public/apps.xml?version=" || packages:get-version()
+        let $url := $config:REPO || "/public/apps.xml?version=" || packages:get-version() ||
+            "&amp;source=" || util:system-property("product-source")
         (: EXPath client module does not work properly. No idea why. :)
 (:        let $request :=:)
 (:            <http:request method="get" href="{$url}" timeout="10">:)
@@ -202,6 +203,7 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                     <form action="">
                                         <input type="hidden" name="package-url" value="{$app/name}"/>
                                         <input type="hidden" name="abbrev" value="{$app/abbrev}"/>
+                                        <input type="hidden" name="version" value="{$app/version}"/>
                                         <input type="hidden" name="action" value="install"/>
                                         <input type="hidden" name="type" value="application"/>
                                         <button class="toobarBtn installApp" title="Install">

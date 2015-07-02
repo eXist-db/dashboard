@@ -253,7 +253,7 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             }
                             {
                                 if ($app/requires) then
-                                    <p class="requires">Requires eXist-db {$app/requires/@version/string()}</p>
+                                    <p class="requires">Requires eXist-db {packages:required-version($app/requires)}</p>
                                 else
                                     ()
                             }
@@ -354,6 +354,23 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             <h3>{$app/title/text()}</h3>
                         </button>
                     </li>
+};
+
+declare %private function packages:required-version($required as element(requires)) {
+    string-join((
+        if ($required/@semver-min) then
+            " > " || $required/@semver-min
+        else
+            (),
+        if ($required/@semver-max) then
+            " < " || $required/@semver-max
+        else
+            (),
+        if ($required/@version) then
+            " " || $required/@version
+        else
+            ()
+    ))
 };
 
 declare %private function packages:is-newer($available as xs:string, $installed as xs:string) as xs:boolean {

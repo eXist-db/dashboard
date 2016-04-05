@@ -7,6 +7,7 @@ declare namespace rest="http://exquery.org/ns/restxq";
 
 import module namespace restxq="http://exist-db.org/xquery/restxq" at "modules/restxq.xql";
 import module namespace login-helper="http://exist-db.org/apps/dashboard/login-helper" at "modules/login-helper.xql";
+import module namespace login="http://exist-db.org/xquery/login" at "resource:org/exist/xquery/modules/persistentlogin/login.xql";
 
 declare variable $exist:path external;
 declare variable $exist:resource external;
@@ -43,10 +44,11 @@ else if ($exist:resource = "login") then (
     util:declare-option("exist:serialize", "method=json media-type=application/json"),
     try {
         let $loggedIn := $login("org.exist.login", (), true())
+        let $user := request:get-attribute("org.exist.login.user")
         return
-            if (xmldb:get-current-user() != "guest") then
+            if ($user and sm:is-dba($user)) then
                 <response>
-                    <user>{xmldb:get-current-user()}</user>
+                    <user>{$user}</user>
                     <isDba json:literal="true">true</isDba>
                 </response>
             else (

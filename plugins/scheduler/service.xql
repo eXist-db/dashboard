@@ -38,7 +38,7 @@ function service:get-running-xqueries() {
             let $id 	:= $xquery/@id
             let $type 	:= $xquery/@sourceType
             let $key 	:= $xquery/system:sourceKey/text()
-            let $src    := if( $type != "String" or string-length( $key ) < 1024 ) then $key else concat( substring( $key, 0, $xqueries:MAX-STRING-KEY-LENGTH - 1 ), "..." )
+            let $src    := if( $type != "String" or string-length( $key ) < 1024 ) then $key else concat( substring( $key, 1, 1024 ), "..." )
             let $started  := $xquery/@started
             let $status := if( $xquery/@terminating = "true" ) then "terminating" else "running"
                 

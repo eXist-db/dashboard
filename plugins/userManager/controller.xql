@@ -48,7 +48,7 @@ declare variable $exist:controller external;
 declare variable $exist:path external;
 declare variable $exist:prefix external;
 
-declare variable $local:HTTP_API_BASE := replace(string-join((request:get-context-path(), $exist:prefix, $exist:controller, "api"), "/"), "//", "/"); 
+declare variable $local:HTTP_API_BASE := replace(string-join((request:get-context-path(), $exist:prefix, $exist:controller, "api"), "/"), "//", "/");
 
 declare variable $login := login-helper:get-login-method();
 
@@ -64,18 +64,18 @@ declare function local:get-location($postfix as xs:string+) {
     string-join(($local:HTTP_API_BASE, $postfix), "/")
 };
 
-declare function local:list-users($user as xs:string?) as element(json:value) {
+declare function local:list-users($user as xs:string?,$range as xs:integer*) as element(json:value) {
     if($user)then
-        usermanager:list-users($user)
+        usermanager:list-users($range,$user)
     else
-        usermanager:list-users()
+        usermanager:list-users($range)
 };
 
-declare function local:list-groups($group as xs:string?) as element(json:value) {
+declare function local:list-groups($group as xs:string?,$range as xs:integer*) as element(json:value) {
     if($group)then
-        usermanager:list-groups($group)
+        usermanager:list-groups($range,$group)
     else
-        usermanager:list-groups()
+        usermanager:list-groups($range)
 };
 
 declare function local:delete-user($user as xs:string) as element(deleted) {
@@ -101,12 +101,12 @@ declare function local:update-user($user as xs:string, $request-body) as element
     (
         response:set-header("Location", local:get-user-location($user)),
         response:set-status-code($local:HTTP_OK),
-        
+
         (: TODO ideally would like to set 204 above and not return and content in the body
         however the controller.xql is not capable of doing that, as there is no dispatch/ignore
         that just returns processing with an empty body.
         :)
-        
+
         (: send back updated group json :)
         usermanager:get-user($user)
     ) else (
@@ -120,12 +120,12 @@ declare function local:update-group($group as xs:string, $request-body) as eleme
     (
         response:set-header("Location", local:get-group-location($group)),
         response:set-status-code($local:HTTP_OK),
-        
+
         (: TODO ideally would like to set 204 above and not return and content in the body
         however the controller.xql is not capable of doing that, as there is no dispatch/ignore
         that just returns processing with an empty body.
         :)
-        
+
         (: send back updated group json :)
         usermanager:get-group($group)
     ) else (
@@ -140,7 +140,7 @@ declare function local:create-user($user as xs:string, $request-body) as element
         (
             response:set-header("Location", local:get-user-location($user)),
             response:set-status-code($local:HTTP_CREATED),
-            
+
             (: send back updated user json :)
             usermanager:get-user($user)
         ) else (
@@ -155,7 +155,7 @@ declare function local:create-group($user as xs:string, $request-body) as elemen
         (
             response:set-header("Location", local:get-group-location($group)),
             response:set-status-code($local:HTTP_CREATED),
-            
+
             (: send back updated group json :)
             usermanager:get-group($group)
         ) else (
@@ -171,7 +171,7 @@ declare function local:get-user($user as xs:string) as element() {
     (
         response:set-status-code($local:HTTP_NOT_FOUND),
         <error>No such user: {$user}</error>
-    )    
+    )
 };
 
 declare function local:get-group($group as xs:string) as element() {
@@ -184,29 +184,71 @@ declare function local:get-group($group as xs:string) as element() {
     )
 };
 
+declare function local:get-limit-from-range($range as xs:string, $maxLimit as xs:integer) {
+    let $maxCount := 0
+    let $limit :=
+        if($maxLimit) then
+            $maxLimit
+        else
+            1 div 0e0
+    let $start := 0
+    let $end := 1 div 0e0
+    return
+        if($range) then
+            let $groups := analyze-string($range,"^items=(\d+)-(\d+)?$")//fn:group/text()
+            return
+            if(count($groups)>0) then
+                let $start :=
+                    if($groups[1]) then
+                        number($groups[1])
+                    else
+                        $start
+
+                let $end :=
+                    if($groups[2]) then
+                        number($groups[2])
+                    else
+                        $end
+                let $limit :=
+                    if($end >= $start) then
+                        min(($limit, $end + 1 - $start))
+                    else
+                        $limit
+                let $maxCount :=
+                    if($end >= $start) then
+                        1
+                    else
+                        $maxCount
+                return ($limit,$start,$maxCount)
+            else
+                ($limit,$start,$maxCount)
+        else
+            ($limit,$start,$maxCount)
+};
+
 
 $login("org.exist.login", (), true()),
 (: HTTP request dispatch... :)
 if(starts-with($exist:path, "/api/"))then(
-    
+
     (: API is in JSON :)
     util:declare-option("exist:serialize", "method=json media-type=application/json"),
-    
+
     if($exist:path eq "/api/user/" and request:get-method() eq "GET")then
-        local:list-users(request:get-parameter("user", ()))
-    
+        local:list-users(request:get-parameter("user", ()), local:get-limit-from-range(request:get-header("range"),9999))
+
     else if(starts-with($exist:path, "/api/user/"))then
         let $user := replace($exist:path, "/api/user/", "") return
-            
+
             if(request:get-method() eq "DELETE")then
                 local:delete-user($user)
-            
-            else if(request:get-method() eq "POST")then 
+
+            else if(request:get-method() eq "POST")then
             (
                 response:set-status-code($local:HTTP_METHOD_NOT_ALLOWED),
                 <error>expected PUT for User from dojox.data.JsonRestStore and not POST</error>
             )
-            
+
             else if(request:get-method() eq "PUT") then
                 let $body := util:binary-to-string(request:get-data()) return
                     if(usermanager:user-exists($user))then
@@ -214,32 +256,32 @@ if(starts-with($exist:path, "/api/"))then(
                         local:update-user($user, $body)
                     else
                         local:create-user($user, $body)
-                        
+
             else if(request:get-method() eq "GET") then
                 local:get-user($user)
-            
+
             else
             (
                 response:set-status-code($local:HTTP_METHOD_NOT_ALLOWED),
                 <error>Unsupported method: {request:get-method()}</error>
             )
-                
-    
+
+
     else if($exist:path eq "/api/group/")then
-        local:list-groups(request:get-parameter("group", ()))
-    
+        local:list-groups(request:get-parameter("group", ()), local:get-limit-from-range(request:get-header("range"),9999))
+
     else if(starts-with($exist:path, "/api/group/"))then
         let $group := replace($exist:path, "/api/group/", "") return
-        
+
             if(request:get-method() eq "DELETE")then
                 local:delete-group($group)
-            
+
             else if(request:get-method() eq "POST")then
             (
                 response:set-status-code($local:HTTP_METHOD_NOT_ALLOWED),
                 <error>expected PUT for Group from dojox.data.JsonRestStore and not POST</error>
             )
-            
+
             else if(request:get-method() eq "PUT") then
                 let $body := util:binary-to-string(request:get-data()) return
                     if(usermanager:group-exists($group))then
@@ -248,13 +290,13 @@ if(starts-with($exist:path, "/api/"))then(
                         local:create-group($group, $body)
             else if(request:get-method() eq "GET") then
                 local:get-group($group)
-            
+
             else
             (
                 response:set-status-code($local:HTTP_METHOD_NOT_ALLOWED),
                 <error>Unsupported method: {request:get-method()}</error>
             )
-            
+
     else
         (: unkown URI path, not part of the API :)
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

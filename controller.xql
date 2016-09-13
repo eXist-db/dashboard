@@ -26,7 +26,11 @@ if ($exist:path eq '') then
 else if ($exist:path = "/") then
     (: forward root path to index.xql :)
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <redirect url="index.html"/>
+        if(request:get-uri() eq "/exist/apps/dashboard/" and request:get-header("X-Forwarded-URI") eq "/apps/dashboard/") then
+            <redirect url="/apps/dashboard/index.html"/>
+        else
+            <redirect url="index.html"/>
+    }
     </dispatch>
 
 else if ($exist:resource = "get-icon.xql") then

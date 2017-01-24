@@ -54,10 +54,9 @@ if (ends-with($exist:path, ".html")) then
 }
 else if (starts-with($exist:path, "/packages/")) then
     let $funcs := util:list-functions("http://exist-db.org/apps/dashboard/packages/rest")
-(:    let $login := login:set-user("org.exist.login", (), true()):)
     return (
-        response:set-header("Cache-Control", "no-cache"),
-        restxq:process($exist:path, $funcs)
+      response:set-header("Cache-Control", "no-cache"),
+      restxq:process($exist:path, $funcs)
     )
 else
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

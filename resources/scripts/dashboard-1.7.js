@@ -201,7 +201,7 @@ require(["dijit/registry",
 
                     },
                     error: function(error, ioargs) {
-                        // console.dirxml(error); 
+                        // console.dirxml(error);
                         console.debug("error:", error, " ioargs:",ioargs);
                         updating = false;
                         status("Error while retrieving package list");
@@ -474,7 +474,7 @@ require(["dijit/registry",
                 var charCode=evt.charCode? evt.charCode : evt.keyCode;
                 // console.debug("keypress: charCode: ",charCode, " keys:",keys);
                 if(charCode == keys.ESCAPE) { closeApp();}
-                // console.debug("default behavior e.charOrCode:",charCode, " dojo.keys.ESCAPE:",dojo.keys.ESCAPE);                
+                // console.debug("default behavior e.charOrCode:",charCode, " dojo.keys.ESCAPE:",dojo.keys.ESCAPE);
             });
 
             // hide the splash screen

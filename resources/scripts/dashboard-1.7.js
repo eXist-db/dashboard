@@ -268,6 +268,8 @@ require(["dijit/registry",
             xhr.get({
                 url: link,
                 load: function(data) {
+                    domStyle.set("appList", "display", "none");
+                    domStyle.set("inlineAppArea", "display", "inline-block");
                     domConstruct.place(data, container, "only");
                     require([ "plugins/" + name + "/" + name], function(Plugin) {
                         var plugin = new Plugin(container, this);
@@ -275,10 +277,16 @@ require(["dijit/registry",
                         openPlugin = plugin;
                         dom.byId("inlineAppTitle").innerHTML = openPlugin.pluginName;
                     });
+                },
+                error: function(error, ioargs) {
+                    if (error.status === 401) {
+                        return requireLogin(openInline.bind(null, name));
+                    }
+                    // all other errors
+                    console.error("error:", error, "ioargs:", ioargs);
+                    status("Error opening package: " + name);
                 }
             });
-            domStyle.set("appList","display","none");
-            domStyle.set("inlineAppArea","display","inline-block");
         }
 
         function closeApp() {

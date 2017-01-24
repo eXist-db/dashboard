@@ -56,11 +56,13 @@ else if ($exist:resource = "login") then (
                     <isDba json:literal="true">true</isDba>
                 </response>
             else (
+                response:set-status-code(401),
                 <response>
                     <fail>Wrong user or password</fail>
                 </response>
             )
     } catch * {
+        response:set-status-code(500),
         <response>
             <fail>{$err:description}</fail>
         </response>

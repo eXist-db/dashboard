@@ -1,4 +1,4 @@
-xquery version "3.1";
+xquery version "3.0";
 
 declare namespace json="http://www.json.org";
 declare namespace control="http://exist-db.org/apps/dashboard/controller";

@@ -106,7 +106,13 @@ declare %private function packages:get-package-meta($app as xs:string, $name as 
             if (exists($meta)) then util:binary-to-string($meta) else ()
     return
         if (exists($data)) then
-            util:parse($data)
+            try {
+                util:parse($data)
+            } catch * {
+                <meta xmlns="http://exist-db.org/xquery/repo">
+                    <description>Invalid repo descriptor for app {$app}</description>
+                </meta>
+            }
         else
             ()
 };

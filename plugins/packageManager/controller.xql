@@ -1,4 +1,4 @@
-xquery version "1.0";
+xquery version "3.0";
 
 declare namespace json="http://www.json.org";
 declare namespace control="http://exist-db.org/apps/dashboard/controller";
@@ -21,24 +21,42 @@ declare variable $login := login-helper:get-login-method();
 request:set-attribute("betterform.filter.ignoreResponseBody", "true"),
 if (ends-with($exist:path, ".html")) then
     (: the html page is run through view.xql to expand templates :)
-    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <view>
-            <forward url="../../modules/view.xql">
-                {$login("org.exist.login", (), true())}
-                <set-header name="Cache-Control" value="no-cache"/>
-            </forward>
-        </view>
-        <error-handler>
-			<forward url="../../error-page.html" method="get"/>
-			<forward url="../../modules/view.xql"/>
-		</error-handler>
-    </dispatch>
+    try {
+      let $loggedIn := $login("org.exist.login", (), true())
+      let $user := request:get-attribute("org.exist.login.user")
+      return
+          if ($user and sm:is-dba($user)) then (
+            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                <view>
+                    <forward url="../../modules/view.xql">
+                        {$user}
+                        <set-header name="Cache-Control" value="no-cache"/>
+                    </forward>
+                </view>
+                <error-handler>
+              			<forward url="../../error-page.html" method="get"/>
+              			<forward url="../../modules/view.xql"/>
+            		</error-handler>
+            </dispatch>
+          )
+          else (
+              response:set-status-code(401),
+              <response>
+                <user>{$user}</user>
+                  <fail>Wrong user or password</fail>
+              </response>
+          )
+} catch * {
+    response:set-status-code(500),
+    <response>
+      <fail>{$err:description}</fail>
+    </response>
+}
 else if (starts-with($exist:path, "/packages/")) then
     let $funcs := util:list-functions("http://exist-db.org/apps/dashboard/packages/rest")
-(:    let $login := login:set-user("org.exist.login", (), true()):)
     return (
-        response:set-header("Cache-Control", "no-cache"),
-        restxq:process($exist:path, $funcs)
+      response:set-header("Cache-Control", "no-cache"),
+      restxq:process($exist:path, $funcs)
     )
 else
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

@@ -35,7 +35,7 @@ return
                         </json:value>
                 } catch * {
                     <json:value json:array="true">
-                        <error>{$err:description}</error>
+                        <error>{($err:description, $err:value)[1]}</error>
                     </json:value>
                 }
             }
@@ -43,13 +43,17 @@ return
         else
             switch ($action)
                 case "remove" return
-                    let $type := request:get-parameter("type", ())
-                    let $removed := apputil:remove($package-url)
-                    return
-                        if ($removed) then
-                            <status><ok/></status>
-                        else
-                            <status><error>Failed to remove package {$package-url}</error></status>
+                    try {
+                        let $type := request:get-parameter("type", ())
+                        let $removed := apputil:remove($package-url)
+                        return
+                            if ($removed) then
+                                <status><ok/></status>
+                            else
+                                <status><error>Failed to remove package {$package-url}</error></status>
+                    } catch * {
+                        <status><error>{($err:description, $err:value)[1]}</error></status>
+                    }
                 default return
                     (: Use dynamic lookup for backwards compatibility :)
                     let $func := function-lookup(xs:QName("apputil:install-from-repo"), 4)
@@ -61,7 +65,7 @@ return
                                 $func($package-url, (), $server-url, $version)
                         } catch * {
                             <status>
-                                <error>{$err:description}</error>
+                                <error>{($err:description, $err:value)[1]}</error>
                                 <trace>{$exerr:xquery-stack-trace}</trace>
                             </status>
                         }

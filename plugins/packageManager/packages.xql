@@ -244,7 +244,15 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                         }
                                         </p>,
                                         <div class="changes" style="display: none;">
-                                        { $app/changelog/change[@version = $available]/node() }
+                                        { 
+                                            for $change in $app/changelog/change[@version eq $available or packages:is-newer(./@version, $installed)]
+                                            order by $change/@version descending
+                                            return
+                                                <div class="shortTitle">
+                                                    <h3>{$change/@version/string()}</h3>
+                                                    { $change/node() }
+                                                </div>
+                                        }
                                         </div>
                                     ) else
                                         ()

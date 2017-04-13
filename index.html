@@ -1,15 +1,35 @@
 <html>
-  <head>
+<head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"/>
 
     <title>existdb-dashboard</title>
 
+    <link rel="stylesheet" href="resources/styles.css"/>
     <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <link rel="import" href="dependencies.html"/>
 
-    <link rel="import" href="existdb-dashboard.html"/>
-  </head>
-  <body>
-    <existdb-dashboard></existdb-dashboard>
-  </body>
+    <!--<link rel="import" href="../existdb-packageservice/dependencies-local.html"/>-->
+
+<!--
+    <style>
+        existdb-package-descriptor{
+            display: block;
+            background: whitesmoke;
+            margin:10px 0;
+        }
+        existdb-app-title{
+            display: block;
+
+        }
+    </style>
+-->
+
+
+</head>
+<body>
+    <existdb-dashboard class="grid">
+        <existdb-local-packages></existdb-local-packages>
+    </existdb-dashboard>
+</body>
 </html>

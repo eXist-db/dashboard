@@ -1,0 +1,94 @@
+existdb-dashboard{
+    width: 80%;
+    margin:0 auto;
+}
+existdb-package-descriptor{
+    display: block;
+    background: whitesmoke;
+    margin:10px 0;
+    position: relative;
+    min-height: 150px;
+    font-family: Roboto;
+    padding: 6px;
+}
+
+existdb-package-descriptor > *{
+    display: block;
+    margin-left:150px;
+}
+
+existdb-package-descriptor > existdb-app-icon{
+    margin-left: 0px;
+    position: absolute;
+    top: 10px;
+    left:10px;
+}
+existdb-app-icon img{
+    max-width: 126px;
+}
+existdb-app-title{
+    font-size: 26px;
+    padding:6px 0;
+}
+
+/* grid styles */
+.grid existdb-local-packages{
+    display: flex;
+    flex-wrap:wrap;
+    justify-content: flex-start;
+}
+.grid existdb-package-descriptor{
+    /*background: transparent;*/
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 320px;
+    margin: 10px;
+    align-items: stretch;
+}
+
+
+.grid existdb-package-descriptor > existdb-app-icon{
+    display: inline-flex;
+    align-items:center;
+    position: relative;
+    top:inherit;
+    left: inherit;
+    max-width: 150px;
+    margin:0 auto;
+}
+
+.grid existdb-app-title{
+    font-size: 20px;
+    text-align: center;
+    margin: 4px 0;
+
+}
+.grid existdb-app-version{
+    display: none;
+}
+.grid exist-app-actions{
+    display: none;
+}
+
+
+
+/*
+existdb-app-details{
+    display: none;
+}
+*/
+
+
+/*
+
+
+existdb-app-title {
+    display: inline-block;
+    vertical-align: top;
+}
+existdb-app-version{
+    display: inline-block;
+
+}
+*/

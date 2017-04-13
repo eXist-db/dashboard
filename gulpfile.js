@@ -83,7 +83,7 @@ gulp.task('deploy:components', function () {
 })
 
 var otherPaths = [
-    // '*.html',
+    '*.html',
     '*.xql',
     'templates/**/*',
     'transforms/**/*',

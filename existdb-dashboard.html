@@ -1,5 +1,3 @@
-<link rel="import" href="bower_components/polymer/polymer.html">
-
 <!--
 `existdb-dashboard`
 a eXistdb launchpad 
@@ -14,11 +12,13 @@ a eXistdb launchpad
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]</h2>
+
+  <slot></slot>
+
   </template>
 
   <script>
-    class existdbDashboard extends Polymer.Element {
+    class ExistdbDashboard extends Polymer.Element {
       static get is() { return 'existdb-dashboard'; }
       static get properties() {
         return {
@@ -30,6 +30,6 @@ a eXistdb launchpad
       }
     }
 
-    window.customElements.define(existdbDashboard.is, existdbDashboard);
+    window.customElements.define(ExistdbDashboard.is, ExistdbDashboard);
   </script>
 </dom-module>

@@ -1,3 +1,5 @@
+IMPORTAN NOTE: Dashboard is deprecated and will be replaced by a new version independent of Dojo. The repository of the new version will be available here soon.
+
 ![Dashboard logo](/eXist-db/dashboard/raw/master/icon.png)
 
 eXist-db Dashboard

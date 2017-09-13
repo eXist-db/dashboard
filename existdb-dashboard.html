@@ -49,6 +49,9 @@ a eXistdb launchpad
       .logo{
         width:134px;
       }
+      a{
+          color:var(--paper-blue-900);
+      }
     </style>
 
     <app-drawer-layout fullbleed force-narrow="true">
@@ -70,6 +73,18 @@ a eXistdb launchpad
             <iron-icon icon="social:people"></iron-icon>
             UserManager
           </paper-item>
+          <paper-item>
+            <iron-icon icon="settings-backup-restore"></iron-icon>
+            Backup
+          </paper-item>
+          <paper-item>
+            <iron-icon icon="settings"></iron-icon>
+            Java Admin Client
+          </paper-item>
+          <paper-item>
+            <iron-icon icon="update"></iron-icon>
+            Scheduler
+          </paper-item>
         </div>
       </app-drawer>
       <app-header-layout>
@@ -77,7 +92,7 @@ a eXistdb launchpad
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div main-title>Dashboard</div>
-            <div class="righttool">admin</div>
+              <div class="righttool">admin | <a href="index.html?logout=true">logout</a></div>
           </app-toolbar>
         </app-header>
 

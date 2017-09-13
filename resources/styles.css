@@ -11,12 +11,18 @@ existdb-dashboard{
 }
 existdb-package-descriptor{
     display: block;
-    /*background: whitesmoke;*/
     margin:10px 0;
     position: relative;
     min-height: 150px;
     font-family: Roboto;
     padding: 6px;
+    background: white;
+}
+existdb-package-descriptor:focus{
+    outline: 1px solid rgb(0, 136, 204);
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
+    0 1px 18px 0 rgba(0, 0, 0, 0.12),
+    0 3px 5px -1px rgba(0, 0, 0, 0.4);
 }
 
 existdb-package-descriptor > *{
@@ -29,6 +35,9 @@ existdb-package-descriptor > existdb-app-icon{
     position: absolute;
     top: 10px;
     left:10px;
+}
+existdb-package-descriptor > existdb-app-icon a:focus{
+    outline:none;
 }
 existdb-app-icon img{
     max-width: 126px;
@@ -74,7 +83,7 @@ existdb-app-title{
     line-height:22px;
     height:44px;
     position: absolute;
-    width: 98%;
+    width: 97%;
     bottom:0;
     text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);
 }

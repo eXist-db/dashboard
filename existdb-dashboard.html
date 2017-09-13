@@ -10,16 +10,104 @@ a eXistdb launchpad
     <style>
       :host {
         display: block;
+        width:100%;
+        height:100%;
+        margin:0;
+        padding:0;
+        @apply(--paper-font-common-base);
+        color:white;
+        --app-drawer-scrim-background:rgba(0,0,0,0.3);
+      }
+
+      app-toolbar{
+        background: rgb(0, 136, 204);
+        width:100%;
+        margin:0;
+      }
+      app-drawer{
+        /*background: rgba(245, 245, 245, 0.5);*/
+        z-index:100;
+        text-align: center;
+        color: black;
+      }
+
+      .drawerbar{
+        width:256px;
+        height:128px;
+        display: table-cell;
+        vertical-align: middle;
+      }
+      .righttool{
+        margin-right:50px;
+      }
+
+      app-drawer iron-icon{
+        color: rgb(0, 136, 204);
+        margin-right:20px;
+
+      }
+      .logo{
+        width:134px;
       }
     </style>
 
-  <slot></slot>
+    <app-drawer-layout fullbleed force-narrow="true">
+      <app-drawer slot="drawer">
+        <div class="drawerbar">
+          <!--<div main-title>user1</div>-->
+          <img class="logo" src="resources/images/existdb.png">
+        </div>
+
+        <!--
+        drawer items will be loaded dynamically dependent on the group a user has
+        -->
+        <div id="draweritems">
+          <paper-item>
+            <iron-icon icon="apps"></iron-icon>
+            PackageManager
+          </paper-item>
+          <paper-item>
+            <iron-icon icon="social:people"></iron-icon>
+            UserManager
+          </paper-item>
+        </div>
+      </app-drawer>
+      <app-header-layout>
+        <app-header slot="header">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div main-title>Dashboard</div>
+            <div class="righttool">admin</div>
+          </app-toolbar>
+        </app-header>
+
+        <slot></slot>
+
+      </app-header-layout>
+    </app-drawer-layout>
+
+<!--
+    <app-toolbar>
+      <paper-icon-button icon="menu" on-click="_toggleDrawer"></paper-icon-button>
+      <div main-title>Dashboard</div>
+    </app-toolbar>
+
+    <app-drawer-layout>
+      <app-drawer id="drawer" slot="drawer" swipe-open>
+        <div>
+          here's something
+        </div>
+      </app-drawer>
+      <slot></slot>
+    </app-drawer-layout>
+-->
 
   </template>
 
   <script>
     class ExistdbDashboard extends Polymer.Element {
       static get is() { return 'existdb-dashboard'; }
+
       static get properties() {
         return {
           prop1: {
@@ -27,6 +115,10 @@ a eXistdb launchpad
             value: 'existdb-dashboard'
           }
         };
+      }
+
+      _toggleDrawer(){
+          this.$.drawer.toggle();
       }
     }
 

@@ -41,6 +41,7 @@
     <target name="production-xar" depends="polymer-build-production">
         <mkdir dir="${build.dir}"/>
 
+
         <copy file="controller.xql" todir="${build.dir}/bundled"/>
         <copy file="expath-pkg.xml" todir="${build.dir}/bundled"/>
         <copy file="configuration.xml" todir="${build.dir}/bundled"/>

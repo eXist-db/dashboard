@@ -6,7 +6,7 @@
     <status>alpha</status>
     <license>GNU-LGPL</license>
     <copyright>true</copyright>
-    <type>application</type>
+    <type>systemapp</type>
     <target>existdb-dashboard</target>
     <prepare></prepare>
     <finish/>

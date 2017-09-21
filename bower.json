@@ -9,7 +9,8 @@
     "paper-icon-button": "PolymerElements/paper-icon-button#^2.0.0",
     "iron-icons": "PolymerElements/iron-icons#^2.0.0",
     "iron-icon": "PolymerElements/iron-icon#^2.0.0",
-    "paper-item": "PolymerElements/paper-item#^2.0.0"
+    "paper-item": "PolymerElements/paper-item#^2.0.0",
+    "existdb-login": "http://gitlab.exist-db.org/eXistdbElements/existdb-login.git"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#2.0-preview",
@@ -21,6 +22,10 @@
     "polymer": "^2.0.0-rc.2",
     "iron-icon": "1 - 2",
     "iron-icons": "^2.0.0",
-    "iron-iconset-svg": "1 - 2"
+    "iron-iconset-svg": "1 - 2",
+    "iron-ajax": "1 - 2",
+    "paper-button": "^2.0.0",
+    "iron-flex-layout": "1 - 2",
+    "paper-styles": "^2.0.0"
   }
 }

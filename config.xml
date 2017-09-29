@@ -1,0 +1,13 @@
+<settings>
+    <admin-app>
+        <app name="existdb-packagemanager"/>
+        <app name="existdb-packageservice" display="hidden"/>
+        <app name="existdb-packageservice"/>
+        <app name="existdb-dashboard" display="hidden"/>
+        <app name="usermanager"/>
+        <app name="backup"/>
+    </admin-app>
+    <repositories>
+        <url></url>
+    </repositories>
+</settings>

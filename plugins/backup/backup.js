@@ -72,8 +72,7 @@ define([
                 ev.preventDefault();
                 var items = $this.grid.selection.getSelected();
                 var href = window.location.href;
-                href = href.replace(/^(.*)\/exist\/(.*)\/[^\/]*$/, "$1/exist/$2");
-                window.location.href = href + "/plugins/backup/backup.xql?action=retrieve&archive=" + items[0].name;
+                window.location.href = href + "/../plugins/backup/backup.xql?action=retrieve&archive=" + items[0].name;
             });
             
             var form = dom.byId("backup-form");

@@ -122,13 +122,12 @@ declare %private function packages:public-repo-contents($installed as element(ap
         let $url := $config:REPO || "/public/apps.xml?version=" || packages:get-version() ||
             "&amp;source=" || util:system-property("product-source")
         (: EXPath client module does not work properly. No idea why. :)
-(:        let $request :=:)
-(:            <http:request method="get" href="{$url}" timeout="10">:)
-(:                <http:header name="Cache-Control" value="no-cache"/>:)
-(:            </http:request>:)
-(:        let $data := http:send-request($request):)
-        let $data := httpclient:get($url, false(), ())
-        let $status := xs:int($data/@statusCode)
+        let $request :=
+            <http:request method="get" href="{$url}" timeout="10">
+                <http:header name="Cache-Control" value="no-cache"/>
+            </http:request>
+        let $data := http:send-request($request)
+        let $status := xs:int($data[1]/@status)
         return
             if ($status != 200) then
                 response:set-status-code($status)
@@ -147,9 +146,9 @@ declare %private function packages:public-repo-contents($installed as element(ap
                             ()
                     else
                         $app
-                }, $data/httpclient:body//app)
+                }, $data[2]//app)
     } catch * {
-        util:log("WARN", "Error while retrieving app packages: " || $err:description)
+        util:log("ERROR", "Error while retrieving app packages: " || $err:description)
     }
 };
 

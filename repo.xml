@@ -59,6 +59,11 @@
                 <li>Removal of link to old web admin</li>
             </ul>
         </change>
+        <change xmlns="" version="0.4.8">
+            <ul>
+                <li>Adopt correct syntax for empty-sequence node test, supported from eXist-db 4.0.0</li>
+            </ul>
+        </change>
     </changelog>
     <deployed>2013-07-06T19:48:05.794+02:00</deployed>
 </meta>

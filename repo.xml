@@ -64,6 +64,12 @@
                 <li>Adopt correct syntax for empty-sequence node test, supported from eXist-db 4.0.0</li>
             </ul>
         </change>
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.4.9">
+            <ul>
+                <li>Remove user manager: there's now a separate package, which actually works</li>
+                <li>Remove scheduler: its functionality is already available in monex</li>
+            </ul>
+        </change>
     </changelog>
     <deployed>2013-07-06T19:48:05.794+02:00</deployed>
 </meta>

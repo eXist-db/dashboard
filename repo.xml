@@ -13,7 +13,7 @@
     <finish/>
     <note>If you are updating the dashboard, you may need to bypass the browser's cache (and cookies). On most browsers, hold Ctrl (IE) or Shift (Firefox, Safari, Chrome) and click the reload button.</note>
     <changelog>
-        <change xmlns="" version="0.3.0">
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.3.0">
             <h3>Package Manager:</h3>
             <ul>
                 <li>Display change log for updated packages</li>
@@ -21,42 +21,64 @@
                 <li>Small improvements to backup plugin</li>
             </ul>
         </change>
-        <change xmlns="" version="0.3.1">
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.3.1">
             <ul>
                 <li>Fixed too dark background on IE</li>
             </ul>
         </change>
-        <change xmlns="" version="0.3.1">
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.3.1">
             <ul>
                 <li>Fixed xhr issues in dashboard-1.7.js</li>
             </ul>
         </change>
-        <change xmlns="" version="0.3.3">
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.3.3">
             <ul>
                 <li>Fixed and Enabled the UserManager plugin</li>
             </ul>
         </change>
-        <change xmlns="" version="0.3.5">
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.3.5">
             <ul>
                 <li>Small fixes</li>
             </ul>
         </change>
-        <change xmlns="" version="0.3.6">
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.3.6">
             <ul>
                 <li>Allow an XQuery to be killed from scheduler plugin</li>
                 <li>Package manager: move packages for which updates are available to the top of the package list.</li>
             </ul>
         </change>
-        <change xmlns="" version="0.3.8">
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.3.8">
             <ul>
                 <li>Read/Write/Execute and SetUID, SetGID and Sticky bits can be set/unset from Collection Browser</li>
                 <li>Display ACL ACEs Collection Browser</li>
             </ul>
         </change>
-        <change xmlns="" version="0.4.1">
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.4.1">
             <ul>
                 <li>Release for eXist-db 2.2</li>
                 <li>Removal of link to old web admin</li>
+            </ul>
+        </change>
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.4.8">
+            <ul>
+                <li>Adopt correct syntax for empty-sequence node test, supported from eXist-db 4.0.0</li>
+            </ul>
+        </change>
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.4.9">
+            <ul>
+                <li>Remove user manager: there's now a separate package, which actually works</li>
+                <li>Remove scheduler: its functionality is already available in monex</li>
+            </ul>
+        </change>
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.4.9">
+            <ul>
+                <li>Remove user manager: there's now a separate package, which actually works</li>
+                <li>Remove scheduler: its functionality is already available in monex</li>
+            </ul>
+        </change>
+        <change xmlns="http://www.w3.org/1999/xhtml" version="0.4.10">
+            <ul>
+                <li>Hotfix release to enable users of eXist 3.6.1-or-lower to upgrade to 4.0.0</li>
             </ul>
         </change>
     </changelog>

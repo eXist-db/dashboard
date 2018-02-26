@@ -1,12 +1,12 @@
 <settings>
-    <admin-app>
-        <app name="existdb-packagemanager"/>
-        <app name="existdb-packageservice" display="hidden"/>
-        <app name="existdb-packageservice"/>
-        <app name="existdb-dashboard" display="hidden"/>
-        <app name="usermanager"/>
-        <app name="backup"/>
-    </admin-app>
+    <components>
+        <component name="existdb-launcher" label="Launcher" icon="icon.svg"/>
+        <component name="existdb-packagemanager" label="PackageManager" icon="apps"/>
+        <component name="existdb-usermanager" label="UserManager" icon="social:people"/>
+        <component name="existdb-backup" label="Backup" icon="settings-backup-restore"/>
+        <component name="existdb-link" label="Java Admin Client" icon="external-link"/>
+        <component name="existdb-scheduler" label="Scheduler" icon="update"/>
+    </components>
     <repositories>
         <url></url>
     </repositories>

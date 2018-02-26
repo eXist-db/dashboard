@@ -1,0 +1,60 @@
+<!--
+`existdb-package-descriptor`
+
+@demo demo/index.html
+-->
+<!doctype html>
+<dom-module id="existdb-package-descriptor">
+    <template>
+        <style>
+            :host {
+                display: block;
+                background: whitesmoke;
+                margin: 10px 0;
+            }
+        </style>
+        <slot></slot>
+    </template>
+
+    <script>
+        class ExistdbPackageDescriptor extends Polymer.Element {
+            static get is() {
+                return 'existdb-package-descriptor';
+            }
+
+            static get properties() {
+                return {
+                    url: {
+                        type: String,
+                        notify:true,
+                        reflectToAttribute:true
+                    }
+                };
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                console.log('ExistdbPackageDescriptor connected');
+                this.addEventListener("click", e => this._handleOpen(e));
+                this.addEventListener("keyup", e => this._handleEnter(e));
+            }
+
+            _handleOpen(e) {
+                console.log("_handleOpen ", this.url);
+                this._openApp();
+            }
+            _handleEnter(e) {
+                if (e.keyCode == 13) {
+                    this._openApp();
+                }
+            }
+
+            _openApp() {
+                window.open(this.url);
+            }
+
+        }
+
+        window.customElements.define(ExistdbPackageDescriptor.is, ExistdbPackageDescriptor);
+    </script>
+</dom-module>

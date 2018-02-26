@@ -73,7 +73,8 @@ gulp.task('odd:watch', function () {
 
 var componentPaths = [
     '*.html',
-    '!index.html'
+    '!index.html',
+    'bower_components/**/*'
 ];
 
 gulp.task('deploy:components', function () {

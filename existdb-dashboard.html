@@ -17,6 +17,19 @@ a eXistdb launchpad
                 @apply(--paper-font-common-base);
                 color: white;
                 --app-drawer-scrim-background: rgba(0, 0, 0, 0.3);
+
+
+            }
+            paper-item{
+                --paper-item-focused:{
+                    background:white;
+                };
+                --paper-item-selected:{
+                    background:white;
+                };
+                --paper-item-focused-before:{
+                    background:white;
+                }
             }
 
             app-toolbar {
@@ -59,6 +72,7 @@ a eXistdb launchpad
 
 
 
+
             h1{
                 color:blue;
             }
@@ -94,11 +108,23 @@ a eXistdb launchpad
                 -->
                 <!--<div id="listItems" class="drawer-items" role="listbox" slot="menu">-->
                 <!--<paper-listbox id="menu" attr-for-selected="id">-->
-                    <paper-item id="launcherItem" on-click="_showLauncher" role="menuitem">Launcher</paper-item>
-                    <paper-item id="packageManagerItem" on-click="_showPackageManager" role="menuitem">Package Manager</paper-item>
-                    <paper-item id="userManagerItem" on-click="_showUserManager" role="menuitem">User Manager</paper-item>
+                    <paper-item id="launcherItem" on-click="_showLauncher" role="menuitem">
+                        Launcher
+                        <paper-ripple></paper-ripple>
+                    </paper-item>
+                    <paper-item id="packageManagerItem" on-click="_showPackageManager" role="menuitem">
+                        Package Manager
+                        <paper-ripple></paper-ripple>
+                    </paper-item>
+                    <paper-item id="userManagerItem" on-click="_showUserManager" role="menuitem">
+                        User Manager
+                        <paper-ripple></paper-ripple>
+                    </paper-item>
                     <!--<paper-item on-click="_showBackup">Backup</paper-item>-->
-                    <paper-item id="settingsItem" on-click="_showSettings" role="menuitem">Settings</paper-item>
+                    <paper-item id="settingsItem" on-click="_showSettings" role="menuitem">
+                        Settings
+                        <paper-ripple></paper-ripple>
+                    </paper-item>
                 <!--</paper-listbox>-->
 
                 <!--</div>-->
@@ -233,7 +259,8 @@ a eXistdb launchpad
 
             _showLauncher(e){
                 console.log('show.... ', e);
-                this.$.pages.select('launcher');
+//                this.$.pages.select('launcher');
+                this.route.path = "/launcher";
             }
             _showPackageManager(e){
                 console.log('show.... ', e);

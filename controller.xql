@@ -4,10 +4,9 @@ import module namespace login="http://exist-db.org/xquery/login" at "resource:or
 import module namespace functx = "http://www.functx.com";
 
 
-declare namespace json = "http://www.json.org";
-declare namespace control = "http://exist-db.org/apps/dashboard/controller";
-declare namespace rest = "http://exquery.org/ns/restxq";
-
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
+declare option output:method "html5";
+declare option output:media-type "text/html";
 
 declare variable $exist:path external;
 declare variable $exist:resource external;
@@ -33,11 +32,11 @@ else if ($exist:path = "/") then(
         if($user and sm:is-dba($user)) then
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
                 <forward url="{$exist:controller}/admin.html"></forward>
+                <cache-control cache="no"/>
             </dispatch>
         else
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <forward url="{$exist:controller}/guest.html">
-                </forward>
+                <forward url="{$exist:controller}/guest.html"></forward>
             </dispatch>
             )
 (:

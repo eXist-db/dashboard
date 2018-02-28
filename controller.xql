@@ -15,17 +15,15 @@ declare variable $exist:prefix external;
 declare variable $exist:root external;
 
 
-declare function local:manglePath($path as xs:string){
-    let $before := substring-before($path,"bower_components")
-    return $before || "bower_components/" || functx:substring-after-last($path,"bower_components/")
-};
-
 if ($exist:path eq '') then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <redirect url="{request:get-uri()}/"/>
     </dispatch>
+else if(starts-with($exist:path,'/demo/settings.html')) then
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <cache-control cache="no"/>
+    </dispatch>
 else if ($exist:path = "/") then(
-(: forward root path to index.html :)
     login:set-user("org.exist.login", (), true()),
     let $user := request:get-attribute("org.exist.login.user")
     return
@@ -39,16 +37,6 @@ else if ($exist:path = "/") then(
                 <forward url="{$exist:controller}/guest.html"></forward>
             </dispatch>
             )
-(:
-else if(functx:number-of-matches($exist:path,"bower_components") = 2) then
-
-    let $before := substring-before($exist:path,"bower_components")
-    let $componentPath := $before || "bower_components/" || functx:substring-after-last($exist:path,"bower_components/")
-    return
-    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <forward url="{$componentPath}"></forward>
-    </dispatch>
-:)
 else if(starts-with($exist:path,"/apps/local")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <forward url="../modules/local-applications.xql"></forward>

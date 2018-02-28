@@ -1,0 +1,52 @@
+<!--
+`existdb-settings`
+
+-->
+
+<dom-module id="existdb-settings">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width:100%;
+        height:100%;
+        margin:0;
+        padding:0;
+        @apply(--paper-font-common-base);
+        color:white;
+      }
+
+      paper-material{
+        padding:10px;
+        max-width: 600px;
+        margin:0 auto;
+      }
+
+
+      h1{
+        color:var(--paper-grey-900);
+      }
+    </style>
+
+    <paper-material>
+      <h1>Settings</h1>
+
+      <paper-input label="Public Repository URL"></paper-input>
+    </paper-material>
+
+  </template>
+
+  <script>
+    class ExistdbSettings extends Polymer.Element {
+      static get is() { return 'existdb-settings'; }
+
+      static get properties() {
+        return {
+        };
+      }
+
+    }
+
+    window.customElements.define(ExistdbSettings.is, ExistdbSettings);
+  </script>
+</dom-module>

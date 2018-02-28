@@ -56,7 +56,11 @@ a eXistdb launchpad
             }
 
             .righttool {
-                margin-right: 50px;
+                margin-right: 20px;
+            }
+
+            [icon=info-outline]{
+                margin-right:30px;
             }
 
             app-drawer iron-icon {
@@ -83,6 +87,13 @@ a eXistdb launchpad
             h1{
                 color:blue;
             }
+
+            #versionDialog{
+                text-align:center;
+            }
+            #settings{
+                padding:20px;
+            }
         </style>
 
         <app-location id="location" route="{{route}}" use-hash-as-path></app-location>
@@ -91,23 +102,23 @@ a eXistdb launchpad
                 pattern="/:page"
                 data="{{routeData}}"></app-route>
 
+        <paper-dialog id="versionDialog">
+            <img src="resources/images/existdb.png" style="width:120px;">
+            <div id="version"></div>
+        </paper-dialog>
 
-<!--
-        <iron-ajax id="loadDashboard"
+        <iron-ajax id="getVersion"
                    with-credentials
                    method="get"
-                   handle-as="json"
-                   on-response="_handleLoad"
-                   url="/exist/apps/existdb-dashboard/modules/dashboard.xql"
-                   on-error="_handleLoadError"
-                   auto
-        ></iron-ajax>
--->
+                   handle-as="text"
+                   on-response="_handleVersion"
+                   url="/exist/apps/existdb-dashboard/modules/dashboard.xql"></iron-ajax>
 
         <app-drawer-layout id="drawerLayout" fullbleed>
             <app-drawer id="drawer" slot="drawer">
                 <div class="drawerbar">
                     <img class="logo" src="resources/images/existdb.png">
+                    <div class="subitem">Dashboard</div>
                 </div>
 
                 <!--
@@ -140,17 +151,11 @@ a eXistdb launchpad
                 <app-header slot="header">
                     <app-toolbar>
                         <paper-icon-button icon="menu" drawer-toggle on-click="_toggleDrawer"></paper-icon-button>
-                        <div main-title>Dashboard > <span class="subitem">[[mainLabel]]</span></div>
+                        <div main-title>[[mainLabel]]</div>
                         <div class="righttool"><a href="index.html?logout=true">logout</a></div>
+                        <iron-icon icon="info-outline" on-click="_showVersion"></iron-icon>
                     </app-toolbar>
                 </app-header>
-
-<!--
-                <template id="pageList" is="dom-repeat" items="{{pages}}" as="item">
-
-                </template>
--->
-                <!--<slot></slot>-->
 
                 <iron-pages id="pages" selected="{{routeData.page}}" attr-for-selected="name">
                     <div name="launcher">
@@ -159,38 +164,14 @@ a eXistdb launchpad
                     <div name="packagemanager">
                         <h1>package manager</h1>
                     </div>
-                    <div name="usermanager" on-click="_loadUserManager">
-                        <!--<existdb-usermanager></existdb-usermanager>-->
-                        <slot name="usermanager"></slot>
-                    </div>
-<!--
-                    <div name="backup">
-                        <h1>backup</h1>
-                    </div>
--->
-                    <div name="settings">
-                        <h1>settings</h1>
+                    <div id="usermanager" name="usermanager"></div>
+                    <div id="settings" name="settings">
+                        <existdb-settings></existdb-settings>
                     </div>
                 </iron-pages>
 
             </app-header-layout>
         </app-drawer-layout>
-
-        <!--
-            <app-toolbar>
-              <paper-icon-button icon="menu" on-click="_toggleDrawer"></paper-icon-button>
-              <div main-title>Dashboard</div>
-            </app-toolbar>
-
-            <app-drawer-layout>
-              <app-drawer id="drawer" slot="drawer" swipe-open>
-                <div>
-                  here's something
-                </div>
-              </app-drawer>
-              <slot></slot>
-            </app-drawer-layout>
-        -->
 
     </template>
 
@@ -228,6 +209,9 @@ a eXistdb launchpad
                     this.notifyPath('route.path');
 */
                 }
+                if(this.route.path == '/usermanager'){
+                    this._loadUserManager();
+                }
 
             }
 
@@ -236,6 +220,11 @@ a eXistdb launchpad
                 console.log("route changed ",this.route);
                 var s = event.detail.value.substring(1);
                 console.log("route changed ",s);
+
+                if(this.$.drawerLayout.narrow){
+                    this.$.drawer.close();
+                }
+
                 if(s == 'launcher'){
                     console.log('launcher');
                     this.mainLabel = 'Launcher';
@@ -258,41 +247,52 @@ a eXistdb launchpad
                 this.menuItems = this.$.loadDashboard.lastResponse;
             }
 
-            _loadUserManager(e){
-                console.log('loadUserManager');
-//                Polymer.importHref('bower_components')
-            }
-
             _showLauncher(e){
                 console.log('show.... ', e);
                 this.$.pages.select('launcher');
-                if(this.$.drawerLayout.narrow){
-                    this.$.drawer.close();
-                }
             }
             _showPackageManager(e){
                 console.log('show.... ', e);
                 this.$.pages.select('packagemanager');
+/*
                 if(this.$.drawerLayout.narrow){
                     this.$.drawer.close();
                 }
+*/
             }
             _showUserManager(e){
                 this.$.pages.select('usermanager');
-                if(this.$.drawerLayout.narrow){
-                    this.$.drawer.close();
-                }
+                this._loadUserManager();
             }
+
+            _loadUserManager(){
+                var um = document.createElement("existdb-usermanager");
+                this.$.usermanager.appendChild(um);
+            }
+
             _showSettings(e){
                 this.$.pages.select('settings');
+/*
                 if(this.$.drawerLayout.narrow){
                     this.$.drawer.close();
                 }
+*/
             }
 
             _toggleDrawer(e){
                 this.$.drawer.close();
 //                this.$.drawer.notifyResize();
+            }
+
+            _showVersion(e){
+                console.log('show version');
+                this.$.getVersion.url = this.importPath + 'modules/getVersion.xql';
+                this.$.getVersion.generateRequest();
+            }
+
+            _handleVersion(){
+                this.$.version.innerHTML = this.$.getVersion.lastResponse;
+                this.$.versionDialog.open();
             }
 
         }

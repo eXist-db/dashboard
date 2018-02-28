@@ -14,9 +14,9 @@
     "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^2.0.0",
     "iron-flex-layout": "PolymerElements/iron-flex-layout#^2.0.0",
     "paper-item": "PolymerElements/paper-item#^2.0.0",
-    "existdb-usermanager": "https://github.com/eXist-db/usermanager.git#6fdead04aa8c77b3ed127435230ba280e5d9a819",
     "app-route": "PolymerElements/app-route#^2.0.0",
-    "paper-ripple": "PolymerElements/paper-ripple#^2.0.0"
+    "paper-ripple": "PolymerElements/paper-ripple#^2.0.0",
+    "existdb-usermanager": "https://github.com/eXist-db/usermanager.git#^0.16.2"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

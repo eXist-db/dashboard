@@ -1,0 +1,485 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="bower_components/paper-styles/color.html">
+<link rel="import" href="bower_components/paper-styles/typography.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/iron-icons/social-icons.html">
+<link rel="import" href="bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+<link rel="import" href="bower_components/paper-password-input/paper-password-input.html">
+<link rel="import" href="bower_components/paper-password-input/match-passwords-validator.html">
+<link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="bower_components/paper-menu-button/paper-menu-button.html">
+<!--<link rel="import" href="bower_components/paper-menu/paper-menu.html">-->
+<link rel="import" href="bower_components/paper-item/paper-item.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
+
+
+
+
+<!--
+`existdb-usermanager`
+a usermanager for eXistdb
+
+@demo demo/index.html
+-->
+
+<dom-module id="existdb-usermanager">
+    <template>
+        <style>
+            :host {
+                --paper-tabs-selection-bar-color: var(--paper-blue-700);
+                @apply(--paper-font-common-base);
+                display: block;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                --iron-icon-fill-color: var(--paper-blue-700);
+                --iron-icon-width: 36px;
+                --iron-icon-height: 36px;
+                --paper-icon-button-ink-color: var(--paper-blue-300);
+                max-width: 600;
+            }
+
+            ul {
+                padding: 0;
+                list-style: none;
+            }
+
+            li {
+                padding: 10px;
+                background: var(--paper-blue-100);
+                margin: 10px 0;
+                position: relative;
+            }
+
+            .user, .group {
+                font-weight: 700;
+            }
+
+            .fullname, .description {
+                display: block;
+                font-size: 12px;
+                padding-left: 40px;
+            }
+
+/*
+            .fullname::before {
+                content: 'Full Name';
+                padding-right: 10px;
+                font-size: 12px;
+                font-weigth: 300;
+            }
+
+            .description::before {
+                content: 'Description';
+                padding-right: 10px;
+                font-size: 12px;
+                font-weigth: 300;
+            }
+*/
+
+            .more {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+
+            .details {
+                padding: 10px;
+                margin: 10px 0;
+                background: white;
+            }
+
+            .accountActive {
+                margin: 10px 0;
+            }
+            ul.groupMembers li{
+                background: var(--paper-blue-500);
+                color:white;
+                position:relative;
+            }
+            .member-heading{
+                margin-top:20px;
+            }
+            .group-member{
+                padding: 16px;
+            }
+            ul.groupMembers li .remove-group{
+                position: absolute;
+                right:10px;
+                top: 0;
+            }
+            paper-input, paper-password-input{
+                --paper-input-container:{
+                    padding:4px 0;
+                };
+                padding:4px 0;
+
+            }
+            .details paper-input-container{
+                padding:4px 0;
+            }
+            paper-item{
+                min-height: 28px;
+            }
+
+            paper-item.iron-selected{
+                background: var(--paper-blue-grey-200);
+                color:var(--paper-blue-gray-900);
+            }
+
+            paper-menu-button {
+                position: relative;
+                float:right;
+            }
+            paper-icon-button.addGroup{
+                position: absolute;
+                top: -30px;
+                right: 10px;
+            }
+            paper-button.save{
+                background: var(--paper-blue-500);
+                color:white;
+            }
+            .membersOfGroup{
+                position: relative;
+                padding:0;
+            }
+            .membersHeader{
+                padding:0;
+            }
+            .membersOfGroup paper-toggle-button{
+                position:absolute;
+                right:10px;
+                top:12px;
+            }
+            .membersOfGroup span{
+                width:50%;
+            }
+            ul li:last-child{
+                background: transparent;
+            }
+            paper-fab{
+                left:48%;
+                margin-top:-40px;
+                --paper-fab-background:var(--paper-blue-900);
+                --iron-icon-fill-color:white;
+            }
+        </style>
+        <iron-ajax id="loadUserList"
+                   verbose with-credentials
+                   method="get" handle-as="json"
+                   content-type="application/json"
+                   on-response="_handleUsers"
+                   url="/exist/apps/existdb-usermanager/plugins/userManager/api/user/"
+                   on-error="_handleUserListError"
+                   auto></iron-ajax>
+
+        <iron-ajax id="saveUser"
+                   verbose with-credentials
+                   method="put" handle-as="json"
+                   on-response="_handleSaveUser"
+                   url="/exist/apps/dashboard/plugins/userManager/api/user/"
+                   on-error="_handleUserSaveError"></iron-ajax>
+
+        <iron-ajax id="loadGroupList"
+                   verbose with-credentials
+                   method="get" handle-as="json"
+                   on-response="_handleGroups"
+                   url="/exist/apps/dashboard/plugins/userManager/api/group/"
+                   on-error="_handleGroupListError"
+                   auto></iron-ajax>
+
+        <paper-tabs selected="{{selected}}">
+            <paper-tab>Users</paper-tab>
+            <paper-tab>Groups</paper-tab>
+        </paper-tabs>
+
+<!-- KEEP FOR THE MOMENT
+        <paper-dialog id="userDialog" opened>
+            <paper-input label="User Name" required value="{{selectedUser.user}}" class="username"></paper-input>
+            <paper-input label="Full Name" value="{{selectedUser.fullName}}"></paper-input>
+            <paper-input label="Description" value="{{selectedUser.description}}"></paper-input>
+            <match-passwords-validator id="match-passwords-validator"
+                                       password="{{selectedUser.password}}"></match-passwords-validator>
+            <paper-password-input label="Password" value="{{selectedUser.password}}"></paper-password-input>
+            <paper-password-input label="Confirm" auto-validate validator="match-passwords-validator"
+                                  error-message="Passwords need to match"></paper-password-input>
+            <paper-toggle-button class="accountActive" checked$="{{selectedUser.disabled}}">Account is disabled</paper-toggle-button>
+            <paper-input label="umask" value="022"></paper-input>
+            <div class="member-heading">Member of groups</div>
+            <paper-menu id="memberOf" class="dropdown-content" multi attr-for-selected="label">
+                <template is="dom-repeat" items="{{groups}}">
+                    <paper-item label="{{item.group}}" on-tap="_handleGroupItem">{{item.group}}</paper-item>
+                </template>
+            </paper-menu>
+            <paper-button id="save" class="save" on-tap="_handleSave">save changes</paper-button>
+        </paper-dialog>
+
+        <array-selector id="selector" items="{{users}}" selected="{{selectedUser}}"></array-selector>
+-->
+        <iron-pages selected="[[selected]]">
+            <ul>
+                <template id="userList" is="dom-repeat" items="{{users}}" as="item">
+                    <li class="user-entry">
+                        <iron-icon class="icon" icon="social:person"></iron-icon>
+                        <span class="user" title="User Name">{{item.user}}</span>
+                        <span class="fullname">{{item.fullName}}</span>
+                        <span class="description">{{item.description}}</span>
+                        <paper-icon-button id="moredetail" class="more" icon="expand-more" on-tap="editUser"></paper-icon-button>
+                        <div class="details" hidden>
+                            <paper-input label="User Name" required value="{{item.user}}" class="username"></paper-input>
+                            <paper-input label="Full Name" value="{{item.fullName}}"></paper-input>
+                            <paper-input label="Description" value="{{item.description}}"></paper-input>
+                            <match-passwords-validator id="match-passwords-validator"
+                                                       password="{{item.password}}"></match-passwords-validator>
+                            <paper-password-input label="Password" value="{{item.password}}"></paper-password-input>
+                            <paper-password-input label="Confirm" auto-validate validator="match-passwords-validator"
+                                                  error-message="Passwords need to match"></paper-password-input>
+                            <paper-toggle-button class="accountActive" checked$="{{item.disabled}}">Account is disabled</paper-toggle-button>
+                            <paper-input label="umask" value="022"></paper-input>
+                            <div class="member-heading">Member of groups</div>
+                            <paper-menu id="memberOf" multi attr-for-selected="label">
+                                <template is="dom-repeat" items="{{groups}}" as="member">
+                                    <paper-item label="{{member.group}}" on-tap="_handleGroupItem">{{member.group}}</paper-item>
+                                </template>
+                            </paper-menu>
+                            <paper-button id="save" class="save" on-tap="_handleSaveUser">save changes</paper-button>
+                        </div>
+                    </li>
+                </template>
+                <li><paper-fab id="addUser" mini icon="add" on-tap="_handleAddUser"></paper-fab></li>
+            </ul>
+            <ul>
+                <template id="groupList" is="dom-repeat" items="{{groups}}" as="item">
+                    <li>
+                        <iron-icon class="icon" icon="social:people"></iron-icon>
+                        <span class="group" title="Group">{{item.group}}</span>
+                        <span class="description">{{item.description}}</span>
+                        <paper-icon-button class="more" icon="expand-more" on-tap="editGroup"></paper-icon-button>
+                        <div class="details" hidden>
+                            <div class="details">
+                                <paper-input label="Group Name" value="{{item.group}}"></paper-input>
+                                <paper-input label="Description" value="{{item.description}}"></paper-input>
+                                <paper-item class="membersHeader">
+                                    <span style="width: 50%;">Users in this Group</span>
+                                    <span style="width: 50%;text-align: right;display: inline-block;">Group Manager</span>
+                                </paper-item>
+                                <template is="dom-repeat" items="{{item.groups}}" as="member">
+                                    <paper-item class="membersOfGroup">
+                                        <span>{{member.member}}</span>
+                                        <paper-toggle-button checked$="{{member.isManager}}"></paper-toggle-button>
+                                    </paper-item>
+                                </template>
+                                <paper-button id="saveGroup" class="save" on-tap="_handleSaveGroup">save changes</paper-button>
+
+                                </table>
+                                <!--<paper-toggle-button value="[[item.disabled]]">Account is disabled</paper-toggle-button>-->
+
+                            </div>
+                        </div>
+                    </li>
+                </template>
+                <li><paper-fab id="addGroup" mini icon="add" on-tap="_handleAddGroup"></paper-fab></li>
+
+            </ul>
+        </iron-pages>
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'existdb-usermanager',
+
+            properties: {
+                selected: {
+                    type: Number,
+                    value: 0,
+                },
+                users: {
+                    type: Array,
+                    notify:true
+                },
+
+                selectedUser: {
+                    type: Object,
+                    value: {
+                        user:'foo',
+                        fullName:'bar',
+                        password:'',
+                        description:'',
+                        umask:'',
+                        disabled:false,
+                        groups:[],
+
+                    }
+                },
+                groups: {
+                    type: Array,
+                    value: function () {
+                        return []
+                    },
+                    notify:true
+                },
+                groupmember: {
+                    type: Array,
+                    value: []
+                },
+
+                saveUrl:{
+                    type: String,
+                    value: "/exist/apps/dashboard/plugins/userManager/api/user/",
+                    readonly:true
+                }
+            },
+
+
+            attached: function () {
+                this.listen(this, 'users-changed', '_usersChanged')
+                this.listen(this, 'groups-changed', '_groupsChanged')
+            },
+
+            detached: function () {
+                this.unlisten(this, 'users-changed', '_usersChanged')
+                this.unlisten(this, 'groups-changed', '_groupsChanged')
+            },
+
+            editUser: function (e) {
+                console.log("edit user ", e.model.get('item.user'))
+//                var userid = e.model.get('item')
+//                console.log('userid: ', userid)
+
+                var item = this.$.userList.itemForElement(e.target);
+                console.log("selectedUser: ", item )
+                this.selectedUser = item
+
+//                this.selectedUser = this.users.indexOf(userid)
+//                console.log("selectedUser index: ", this.setSelectedUser )
+
+/* keep: using array-selector for master/detail binding - see above
+                var item = this.$.userList.itemForElement(e.target);
+                this.$.selector.select(item);
+*/
+
+                this.groupmember = e.model.get('item.groups')
+                this._selectGroups(e.target)
+                this._toggleDetails(e)
+
+            },
+
+            _selectGroups: function (target) {
+                var section = target.parentNode.parentNode
+                var dropdown = section.querySelector('paper-menu')
+                dropdown.selectedValues = this.groupmember
+            },
+
+
+            editGroup: function (e) {
+                console.log("edit group ", e.model.get('item.group'))
+                var groupid = e.model.get('item.group')
+                this._toggleDetails(e)
+            },
+
+            _toggleDetails: function (e) {
+                var target = e.target.parentNode.parentNode
+                var elem = Polymer.dom(target).querySelector('.details')
+                if (elem.hidden) {
+                    elem.hidden = false
+                    e.target.icon='expand-less'
+                    //set selected values - in which group am i?
+                } else {
+                    elem.hidden = true
+                    e.target.icon='expand-more'
+                }
+            },
+
+            _handleUsers: function () {
+                console.log(this.$.loadUserList.lastResponse)
+                this.users = this.$.loadUserList.lastResponse
+            },
+
+            _handleUserListError: function (e) {
+                console.log("error loading users: ", e)
+                //todo
+            },
+
+            _handleGroups: function () {
+                this.groups = this.$.loadGroupList.lastResponse
+
+            },
+
+            _handleGroupListError: function (e) {
+                console.log("error loading users: ", e)
+                //todo
+            },
+
+            _addGroup: function (e) {
+                //todo
+            },
+            
+            _handleAddUser: function (e) {
+                console.log("add user: ", e)
+                this.push('users',{user:'',fullName:'',description:'',password:'',disabled:false,umask:'022', groups:[]})
+                this.notifyPath('users.*')
+                this.notifyPath('users.#groups')
+            },
+
+            _handleAddGroup: function (e) {
+                //todo
+            },
+
+            _usersChanged: function (e) {
+                console.log("users changed", this.users)
+                //render must be called to update the UI when a new user has been added to the 'users' array
+                this.$.userList.render()
+
+                var scope = this.querySelectorAll('.user-entry')[this.users.length-1]
+                var user = scope.querySelectorAll('.username')[0]
+                if(user.value == ''){
+                    var detail = scope.querySelectorAll('.details')[0]
+                    detail.hidden=false
+                }
+            },
+
+            _groupsChanged: function (e) {
+                console.log("groups changed", this.users)
+                this.$.userList.render()
+            },
+
+
+            _handleGroupItem: function (e) {
+
+                //todo: this does not work yet!
+                var item = this.$.userList.itemForElement(e.model.dataHost.parentNode);
+                var idx = this.users.indexOf(item)
+                console.log("group change idx: ", idx, e.target.label)
+
+//                var idx = this.users.length -1
+                this.push('users.#' + idx + '.groups',e.target.label)
+                this.notifyPath('users.*')
+                console.log("updated groups ", this.users)
+            },
+
+            _handleSaveUser: function (e) {
+                //todo
+                console.log("save user: ", e.model.item, e.model.item.user)
+                this.$.saveUser.body=e.model.item
+                this.$.saveUser.url = this.saveUrl + e.model.item.user
+                this.$.saveUser.generateRequest()
+            },
+
+            _handleUserSaveError:function (e) {
+                //todo
+            }
+
+        });
+    </script>
+</dom-module>

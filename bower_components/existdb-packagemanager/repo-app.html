@@ -1,0 +1,494 @@
+<!--
+`repo-app`
+element for displaying package metadata
+
+@demo demo/doc.html
+-->
+
+<dom-module id="repo-app">
+    <template>
+        <custom-style>
+            <style is="custom-style">
+                paper-progress.slow {
+                    --paper-progress-indeterminate-cycle-duration: 10s;
+                }
+            </style>
+        </custom-style>
+        <style>
+            :host {
+                display: flex;
+                flex-direction: row;
+                padding: 30px;
+                position: relative;
+                background: white;
+                margin-bottom:10px;
+                min-height:70px;
+
+                --paper-icon-button: {
+                    color: var(--paper-blue-700);
+                };
+
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12),0 3px 1px -2px rgba(0, 0, 0, 0.2);
+
+                cursor: pointer;
+                /*--paper-progress-container-color:white;*/
+
+            }
+            #progress{
+                position: absolute;
+                top:0;
+                left:0;
+                width:100%;
+                display: block;
+            }
+            :host ::slotted(*){
+                @apply(--paper-font-common-base);
+            }
+
+            paper-icon-button {
+                min-height: 36px;
+                min-width: 36px;
+            }
+
+            #info{
+                display:inline-block;
+                z-index:100;
+            }
+            #install:not([hidden]){
+                /*position: absolute;*/
+                display: inline-block;
+                top:10px;
+                right:40px;
+            }
+
+            existdb-package-remove-action{
+                /*position: absolute;*/
+                top:10px;
+                right:40px;
+                display: inline-block;
+            }
+
+            .actions{
+                position: absolute;
+                right:0;
+                top:0;
+                padding:10px;
+            }
+            /* styles for metadata elements */
+            :host ::slotted(repo-icon){
+                width:120px;
+                display: inline-block;
+            }
+            ::slotted(repo-icon) img{
+                /*max-width: 100px;*/
+                width: 100px;
+            }
+
+            .wrapper{
+                display: inline-block;
+                padding-left:20px;
+            }
+
+            .wrapper ::slotted(repo-type){
+                display:block;
+                color:var(--paper-blue--700);
+                font-size:16px;
+                position:absolute;
+                top:0px;
+                padding-top:15px;
+                text-transform:uppercase;
+            }
+            :host[type='library'] .wrapper ::slotted(repo-type){
+                color:var(--paper-green-700);
+            }
+
+            .wrapper ::slotted(repo-title){
+                font-size:24px;
+                font-weight:500;
+                margin:10px 0;
+                display: inline-block;
+                @apply(--paper-font-common-base);
+
+            }
+
+            .wrapper ::slotted(repo-name),
+            .wrapper ::slotted(repo-description),
+            .wrapper ::slotted(repo-authors),
+            .wrapper ::slotted(repo-abbrev),
+            .wrapper ::slotted(repo-license),
+            .wrapper ::slotted(repo-website),
+            .wrapper ::slotted(repo-url),
+            .wrapper ::slotted(repo-requires),
+            .wrapper ::slotted(repo-changelog),
+            .wrapper ::slotted(repo-other),
+            .wrapper ::slotted(repo-note),
+            .wrapper ::slotted(repo-available)
+            {
+                display:none;
+            }
+
+            .wrapper ::slotted(repo-installed):before{
+                content: "Installed Version ";
+                color:var(--paper-orange-700);
+                display: table-cell;
+                padding-right:4px;
+            }
+            .wrapper ::slotted(repo-installed){
+                color:var(--paper-orange-700);
+
+            }
+
+            .wrapper[show-all] ::slotted(repo-name),
+            .wrapper[show-all] ::slotted(repo-description),
+            .wrapper[show-all] ::slotted(repo-authors),
+            .wrapper[show-all] ::slotted(repo-abbrev),
+            .wrapper[show-all] ::slotted(repo-license),
+            .wrapper[show-all] ::slotted(repo-website),
+            .wrapper[show-all] ::slotted(repo-url),
+            .wrapper[show-all] ::slotted(repo-requires),
+            .wrapper[show-all] ::slotted(repo-changelog),
+            .wrapper[show-all] ::slotted(repo-change),
+            .wrapper[show-all] ::slotted(repo-other),
+            .wrapper[show-all] ::slotted(repo-note)
+            {
+
+                display:table-row;
+                padding:10px 0;
+                margin-bottom: 6px;
+            }
+
+            .wrapper[show-all] ::slotted(repo-other) repo-version repo-requires{
+                display: table-cell;
+            }
+            .wrapper[show-all] ::slotted(repo-changelog) {
+                padding-top:10px;
+            }
+            .wrapper[show-all] ::slotted(repo-changelog) repo-change ul{
+                padding:0 0 10px 10px;
+                margin:0;
+            }
+
+            /* CSS Labels for the meta elements */
+            .wrapper[show-all] ::slotted(*)::before{
+                display: table-cell;
+                min-width: 120px;
+                padding:2px;
+            }
+
+            .wrapper[show-all] ::slotted(repo-requires)::after{
+                display:table-row;
+                content: 'eXistdb ' attr(semver-min);
+            }
+
+            .wrapper[show-all] ::slotted(repo-version) repo-change{
+                display:table-row;
+            }
+            .wrapper[show-all] ::slotted(repo-version) repo-change:before{
+                content:attr(version);
+            }
+
+            .wrapper[show-all] ::slotted(repo-name)::before{
+                content: "Name: ";
+            }
+            .wrapper[show-all] ::slotted(repo-description)::before{
+                content:"Description: ";
+            }
+            .wrapper[show-all] ::slotted(repo-authors)::before{
+                content:"Author(s):";
+            }
+            .wrapper[show-all] ::slotted(repo-abbrev)::before{
+                content:"Abbreviation:";
+            }
+            .wrapper[show-all] ::slotted(repo-website)::before{
+                content:"Website:";
+            }
+            .wrapper[show-all] ::slotted(repo-url)::before{
+                content:"Url:";
+            }
+            .wrapper[show-all] ::slotted(repo-license)::before{
+                content:"License:";
+            }
+
+            .wrapper[show-all] ::slotted(repo-version)::before{
+                display:inline-block;
+            }
+            .wrapper[show-all] ::slotted(repo-version[version])::before{
+                min-width: auto;
+            }
+
+            .wrapper[show-all] ::slotted(repo-requires):before{
+                content:'Requires';
+            }
+
+            .wrapper[show-all] ::slotted(repo-changelog) repo-change:before{
+                content:'Changes in ' attr(version);
+            }
+
+            .wrapper[show-all] ::slotted(repo-changelog):before{
+                content:'Changelog';
+                paddding-top:10px;
+            }
+
+            .wrapper[show-all] ::slotted(repo-other){
+                display: table-row;
+            }
+            .wrapper[show-all] ::slotted(repo-other):before{
+                content:'Older versions';
+                display: table-cell;
+            }
+
+            .wrapper[show-all] ::slotted(repo-note):before{
+                content:'Notes';
+            }
+
+            :host(.update):before{
+                content: "updated";
+                position:absolute;
+                bottom:14px;
+                left:30px;
+                background: var(--paper-orange-700);
+                color:var(--paper-orange-100);
+                padding:4px 0;
+                width: 120px;
+                text-align: center;
+            }
+            [hidden]{
+                display: none;
+            }
+
+        </style>
+        <paper-progress id="progress" class="slow"></paper-progress>
+        <slot name="icon"></slot>
+        <div id="wrapper" class="wrapper" url="[[url]]">
+            <slot></slot>
+            <div class="actions">
+                <existdb-package-install-action
+                        id="install"
+                        url="{{url}}"
+                        abbrev="{{abbrev}}"
+                        type="{{type}}"
+                        version="{{version}}"
+                        hidden></existdb-package-install-action>
+
+                <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}" no-remove="{{readonly}}"></existdb-package-remove-action>
+
+                <paper-icon-button id="info" icon="info" on-click="_showInfo"></paper-icon-button>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        class RepoApp extends Polymer.Element {
+
+            static get is() {
+                return 'repo-app';
+            }
+
+            static get properties() {
+                return {
+                    type: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    abbrev: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    version: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    action: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    status: {
+                        type: String,
+                        reflectToAttribute: true,
+                        notify: true,
+                        observer: '_handleStatus'
+                    },
+                    installed: {
+                        type: String
+                    },
+                    available: {
+                        type: String
+                    },
+                    url: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    packageTitle: {
+                        type: String,
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+                    showAll: {
+                        type: Boolean,
+                        reflectToAttribute: true
+                    },
+                    path: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    readonly:{
+                        type: String,
+                        reflectToAttribute:true
+                    }
+                };
+            }
+
+            constructor() {
+//                console.log('constructor RepoApp')
+                super();
+            }
+
+
+            handleInfo (e) {
+                e.stopPropagation()
+                e.preventDefault()
+               var detail = this.querySelector('table');
+                if(detail.hasAttribute("class")){
+                   detail.removeAttribute("class")
+                }else{
+                    detail.setAttribute("class","hidden")
+                }
+
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+//                console.log("repo-app attached");
+                this.setAttribute('tabindex','0');
+
+//                this.$.remove.addEventListener('click',e => this._doRemove(e));
+//                this.addEventListener('click',this._doRemove);
+                console.log("repo-app readonly: ", this.readonly);
+            }
+
+            ready () {
+                super.ready();
+//                console.log('repo-app ready');
+
+                this.addEventListener('keyup',this._handleEnter);
+
+                this.$.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
+                this.$.install.addEventListener('package-installed',e => this._onInstalled(e));
+                this.$.remove.addEventListener('package-remove-started',e => this._onRemove(e));
+                this.addEventListener('click',e => this._handleTap(e));
+
+                var that = this;
+                this.querySelector("repo-title").addEventListener('click', function(e){
+                    that._handleTap(e);
+                });
+
+                this.addEventListener('requestInstall', this._installOtherVersion);
+
+                this.$.remove.packageTitle = this.querySelector('repo-title').textContent;
+            }
+
+            _handleTap (e) {
+                e.stopPropagation();
+
+                var t = e.target.nodeName.toLowerCase();
+//                console.log('_handleTap ',e);
+//                console.log('_handleTap ',e.b[0].id);
+//                console.log('_handleTap ',e.path);
+
+                // ugly special case handling for Chrome and FF but don't know how to solve better yet.
+                if(e.path != undefined){
+                    console.log('########',e.path[0].nodeName);
+                    if(e.path[0].nodeName == 'EXISTDB-PACKAGE-REMOVE-ACTION') return;
+                }
+                if(e.b != undefined && e.b[0].id == 'remove') return;
+
+                if(t == 'existdb-package-remove') return;
+                if(t == "paper-icon-button") return;
+                if(t == "iron-icon") return;
+
+                this._openApp();
+            }
+
+            _handleEnter(e) {
+//                console.log("_handleEnter key ", e);
+//                console.log("_handleEnter key original", e.composedPath()[0]);
+                var originalTarget = e.composedPath()[0];
+
+//                console.log("node ", originalTarget.nodeName);
+
+                if(originalTarget.nodeName == 'PAPER-ICON-BUTTON') return;
+                if (e.target.nodeName.toLowerCase() == "repo-app" && e.keyCode == 13) {
+//                    console.log('_handleEnter key enter fired');
+                    this._openApp()
+                }
+            }
+
+            _openApp () {
+                var isApp = this.type == 'application';
+//                console.log("######## is App: ", isApp);
+
+                if(isApp && this.status == "installed"){
+                    var targetUrl = this.path;
+                    window.open(targetUrl)
+                }
+            }
+
+            _handleStatus () {
+//                console.log("_handleStatus ",this.status);
+
+                if(this.status == 'installed'){
+                    this.$.install.hidden = true;
+                    this.$.remove.hidden = false;
+                }else{
+                    this.$.remove.hidden = true;
+                    this.$.install.hidden = false;
+                }
+            }
+
+            _showInfo(e){
+//                console.log('_showInfo ', e);
+                e.stopPropagation();
+                e.preventDefault();
+                var showsAll = this.$.wrapper.getAttribute('show-all');
+
+                if(!showsAll){
+                    this.$.wrapper.setAttribute('show-all','true');
+                }else{
+                    this.$.wrapper.removeAttribute('show-all');
+                }
+
+            }
+
+            _onInstalled (e) {
+//                console.log('_onInstalled ', e);
+                this.$.progress.indeterminate=false;
+                this.$.progress.value=100;
+//                this.dispatchEvent(new CustomEvent('package-installed', {detail: {packageUrl:e.detail.package}}));
+
+            }
+
+            _onInstallStarted (e) {
+//                console.log('_onInstallStarted ', e);
+                this.$.progress.hidden=false;
+                this.$.progress.indeterminate=true;
+                this.$.install.install();
+            }
+
+            _onRemove (e){
+//                console.log('_onRemoveStarted ', e);
+                this.$.progress.hidden=false;
+                this.$.progress.indeterminate=true;
+                this.$.remove.removeIt();
+            }
+
+            _installOtherVersion (e) {
+//                console.log("###################### install other version", e.detail.version);
+                this.$.install.version = e.detail.version;
+                this.$.install.submit(e);
+            }
+
+        }
+        window.customElements.define(RepoApp.is, RepoApp);
+
+    </script>
+</dom-module>

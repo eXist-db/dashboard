@@ -1,0 +1,742 @@
+
+-->
+<!--
+`existdb-packagemanager`
+a web component implementing eXistdb packagemanager
+
+@demo demo/doc.html
+-->
+
+
+<dom-module id="existdb-packagemanager">
+    <template>
+        <style>
+            :host {
+                display: block;
+
+                --paper-tabs-selection-bar-color: var(--paper-blue-700);
+                @apply(--paper-font-common-base);
+                position: relative;
+                /*background: var(--paper-blue-100);*/
+                background: whitesmoke;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                height:100%;
+                overflow:auto;
+/*
+                --vaadin-upload-button-add: {
+                    background: var(--paper-blue-700);
+                };
+*/
+
+                --paper-toggle-button-checked-button-color: var(--paper-blue-700);
+
+                --app-header-background-front-layer: {
+                    background: var(--paper-blue-500);
+
+                };
+                --paper-input-container:{
+                    font-size:18px;
+                    margin-top:-18px;
+                    /*background: var(--paper-blue-900);*/
+                    padding:0;
+                };
+
+                --paper-input-container-underline-focus:{
+                    background: var(--paper-blue-900);
+                    border:var(--paper-blue-900);
+                    color:var(--paper-blue-100);
+                };
+                /*--iron-icon-stroke-color:white;*/
+
+            }
+
+            app-header-layout{
+                background: var(--paper-blue-300);
+            }
+
+
+            app-header {
+                background: var(--paper-blue-500);
+                color:var(--paper-blue-900);
+                height: 128px;
+            }
+
+            #pages{
+                display: block;
+            }
+            #pages > div{
+                width: 100%;
+                height:100%;
+            }
+
+            [icon="apps"],[icon="search"],[icon="more-vert"]{
+                --iron-icon-fill-color:white;
+                --iron-icon-stroke-color:white;
+                /*width: 60px;*/
+            }
+            [icon="chevron-left"]{
+                --iron-icon-fill-color:var(--paper-blue-100);
+                /*--iron-icon-stroke-color:var(--paper-blue-900);*/
+                --paper-icon-button:{
+                    width: 64px;
+                    height:52px;
+                }
+            }
+            [icon="apps"]{
+                width:36px;
+                height: 36px;
+            }
+
+            .filter{
+                display: inline-block;
+                font-size: 16px;
+                box-shadow: none;
+                width:100%;
+                border:none;
+                outline:none;
+                width: 260px;
+                font-size:16px;
+                background: var(--paper-blue-700);
+                color:var(--paper-blue-100);
+                padding:10px;
+
+                --paper-input-container-underline:{
+                    color: var(--paper-blue-700);
+                };
+            }
+            .filter::placeholder{
+                color:var(--paper-blue-100);
+            }
+            ::selection{
+                /*background: var(--paper-blue-700);*/
+                color:var(--paper-blue-900);
+            }
+
+
+            .remote-filter-wrapper{
+                margin-right:40px;
+            }
+
+            iron-icon {
+                margin-right: 10px;
+                --iron-icon-stroke-color: var(--paper-blue-500);
+            }
+
+            app-toolbar {
+                z-index: 10;
+                background: var(--paper-blue-500);
+                color:white;
+            }
+
+            vaadin-upload{
+                background: var(--paper-blue-300);
+                padding:10px;
+                color: var(--paper-blue-700);
+                display:block;
+            }
+            vaadin-upload:not([nodrop]){
+                border:none;
+            }
+
+            [slot="drop-label"] {
+                padding:11px 0;
+                color:var(--paper-blue-900);
+                font-weight:300;
+            }
+            [slot="drop-label-icon"] {
+                margin: 0 1em;
+                width: 40px;
+                color:var(--paper-blue-500);
+                height:40px;
+            }
+
+            [slot="add-button"] {
+                background: var(--paper-blue-500);
+                color:white;
+                margin: 0 0 10px 0;
+            }
+
+            #toast {
+                --paper-toast-background-color: var(--paper-blue-700);
+                --paper-toast-color: white;
+            }
+
+            #toastError {
+                --paper-toast-background-color: var(--paper-red-700);
+                --paper-toast-color: white;
+            }
+
+            #updates{
+                --paper-toast-background-color: var(--paper-orange-700);
+                display: table;
+                font-size:18px;
+            }
+            #updates paper-button{
+                background: var(--paper-orange-300);
+                color:var(--paper-deep-orange-700);
+                text-align: center;
+                margin-left:20px;
+            }
+            #updates #label{
+                display: inline-block;
+                padding-right:20px;
+            }
+
+            [type='search'] {
+                width: 140px;
+
+            }
+
+            paper-fab {
+                position: fixed;
+                right: 20px;
+                bottom: 20px;
+                z-index: 100;
+                --paper-fab-background: var(--paper-pink-500);
+                --iron-icon-fill-color: var(--paper-grey-50);
+            }
+
+            .heading {
+                display: none;
+            }
+
+            @media only screen and (min-width: 768px) {
+                .heading {
+                    width: 100%;
+                    display: inline-block;
+                    font-weight: 300;
+                    text-align: center;
+                    flex-grow: 2;
+                    color: var(--paper-blue-100);
+                }
+            }
+
+            .repo-toolbar {
+                position: fixed;
+                height: 64px;
+                width: 100%;
+            }
+
+            .repo-toolbar {
+                box-shadow: -1px 6px 6px -3px rgba(0, 0, 0, 0.4);
+            }
+
+            #remoteService {
+                padding-top: 65px;
+            }
+            paper-listbox{
+                z-index:10;
+            }
+            paper-card{
+                position:fixed;
+                z-index:101;
+                width:340px;
+                padding:10px;
+                top:10px;
+                right:30px;
+                --paper-card-background-color:var(--paper-orange-500);
+            }
+            .card-content{
+                background:var(--paper-orange-300);
+            }
+            paper-card td:first-child{
+                padding:10px 10px 10px 0;
+            }
+            [main-title]{
+                color:white;
+                font-weight: 300;
+            }
+/*
+            .count{
+                background:var(--paper-blue-300);
+                display:inline-block;
+                !*border-radius:20px;*!
+                padding:10px;
+                color:var(--paper-blue-800);
+                font-size:20px;
+                line-height:20px;
+                font-weight: 700;
+            }
+*/
+
+            existdb-packages{
+                margin-top:2px;
+            }
+
+            .wrapService{
+                padding-top:66px;
+            }
+
+            [hidden]{
+                display: none;
+            }
+
+            paper-item a{
+                text-decoration: none;
+                color:inherit;
+            }
+
+            .counter{
+                font-size:smaller;
+            }
+        </style>
+<!--
+        <iron-a11y-keys id="a11y1" target="[[target]]" keys="ctrl+h"
+                        on-keys-pressed="_showHideShortcuts"></iron-a11y-keys>
+
+-->
+        <iron-a11y-keys id="a11y2" target="[[target]]" keys="esc"
+                        on-keys-pressed="_handleESC"></iron-a11y-keys>
+
+        <iron-a11y-keys id="a11y3" target="[[target]]" keys="right"
+                        on-keys-pressed="_switchToAvailable"></iron-a11y-keys>
+
+        <iron-a11y-keys id="a11y4" target="[[target]]" keys="left"
+                        on-keys-pressed="_switchToInstalled"></iron-a11y-keys>
+
+        <iron-a11y-keys id="a11y5" target="[[target]]" keys="ctrl+f"
+                        on-keys-pressed="_handleFilterShortcut"></iron-a11y-keys>
+
+<!-- todo: for unclear reasons the shortcut does not work in FF - disabling for now
+        <iron-a11y-keys id="a11y6" target="[[target]]" keys="ctrl+l"
+                        on-keys-pressed="_showLibraries"></iron-a11y-keys>
+-->
+
+        <iron-a11y-keys id="a11y7" target="[[target]]" keys="ctrl+u"
+                        on-keys-pressed="_showUpload"></iron-a11y-keys>
+
+
+        <paper-card id="shortcuts" heading="shortcuts" hidden>
+            <div class="card-content">
+                <div class="card-actions">
+                    <table>
+<!--
+                        <tr>
+                            <td>Ctrl+h</td>
+                            <td>show shortcuts</td>
+                        </tr>
+-->
+                        <tr>
+                            <td>ESC</td>
+                            <td>reset filter</td>
+                        </tr>
+                        <tr>
+                            <td>Crtl + f</td>
+                            <td>filter packages</td>
+                        </tr>
+<!--
+                        <tr>
+                            <td>Crtl + l</td>
+                            <td>show/hide local libraries</td>
+                        </tr>
+-->
+                        <tr>
+                            <td>Crtl + u</td>
+                            <td>upload</td>
+                        </tr>
+                        <tr>
+                            <td>right</td>
+                            <td>show available packages</td>
+                        </tr>
+                        <tr>
+                            <td>left</td>
+                            <td>show installed packages</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="card-actions">
+                <paper-button id="closeCard" on-click="_showHideShortcuts">close</paper-button>
+            </div>
+        </paper-card>
+<!--
+        <neon-animated-pages id="pages" nolibs="true" selected="{{selected}}" entry-animation="[[entryAnimation]]"
+                             exit-animation="[[exitAnimation]]">
+-->
+        <iron-pages id="pages" nolibs="true" selected="{{selected}}">
+
+            <div id="localPage">
+                <app-header-layout fullbleed has-scrolling-region>
+                    <app-header slot="header" class="app-header" reveals condenses effects="waterfall" fixed>
+
+                        <app-toolbar id="maintool" style="height:64px;" sticky>
+                            <iron-icon icon="apps"></iron-icon>
+                            <div main-title>PackageManager</div>
+                            <span class="heading">Installed packages <span class="count">[[count]]</span></span>
+
+                            <paper-input-container>
+                                <iron-input slot="input">
+                                    <input id="filterLocal" class="filter" type="text" name="query"
+                                       tabindex="0" on-keyup="_handleFilter" autofocus placeholder="type here to filter" title="type here to filter - ESC to reset">
+                                </iron-input>
+                            </paper-input-container>
+
+                            <paper-menu-button id="moreMenu" close-on-activate horizontal-align="right" tabindex="-1">
+                                <paper-icon-button icon="more-vert" mini slot="dropdown-trigger"></paper-icon-button>
+                                <paper-listbox slot="dropdown-content">
+                                    <paper-item id="libSwitch" on-click="_showLibraries">show libraries</paper-item>
+                                    <paper-item on-click="_showHideShortcuts">show shortcuts</paper-item>
+                                    <paper-item><a href="index.html?logout=true">logout</a></paper-item>
+                                </paper-listbox>
+                            </paper-menu-button>
+
+
+                        </app-toolbar>
+
+                        <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}" tabindex="-1">
+                            <iron-icon class="drop-icon" slot="drop-label-icon" icon="image:adjust" size="48" width="48"></iron-icon>
+                            <div slot="drop-label">DROPZONE - put your package(s) here.</div>
+                            <paper-button id="uploadBtn" slot="add-button">upload</paper-button>
+                        </vaadin-upload>
+
+
+                    </app-header>
+
+
+                    <existdb-packages id="localService"
+                                      service="../packageservice/packages/apps"></existdb-packages>
+                    <paper-fab id="showRepo" icon="add" on-click="_switchToAvailable"></paper-fab>
+
+                </app-header-layout>
+            </div>
+
+            <div id="repoPage">
+
+                <app-toolbar class="repo-toolbar">
+                    <paper-icon-button icon="chevron-left" on-click="_switchToInstalled"></paper-icon-button>
+                    <div class="heading">Available Packages <span class="count">[[count]]</span></div>
+
+                    <paper-input-container class="remote-filter-wrapper">
+                        <iron-input slot="input">
+                            <input id="filterRepo" class="filter" type="text" name="query"
+                                   tabindex="0" on-keyup="_handleFilter" autofocus placeholder="type here to filter" title="type here to filter - ESC to reset">
+                        </iron-input>
+                    </paper-input-container>
+
+                </app-toolbar>
+                <div class="wrapService">
+                <existdb-packages id="remoteService"
+                                  service="../packageservice/packages/remote"></existdb-packages>
+                </div>
+            </div>
+
+        </iron-pages>
+
+
+        <paper-toast id="toast" text="" duration="5000"></paper-toast>
+        <paper-toast id="toastError" text="" duration="-1">
+            <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
+        </paper-toast>
+        <paper-toast id="updates" text="Updates available" auto-fit-on-attach duration="10000">
+            <paper-button on-click="_goToAvailable">install...</paper-button>
+            <paper-icon-button icon="clear" on-click="_hideUpdatesToast"></paper-icon-button>
+        </paper-toast>
+    </template>
+
+    <script>
+        class ExistdbPackagemanager extends Polymer.Element{
+
+            static get is() {
+                return 'existdb-packagemanager';
+            }
+
+            static get properties(){
+                return{
+                    url: {
+                        type: String,
+                        notify: true,
+                        reflectToAttribute: true
+                    },
+                    targetUrl: {
+                        type: String,
+                        reflectToAttribute:true
+                    },
+                    filter: {
+                        type: String,
+                        notify: true,
+                        reflectToAttribute: true,
+//                        observer: '_handleFilter'
+                    },
+                    selected: {
+                        observer: '_handlePageChange',
+                        value: 0
+                    },
+                    target:{
+                        type:Object
+                    },
+                    currentFocus:{
+                        type:Number
+                    },
+                    count:{
+                        type:Number,
+                        value:0
+                    },
+                    local:{
+                        type:Array,
+                        value:[]
+                    },
+                    remote:{
+                        type:Array,
+                        value:[]
+                    }
+                };
+            }
+
+            constructor() {
+                super();
+//                console.log('ExistdbPackagemanager constructor');
+                this.remote=[];
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                console.log('packagemanager rootPath: ', this.rootPath);
+                this.focus();
+            }
+
+            ready () {
+                super.ready();
+                this.target=this;
+                this.tabindex=0;
+                this.timeout = 0;
+                this.selected = 0;
+                window.addEventListener('packages-loaded', e => this._handlePackagesLoaded(e));
+
+                this.targetUrl = "/exist/apps/packagemanager/modules/install.xql";
+
+                this.$.uploader.formDataName = "uploadedfiles[]";
+
+                this.$.uploader.addEventListener('upload-before', function (event) {
+//                    console.log('upload xhr before open: ', event.detail.xhr);
+                    var file = event.detail.file;
+                    file.uploadTarget = '../packageservice/packages/action?name=' + file.name;
+                }.bind(this));
+
+                this.$.uploader.addEventListener('upload-progress', function (event) {
+//                    console.log('upload progress: ', event.detail.file);
+                    var file = event.detail.file;
+                });
+
+                var that = this;
+                this.$.uploader.addEventListener('upload-success', function (e) {
+
+                    //catching errors with an 200 response
+                    var res = JSON.parse(e.detail.xhr.response);
+                    if(res[0].error != undefined){
+//                        console.log("got it ", res[0].error);
+                        that._toastError(res[0].error);
+                    }
+
+
+                    var file = e.detail.file
+                    var self = this
+                    that.$.localService.loadPackages();
+
+                    setTimeout(function () {
+                        self.splice('files', self.files.indexOf(file), 1);
+                    }, 1000)
+                });
+                this.$.uploader.addEventListener('upload-error', function (e) {
+//                    console.log("Upload error: ", e.detail)
+                    that._toastError("Upload failed for: " + e.detail.file.name + ' Reason: ' + e.detail.file.error);
+                });
+
+                this._switchToInstalled();
+                this.$.remoteService.loadPackages();
+                this.$.filterLocal.focus();
+            }
+
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                window.removeEventListener('packages-loaded', e => this._handlePackagesLoaded(e));
+
+            }
+
+            _handleESC (e) {
+                this._resetFilters();
+                if(this.selected == 0){
+                    this.$.localService.loadPackages();
+                }else {
+                    this.$.remoteService.loadPackages();
+                }
+                this.focus();
+            }
+
+            _showUpload (e) {
+                this.$.uploadBtn.click();
+            }
+
+            _handlePackagesLoaded (e) {
+//                console.log('################# _handlePackagesLoaded', e);
+
+                this.local = this.$.localService.getPackages();
+                this.remote = this.$.remoteService.getPackages();
+
+//                if(e.detail.type == 'remoteService'){
+//                }
+
+                if(this.selected == 0){
+                    this.$.filterLocal.focus();
+                    this.count = this.$.localService.count;
+                    this._checkForUpdates();
+                }else{
+                    this.$.filterRepo.focus();
+                    this.count = this.$.remoteService.count;
+                }
+
+            }
+
+            _handlePageChange (newValue, oldValue) {
+//                console.log('_handlePageChange ', newValue, oldValue);
+                this._resetFilters();
+                if (newValue == 0) {
+                    //local page
+                    this.focus();
+                    this.$.localService.loadPackages();
+                    this.updateStyles();
+                } else {
+                    //repo page
+                    this.$.updates.close();
+                    this.$.repoPage.focus();
+                    this.$.remoteService.loadPackages();
+                }
+                this.currentFocus=undefined;
+                this.focus();
+            }
+
+            _handleFilterShortcut () {
+//                console.log('_handleFilterShortcut');
+                if(this.selected == 0){
+                    this.focus();
+                    this.$.filterLocal.focus();
+                }else{
+                    this.$.filterRepo.focus();
+                }
+            }
+
+            _handleFilter (e) {
+//                console.log('_handleFilter', e);
+
+
+                var apps, filterString;
+                if(this.selected == 0){
+                    // ### on local page
+                    apps = this.local;
+                    filterString = this.$.filterLocal.value.toLowerCase();
+                }else{
+                    // ### on remote page
+                    apps = this.remote;
+                    filterString = this.$.filterRepo.value.toLowerCase();
+                }
+
+                this.count = apps.length;
+                for (var i = 0; i < apps.length; ++i) {
+                    var app = apps[i]
+                    var shortTitle = app.querySelector("repo-title").textContent;
+
+                    if (!shortTitle.toLowerCase().includes(filterString)) {
+                        app.setAttribute('hidden', '')
+                        this.count--;
+                    } else if (app.hasAttribute('hidden')) {
+                        app.removeAttribute('hidden')
+                    }
+                }
+            }
+
+            _resetFilters () {
+                this.$.filterLocal.value='';
+                this.$.filterRepo.value='';
+            }
+
+            _switchToInstalled () {
+                this.$.pages.selected = 0;
+            }
+
+
+            _switchToAvailable (e) {
+                this.$.pages.selected = 1;
+            }
+
+            _handlePackageInstallError (e) {
+                this._toastError(e.detail)
+            }
+
+            _toast (msg) {
+                this.$.toast.text = msg;
+                this.$.toast.open();
+            }
+
+            _toastError (msg) {
+                this.$.toastError.text = msg;
+                this.$.toastError.open();
+            }
+
+            _hideToast (e) {
+                this.$.toastError.hide();
+            }
+
+            _hideUpdatesToast(e){
+                this.$.updates.hide();
+            }
+
+            _handleRemoveAttempt (e) {
+                this._toastError("Package Manager cannot be removed.")
+            }
+
+            _showLibraries (e) {
+//                console.log('_showLibraries ',e);
+
+                this._resetFilters();
+
+                if (this.$.libSwitch.innerText.trim() == 'show libraries') {
+                    this.$.localService.service = "../packageservice/packages/local";
+                    this.$.localService.loadPackages();
+                    this.$.libSwitch.innerText = "hide libraries";
+                } else {
+                    this.$.localService.service = "../packageservice/packages/apps";
+                    this.$.localService.loadPackages();
+                    this.$.libSwitch.innerText = "show libraries";
+                    var firstApp = this.$.localService.querySelectorAll('repo-app[type="application"]')[0];
+                    this.focus();
+                }
+            }
+
+            _showHideShortcuts (e) {
+//                console.log('_showHideShortcuts')
+
+                if(this.$.shortcuts.hidden){
+                    this.$.shortcuts.hidden=false;
+                }else{
+                    this.$.shortcuts.hidden=true;
+                }
+                this.focus();
+            }
+
+            _checkForUpdates(){
+//                console.log('check for updates.....');
+
+                var self = this;
+                if(!this.remote) return;
+
+                this.remote.forEach(function(item){
+                    if(item.classList.contains('update')) {
+//                        console.log("found update for", item.abbrev);
+//                        console.log("found update for version", item.version);
+                        if (self.selected == 0) {
+                            self.$.updates.open();
+                        }
+                    }
+                });
+            }
+            _goToAvailable(e){
+                this.$.updates.close();
+                this._switchToAvailable(e);
+            }
+
+        }
+        window.customElements.define(ExistdbPackagemanager.is, ExistdbPackagemanager);
+
+    </script>
+</dom-module>

@@ -50,6 +50,6 @@
     "commit": "bbaa07e3c348dddbe94f7a1bda9bc9abd9e6ff76"
   },
   "_source": "https://github.com/vaadin/vaadin-upload.git",
-  "_target": "^3.0.1",
+  "_target": "^3.0.2",
   "_originalSource": "vaadin-upload"
 }

@@ -1,0 +1,226 @@
+<!--
+`existdb-packages`
+element for displaying package metadata
+
+@demo demo/doc.html
+-->
+
+<dom-module id="existdb-packages">
+    <template>
+        <style>
+            body{
+                margin:0;
+                padding:0;
+            }
+            :host {
+                position: relative;
+                background: whitesmoke;
+                margin:0;
+                padding:0;
+                /*height: 100%;*/
+                /*width: 100%;*/
+
+                --paper-icon-button: {
+                    color: var(--paper-blue-300);
+                }
+            }
+            #localItemList{
+                /*width:100%;*/
+                display: block;
+                padding: 10px;
+                margin:0;
+                background: whitesmoke;
+            }
+
+            ::slotted(repo-packages){
+                display: block;
+                width: 100%;
+            }
+            paper-progress.paper-progress{
+                width: 100%;
+                display: block;
+                margin-top: -2px;
+                flex-grow:5;
+
+                --paper-progress-active-color: var(--paper-blue-500);
+                --paper-progress-height: 5px;
+
+            }
+            #toast {
+                --paper-toast-background-color: var(--paper-blue-700);
+                --paper-toast-color: white;
+            }
+            #toastError{
+                background:var(--paper-red-500);
+            }
+            [hidden]{
+                display:none;
+            }
+        </style>
+
+        <iron-ajax id="loadPackages"
+                   verbose with-credentials
+                   method="get" handle-as="text"
+                   on-response="_handlePackages"
+                   on-error="_handleLocalError"></iron-ajax>
+
+
+        <paper-progress id="progress" class="paper-progress" value=""></paper-progress>
+
+        <div id="localItemList" class="items">
+            <slot></slot>
+        </div>
+
+
+        <paper-toast id="toast" text="" duration="4000"></paper-toast>
+        <paper-toast id="toastError" text="" duration="-1">
+            <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
+        </paper-toast>
+
+    </template>
+
+    <script>
+        class ExistdbPackages extends Polymer.Element {
+
+            static get is() {
+                return 'existdb-packages';
+            }
+
+            static get properties() {
+                return {
+                    url: {
+                        type:String,
+                        reflectToAttribute:true
+                    },
+                    service:{
+                        type: String,
+                        reflectToAttribute:true,
+                        notify:true,
+//                        observer: '_serviceChanged'
+                    },
+                    autoLoad:{
+                        type:Boolean,
+                        value:false
+                    },
+                    count:{
+                        type:Number,
+                        value:0,
+                        notify:true,
+                        reflectToAttribute:true,
+                        observer:'_handleCount'
+                    }
+                };
+            }
+
+            constructor() {
+//                console.log('ExistdbPackages constructor')
+                super();
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+//                console.log("existdb-packages connected");
+
+            }
+
+
+            ready () {
+                super.ready();
+//                console.log("existdb-packages ready ", this.service);
+
+                if(this.autoLoad){
+                    this.loadPackages();
+                }
+
+                window.addEventListener('package-removed', function(e){
+//                    console.log("package was removed", e);
+                    this._toast('successfully removed "' + e.detail.package + '"');
+                    this.loadPackages();
+                }.bind(this));
+
+                window.addEventListener('package-remove-error', function (e) {
+                    this._toastError(e.detail.error.error.message)
+                }.bind(this));
+
+                window.addEventListener('package-installed', function (e) {
+//                    console.log('package-installed ', e);
+                    this._toast('Package has been installed: ' + e.detail.abbrev)
+                    this.loadPackages();
+                }.bind(this));
+                window.addEventListener('package-install-error', function (e) {
+                    this._toastError(e.detail.error.error.message)
+                }.bind(this));
+            }
+
+            getPackages(){
+                return this.packages;
+            }
+
+
+            _handlePackages (data) {
+//                console.log('existdb-packages._handlePackages');
+                this.$.localItemList.innerHTML = this.$.loadPackages.lastResponse
+
+                this._resetProgress();
+//                console.log('######################## ', this.shadowRoot.querySelectorAll('repo-app').length);
+
+                this.packages = this.shadowRoot.querySelectorAll('repo-app')
+                this.count = this.packages.length;
+
+                this.dispatchEvent(new CustomEvent('packages-loaded', {bubbles: true, composed: true, detail: {type:this.id}}));
+            }
+
+            _handleLocalError(e) {
+//                console.log("loading of available packages failed", e.detail.error)
+                this._resetAndHideProgress()
+                this._toastError('loading of available packages failed')
+            }
+
+            loadPackages(){
+                this.$.progress.indeterminate = true
+                this.$.loadPackages.url = this.service;
+                this.$.loadPackages.generateRequest();
+            }
+
+            _resetProgress () {
+                this.$.progress.value = 100
+                var self = this;
+                setTimeout(function () {
+                    self.$.progress.value = 0
+                    self.$.progress.indeterminate = false
+                }, 1000)
+
+            }
+
+            _resetAndHideProgress () {
+                this.$.progress.indeterminate = false;
+                this.$.progress.value = 0;
+                this.$.progress.hidden=true
+            }
+
+            _toast (msg) {
+                this.$.toast.text = msg
+                this.$.toast.open()
+            }
+
+            _toastError (msg) {
+                this.$.toastError.text = msg
+                this.$.toastError.open()
+            }
+
+            _serviceChanged(e){
+//                console.log("the service has changed!");
+                // DO NOT!!!!
+//                this.$.loadPackages.generateRequest();
+
+            }
+            _handleCount(newValue, oldValue){
+//                console.log("_handleCount ", newValue, oldValue)
+            }
+
+        }
+
+        window.customElements.define(ExistdbPackages.is, ExistdbPackages);
+
+    </script>
+</dom-module>

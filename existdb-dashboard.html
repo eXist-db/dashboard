@@ -15,7 +15,7 @@ a eXistdb launchpad
                 margin: 0;
                 padding: 0;
                 @apply(--paper-font-common-base);
-                color: white;
+                color: var(--google-grey-900);
                 --app-drawer-scrim-background: rgba(0, 0, 0, 0.3);
 
 
@@ -117,7 +117,7 @@ a eXistdb launchpad
         <app-drawer-layout id="drawerLayout" fullbleed>
             <app-drawer id="drawer" slot="drawer">
                 <div class="drawerbar">
-                    <img class="logo" src="resources/images/existdb.png">
+                    <img class="logo" src="resources/images/existdb-web.svg">
                     <div class="subitem">Dashboard</div>
                 </div>
 
@@ -127,19 +127,23 @@ a eXistdb launchpad
                 <!--<div id="listItems" class="drawer-items" role="listbox" slot="menu">-->
                 <!--<paper-listbox id="menu" attr-for-selected="id">-->
                     <paper-item id="launcherItem" on-click="_showLauncher" role="menuitem">
+                        <img src="resources/images/launcher.svg" style="width:36px;height:36px;">
                         Launcher
                         <paper-ripple></paper-ripple>
                     </paper-item>
                     <paper-item id="packageManagerItem" on-click="_showPackageManager" role="menuitem">
+                        <iron-icon icon="apps"></iron-icon>
                         Package Manager
                         <paper-ripple></paper-ripple>
                     </paper-item>
                     <paper-item id="userManagerItem" on-click="_showUserManager" role="menuitem">
+                        <iron-icon icon="social:people"></iron-icon>
                         User Manager
                         <paper-ripple></paper-ripple>
                     </paper-item>
                     <!--<paper-item on-click="_showBackup">Backup</paper-item>-->
                     <paper-item id="settingsItem" on-click="_showSettings" role="menuitem">
+                        <iron-icon icon="build"></iron-icon>
                         Settings
                         <paper-ripple></paper-ripple>
                     </paper-item>
@@ -147,6 +151,7 @@ a eXistdb launchpad
 
                 <!--</div>-->
             </app-drawer>
+<!--
             <app-header-layout>
                 <app-header slot="header">
                     <app-toolbar>
@@ -156,21 +161,20 @@ a eXistdb launchpad
                         <iron-icon icon="info-outline" on-click="_showVersion"></iron-icon>
                     </app-toolbar>
                 </app-header>
+-->
 
                 <iron-pages id="pages" selected="{{routeData.page}}" attr-for-selected="name">
                     <div name="launcher">
                         <h1>launcher</h1>
                     </div>
-                    <div name="packagemanager">
-                        <h1>package manager</h1>
-                    </div>
+                    <div id="packagemanager" name="packagemanager"></div>
                     <div id="usermanager" name="usermanager"></div>
                     <div id="settings" name="settings">
                         <existdb-settings></existdb-settings>
                     </div>
                 </iron-pages>
 
-            </app-header-layout>
+            <!--</app-header-layout>-->
         </app-drawer-layout>
 
     </template>
@@ -189,9 +193,19 @@ a eXistdb launchpad
 
                     mainLabel:{
                         type: String
+                    },
+                    userManagerLoaded:{
+                        type:Boolean,
+                        value:false
+                    },
+                    packageManagerLoaded:{
+                        type:Boolean,
+                        value:false
                     }
+
                 };
             }
+
 
             connectedCallback() {
                 super.connectedCallback();
@@ -254,20 +268,33 @@ a eXistdb launchpad
             _showPackageManager(e){
                 console.log('show.... ', e);
                 this.$.pages.select('packagemanager');
+                this._loadPackageManager();
 /*
                 if(this.$.drawerLayout.narrow){
                     this.$.drawer.close();
                 }
 */
             }
+
+            _loadPackageManager(){
+                if(!this.packageManagerLoaded){
+                    var pm = document.createElement("existdb-packagemanager");
+                    this.$.packagemanager.appendChild(pm);
+                    this.packageManagerLoaded=true;
+                }
+            }
+
             _showUserManager(e){
                 this.$.pages.select('usermanager');
                 this._loadUserManager();
             }
 
             _loadUserManager(){
-                var um = document.createElement("existdb-usermanager");
-                this.$.usermanager.appendChild(um);
+                if(!this.userManagerLoaded){
+                    var um = document.createElement("existdb-usermanager-app");
+                    this.$.usermanager.appendChild(um);
+                    this.userManagerLoaded=true;
+                }
             }
 
             _showSettings(e){

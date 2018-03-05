@@ -1,0 +1,68 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
+
+<dom-module id="neo-anim">
+    <template>
+        <style>
+            :host {
+                display: block;
+                position: relative;
+
+                --paper-fab-iron-icon:{
+                    color:transparent;
+                };
+            }
+
+            button#install {
+                display: table-cell;
+                padding: 4px;
+                margin-left: 10px;
+            }
+
+            paper-fab {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+            }
+        </style>
+
+
+        <slot></slot>
+
+        <paper-fab id="doit" icon="add" on-click="_doAnim"></paper-fab>
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'neo-anim',
+
+            properties: {},
+
+
+            attached: function () {
+            },
+
+            _doAnim: function () {
+                this.$.doit.color="transparent";
+                console.log('_doAnim');
+                var elem = this.$.doit;
+                var animation = elem.animate({
+                    opacity: [0.5, 1],
+//                    transform: ['scale(0.5)', 'scale(100)'],
+                    transform: ['translate(10px,100px)']
+                }, {
+                    duration: 400,
+                    iterations: 1,
+                });
+
+                animation.onfinish = function() {
+                    console.log("its done");
+                };
+            }
+
+        });
+    </script>
+</dom-module>

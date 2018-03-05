@@ -16,7 +16,8 @@
     "paper-item": "PolymerElements/paper-item#^2.0.0",
     "app-route": "PolymerElements/app-route#^2.0.0",
     "paper-ripple": "PolymerElements/paper-ripple#^2.0.0",
-    "existdb-usermanager": "https://github.com/eXist-db/usermanager.git#^0.16.2"
+    "existdb-usermanager": "https://github.com/eXist-db/usermanager.git#^0.16.2",
+    "existdb-packagemanager": "https://github.com/eXist-db/existdb-packagemanager.git#v4.2.1"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

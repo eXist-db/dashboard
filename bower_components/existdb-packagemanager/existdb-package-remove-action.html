@@ -99,7 +99,8 @@ implements an interaction with the package repository
                     return
                 }
 
-                var r = confirm('Really remove package "' + this.packageTitle + '"?');
+//                var r = confirm('Really remove package "' + this.packageTitle + '"?');
+                var r = confirm('Really remove package?');
                 if (r == true) {
                     this.dispatchEvent(new CustomEvent('package-remove-started', {bubbles: true, composed: true, detail: {}}));
                 }

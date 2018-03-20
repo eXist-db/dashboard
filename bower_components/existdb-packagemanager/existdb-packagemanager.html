@@ -53,7 +53,7 @@ a web component implementing eXistdb packagemanager
             }
 
             app-header-layout{
-                background: var(--paper-blue-300);
+                /*background: var(--paper-blue-300);*/
             }
 
 
@@ -126,7 +126,8 @@ a web component implementing eXistdb packagemanager
 
             app-toolbar {
                 z-index: 10;
-                background: var(--paper-blue-500);
+                /*background: var(--paper-blue-500);*/
+                background: rgb(0, 136, 204);
                 color:white;
             }
 
@@ -212,6 +213,23 @@ a web component implementing eXistdb packagemanager
                     color: var(--paper-blue-100);
                 }
             }
+            @media only screen and (max-width: 768px) {
+                .filter{
+                    width:120px;
+                    font-size:18px;
+                }
+                [main-title]{
+                    font-size:18px;
+                }
+                [icon="apps"]{
+                    display: none;
+                }
+
+                [slot="drop-label"], [slot="drop-label-icon"] {
+                    display: none;
+                }
+
+            }
 
             .repo-toolbar {
                 position: fixed;
@@ -280,6 +298,10 @@ a web component implementing eXistdb packagemanager
 
             .counter{
                 font-size:smaller;
+            }
+
+            #localService{
+                margin-top:9px;
             }
         </style>
 <!--
@@ -362,7 +384,9 @@ a web component implementing eXistdb packagemanager
                     <app-header slot="header" class="app-header" reveals condenses effects="waterfall" fixed>
 
                         <app-toolbar id="maintool" style="height:64px;" sticky>
-                            <iron-icon icon="apps"></iron-icon>
+                            <slot name="toggleIcon"></slot>
+
+                            <!--<iron-icon icon="apps"></iron-icon>-->
                             <div main-title>PackageManager</div>
                             <span class="heading">Installed packages <span class="count">[[count]]</span></span>
 
@@ -406,7 +430,7 @@ a web component implementing eXistdb packagemanager
 
                 <app-toolbar class="repo-toolbar">
                     <paper-icon-button icon="chevron-left" on-click="_switchToInstalled"></paper-icon-button>
-                    <div class="heading">Available Packages <span class="count">[[count]]</span></div>
+                    <div class="heading" main-title>Available Packages <span class="count">[[count]]</span></div>
 
                     <paper-input-container class="remote-filter-wrapper">
                         <iron-input slot="input">
@@ -429,7 +453,7 @@ a web component implementing eXistdb packagemanager
         <paper-toast id="toastError" text="" duration="-1">
             <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
         </paper-toast>
-        <paper-toast id="updates" text="Updates available" auto-fit-on-attach duration="10000">
+        <paper-toast id="updates" text="Updates available" auto-fit-on-attach duration="15000">
             <paper-button on-click="_goToAvailable">install...</paper-button>
             <paper-icon-button icon="clear" on-click="_hideUpdatesToast"></paper-icon-button>
         </paper-toast>

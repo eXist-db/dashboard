@@ -22,15 +22,28 @@ element for displaying package metadata
 
                 --paper-icon-button: {
                     color: var(--paper-blue-300);
-                }
+                };
+
             }
+
             #localItemList{
                 /*width:100%;*/
-                display: block;
+                /*display: block;*/
                 padding: 10px;
                 margin:0;
                 background: whitesmoke;
+                display: flex;
+                flex-direction:row;
+                flex-wrap:wrap;
+                justify-content:center;
             }
+
+            @media only screen and (max-width: 768px) {
+                #localItemList{
+                    display: block;
+                }
+            }
+
 
             ::slotted(repo-packages){
                 display: block;
@@ -67,7 +80,7 @@ element for displaying package metadata
 
         <paper-progress id="progress" class="paper-progress" value=""></paper-progress>
 
-        <div id="localItemList" class="items">
+        <div id="localItemList" class="items" type="packagemanager">
             <slot></slot>
         </div>
 
@@ -160,9 +173,10 @@ element for displaying package metadata
             _handlePackages (data) {
 //                console.log('existdb-packages._handlePackages');
                 this.$.localItemList.innerHTML = this.$.loadPackages.lastResponse
-
                 this._resetProgress();
-//                console.log('######################## ', this.shadowRoot.querySelectorAll('repo-app').length);
+
+
+//                console.log('repo-packages ', this.shadowRoot.querySelector('repo-packages'));
 
                 this.packages = this.shadowRoot.querySelectorAll('repo-app')
                 this.count = this.packages.length;

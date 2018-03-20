@@ -1,6 +1,7 @@
 <!--
 `existdb-dashboard`
-a eXistdb launchpad 
+
+an application bundling all admin apps in one place.
 
 @demo demo/index.html
 -->
@@ -18,17 +19,17 @@ a eXistdb launchpad
                 color: var(--google-grey-900);
                 --app-drawer-scrim-background: rgba(0, 0, 0, 0.3);
 
-
             }
-            paper-item{
-                --paper-item-focused:{
-                    background:white;
+
+            paper-item {
+                --paper-item-focused: {
+                    background: white;
                 };
-                --paper-item-selected:{
-                    background:white;
+                --paper-item-selected: {
+                    background: white;
                 };
-                --paper-item-focused-before:{
-                    background:white;
+                --paper-item-focused-before: {
+                    background: white;
                 }
             }
 
@@ -43,6 +44,7 @@ a eXistdb launchpad
                 z-index: 100;
                 text-align: center;
                 color: black;
+                /*background: url('resources/images/x.svg') no-repeat;*/
             }
 
             .drawerbar {
@@ -51,16 +53,13 @@ a eXistdb launchpad
                 display: table-cell;
                 vertical-align: middle;
             }
+
             app-drawer-layout:not([narrow]) [drawer-toggle] {
                 display: none;
             }
 
             .righttool {
                 margin-right: 20px;
-            }
-
-            [icon=info-outline]{
-                margin-right:30px;
             }
 
             app-drawer iron-icon {
@@ -77,30 +76,37 @@ a eXistdb launchpad
                 color: var(--paper-blue-900);
             }
 
-            .subitem{
-                font-weight:700;
-                font-size:larger;
-                letter-spacing:1.5px;
+            .subitem {
+                font-weight: 700;
+                font-size: larger;
+                letter-spacing: 1.5px;
             }
 
-
-            h1{
-                color:blue;
+            h1 {
+                color: blue;
             }
 
-            #versionDialog{
-                text-align:center;
+            #versionDialog {
+                text-align: center;
             }
-            #settings{
-                padding:20px;
+
+            #settings {
+                padding: 20px;
+            }
+
+            .launcherIcon {
+                width: 36px;
+                height: 36px;
+                margin-right: 10px;
             }
         </style>
 
+
         <app-location id="location" route="{{route}}" use-hash-as-path></app-location>
         <app-route id="router"
-                route="{{route}}"
-                pattern="/:page"
-                data="{{routeData}}"></app-route>
+                   route="{{route}}"
+                   pattern="/:page"
+                   data="{{routeData}}"></app-route>
 
         <paper-dialog id="versionDialog">
             <img src="resources/images/existdb.png" style="width:120px;">
@@ -121,58 +127,56 @@ a eXistdb launchpad
                     <div class="subitem">Dashboard</div>
                 </div>
 
-                <!--
-                drawer items will be loaded dynamically dependent on the group a user has
-                -->
-                <!--<div id="listItems" class="drawer-items" role="listbox" slot="menu">-->
-                <!--<paper-listbox id="menu" attr-for-selected="id">-->
-                    <paper-item id="launcherItem" on-click="_showLauncher" role="menuitem">
-                        <img src="resources/images/launcher.svg" style="width:36px;height:36px;">
-                        Launcher
-                        <paper-ripple></paper-ripple>
-                    </paper-item>
-                    <paper-item id="packageManagerItem" on-click="_showPackageManager" role="menuitem">
-                        <iron-icon icon="apps"></iron-icon>
-                        Package Manager
-                        <paper-ripple></paper-ripple>
-                    </paper-item>
-                    <paper-item id="userManagerItem" on-click="_showUserManager" role="menuitem">
-                        <iron-icon icon="social:people"></iron-icon>
-                        User Manager
-                        <paper-ripple></paper-ripple>
-                    </paper-item>
-                    <!--<paper-item on-click="_showBackup">Backup</paper-item>-->
-                    <paper-item id="settingsItem" on-click="_showSettings" role="menuitem">
-                        <iron-icon icon="build"></iron-icon>
-                        Settings
-                        <paper-ripple></paper-ripple>
-                    </paper-item>
-                <!--</paper-listbox>-->
-
-                <!--</div>-->
+                <paper-item id="launcherItem" on-click="_showLauncher" role="menuitem">
+                    <img class="launcherIcon" src="resources/images/launcher.svg">
+                    <span class="menuitem">Launcher</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
+                <paper-item id="packageManagerItem" on-click="_showPackageManager" role="menuitem">
+                    <iron-icon icon="apps"></iron-icon>
+                    <span class="menuitem">Package Manager</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
+                <paper-item id="userManagerItem" on-click="_showUserManager" role="menuitem">
+                    <iron-icon icon="social:people"></iron-icon>
+                    <span class="menuitem">User Manager</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
+                <paper-item id="settingsItem" on-click="_showSettings" role="menuitem">
+                    <iron-icon icon="build"></iron-icon>
+                    <span class="menuitem">Settings</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
+                <paper-item id="about" on-click="_showAbout" role="menuItem">
+                    <iron-icon icon="info-outline"></iron-icon>
+                    <span class="menuitem">About</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
             </app-drawer>
-<!--
-            <app-header-layout>
-                <app-header slot="header">
-                    <app-toolbar>
-                        <paper-icon-button icon="menu" drawer-toggle on-click="_toggleDrawer"></paper-icon-button>
-                        <div main-title>[[mainLabel]]</div>
-                        <div class="righttool"><a href="index.html?logout=true">logout</a></div>
-                        <iron-icon icon="info-outline" on-click="_showVersion"></iron-icon>
-                    </app-toolbar>
-                </app-header>
--->
-
-                <iron-pages id="pages" selected="{{routeData.page}}" attr-for-selected="name">
-                    <div name="launcher">
-                        <h1>launcher</h1>
-                    </div>
-                    <div id="packagemanager" name="packagemanager"></div>
-                    <div id="usermanager" name="usermanager"></div>
-                    <div id="settings" name="settings">
-                        <existdb-settings></existdb-settings>
-                    </div>
-                </iron-pages>
+            <iron-lazy-pages id="pages" attr-for-selected="name" selected="{{routeData.page}}">
+                <div name="launcher" data-path="bower_components/existdb-launcher/dependencies.html">
+                    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager"]'>
+                        <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
+                    </existdb-launcher-app>
+                </div>
+                <div id="packagemanager" name="packagemanager"
+                     data-path="bower_components/existdb-packagemanager/dependencies.html">
+                    <existdb-packagemanager>
+                        <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
+                    </existdb-packagemanager>
+                </div>
+                <div id="usermanager" name="usermanager"
+                     data-path="bower_components/existdb-usermanager/dependencies.html">
+                    <existdb-usermanager-app>
+                        <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
+                    </existdb-usermanager-app>
+                </div>
+                <div id="settings" name="settings" data-route="settings">
+                    <existdb-settings>
+                        <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
+                    </existdb-settings>
+                </div>
+            </iron-lazy-pages>
 
             <!--</app-header-layout>-->
         </app-drawer-layout>
@@ -187,20 +191,20 @@ a eXistdb launchpad
 
             static get properties() {
                 return {
-                    route:{
-                        type:Object
+                    route: {
+                        type: Object
                     },
 
-                    mainLabel:{
+                    mainLabel: {
                         type: String
                     },
-                    userManagerLoaded:{
-                        type:Boolean,
-                        value:false
+                    userManagerLoaded: {
+                        type: Boolean,
+                        value: false
                     },
-                    packageManagerLoaded:{
-                        type:Boolean,
-                        value:false
+                    packageManagerLoaded: {
+                        type: Boolean,
+                        value: false
                     }
 
                 };
@@ -210,114 +214,69 @@ a eXistdb launchpad
             connectedCallback() {
                 super.connectedCallback();
                 console.log("dashboard connected");
+                console.log("dashboard connected route ", this.route);
             }
 
-            ready(){
+            ready() {
                 super.ready();
                 this.$.location.addEventListener('path-changed', event => this.routeChanged(event))
                 if (!this.route || !this.route.path) {
                     this.route = {};
                     this.set('route.path', '/launcher');
-/*
-                    this.route.path = '/launcher';
-                    this.notifyPath('route.path');
-*/
                 }
-                if(this.route.path == '/usermanager'){
-                    this._loadUserManager();
-                }
-
             }
 
-            routeChanged(event){
-                console.log("route changed ",event);
-                console.log("route changed ",this.route);
-                var s = event.detail.value.substring(1);
-                console.log("route changed ",s);
+            routeChanged(event) {
+                console.log("route changed ", event);
+                console.log("route changed ", this.route);
 
-                if(this.$.drawerLayout.narrow){
+                var s = this.route.path;
+                console.log("route path changed ", s);
+
+                if (this.$.drawerLayout.narrow) {
                     this.$.drawer.close();
                 }
-
-                if(s == 'launcher'){
-                    console.log('launcher');
-                    this.mainLabel = 'Launcher';
-                } else if(s == 'packagemanager'){
-                    this.mainLabel = 'Package Manager';
-                } else if(s == 'usermanager'){
-                    this.mainLabel = 'User Manager';
-                } else if(s == 'settings'){
-                    this.mainLabel = 'Settings';
-                }
-
+                this.$.drawerLayout.resetLayout();
             }
 
             _toggleDrawer() {
                 this.$.drawer.toggle();
             }
 
-            _handleLoad(){
+            _handleLoad() {
                 console.log("items: ", this.$.loadDashboard.lastResponse);
                 this.menuItems = this.$.loadDashboard.lastResponse;
             }
 
-            _showLauncher(e){
+            _showLauncher(e) {
                 console.log('show.... ', e);
                 this.$.pages.select('launcher');
             }
-            _showPackageManager(e){
+
+            _showPackageManager(e) {
                 console.log('show.... ', e);
                 this.$.pages.select('packagemanager');
-                this._loadPackageManager();
-/*
-                if(this.$.drawerLayout.narrow){
-                    this.$.drawer.close();
-                }
-*/
             }
 
-            _loadPackageManager(){
-                if(!this.packageManagerLoaded){
-                    var pm = document.createElement("existdb-packagemanager");
-                    this.$.packagemanager.appendChild(pm);
-                    this.packageManagerLoaded=true;
-                }
-            }
-
-            _showUserManager(e){
+            _showUserManager(e) {
                 this.$.pages.select('usermanager');
-                this._loadUserManager();
             }
 
-            _loadUserManager(){
-                if(!this.userManagerLoaded){
-                    var um = document.createElement("existdb-usermanager-app");
-                    this.$.usermanager.appendChild(um);
-                    this.userManagerLoaded=true;
-                }
-            }
-
-            _showSettings(e){
+            _showSettings(e) {
                 this.$.pages.select('settings');
-/*
-                if(this.$.drawerLayout.narrow){
-                    this.$.drawer.close();
-                }
-*/
             }
 
-            _toggleDrawer(e){
+            _toggleDrawer(e) {
                 this.$.drawer.close();
-//                this.$.drawer.notifyResize();
             }
 
-            _showVersion(e){
+            _showAbout(e) {
                 console.log('show version');
                 this.$.getVersion.url = this.importPath + 'modules/getVersion.xql';
                 this.$.getVersion.generateRequest();
             }
 
-            _handleVersion(){
+            _handleVersion() {
                 this.$.version.innerHTML = this.$.getVersion.lastResponse;
                 this.$.versionDialog.open();
             }

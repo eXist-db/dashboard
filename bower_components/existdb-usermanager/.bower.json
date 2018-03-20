@@ -52,15 +52,15 @@
   ],
   "private": true,
   "homepage": "https://github.com/eXist-db/usermanager",
-  "version": "0.16.2",
-  "_release": "0.16.2",
+  "version": "0.16.3",
+  "_release": "0.16.3",
   "_resolution": {
     "type": "version",
-    "tag": "v0.16.2",
-    "commit": "9686cc102d95f0a0362b6b39bf3f262d1902e087"
+    "tag": "v0.16.3",
+    "commit": "74926a9e32ffed381b03cdde94658ae4625fe1b1"
   },
   "_source": "https://github.com/eXist-db/usermanager.git",
-  "_target": "^0.16.2",
+  "_target": "^0.16.3",
   "_originalSource": "https://github.com/eXist-db/usermanager.git",
   "_direct": true
 }

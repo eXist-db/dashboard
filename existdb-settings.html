@@ -16,10 +16,31 @@
         color:white;
       }
 
+      app-header-layout {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        /*height: calc(100% - 200px);*/
+        background-color: ghostwhite;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+
+
+      app-header {
+        background: rgb(0, 136, 204);
+        padding: 0px;
+        color: white;
+        height: 60px;
+      }
+
       paper-material{
-        padding:10px;
+        padding:20px;
         max-width: 600px;
-        margin:0 auto;
+        min-width:300px;
+        margin:20px;
       }
 
 
@@ -28,11 +49,20 @@
       }
     </style>
 
-    <paper-material>
-      <h1>Settings</h1>
+    <app-header-layout id="outer" fullbleed has-scrolling-region>
+      <app-header slot="header" fixed>
+        <app-toolbar>
+          <slot name="toggleIcon"></slot>
 
-      <paper-input label="Public Repository URL"></paper-input>
-    </paper-material>
+          <div main-title>Settings</div>
+        </app-toolbar>
+      </app-header>
+
+      <paper-material>
+        <paper-input label="Public Repository URL"></paper-input>
+      </paper-material>
+    </app-header-layout>
+
 
   </template>
 

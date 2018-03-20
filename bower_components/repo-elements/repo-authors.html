@@ -1,20 +1,19 @@
 <!--
-`repo-icon`
+`repo-authors`
 element for displaying package metadata
 
 @demo demo/doc.html
 -->
 
-<dom-module id="repo-icon">
+<dom-module id="repo-authors">
     <template>
         <style>
             :host {
-                display:inline-block;
-                position: relative;
+                display:block;
             }
-            img{
-                display: inline-block;
-                width: 100%;
+
+            ::slotted(repo-author){
+                display: block;
             }
         </style>
         <img src="{{src}}" on-click="_openApp">
@@ -22,10 +21,10 @@ element for displaying package metadata
     </template>
 
     <script>
-        class RepoIcon extends Polymer.Element{
+        class RepoAuthors extends Polymer.Element{
 
             static get is() {
-                return 'repo-icon';
+                return 'repo-authors';
             }
 
             static get properties() {
@@ -38,20 +37,19 @@ element for displaying package metadata
                 };
             }
 
-            constructor() {
-                super();
-            }
 
 
+/*
             _openApp (e) {
                 e.stopPropagation();
                 this.parentNode._openApp(e);
             }
+*/
 
 
 
         }
-        window.customElements.define(RepoIcon.is, RepoIcon);
+        window.customElements.define(RepoAuthors.is, RepoAuthors);
 
     </script>
 </dom-module>

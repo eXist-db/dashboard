@@ -27,6 +27,7 @@
                 position: relative;
                 /*max-width: 600;*/
                 display: block;
+                overflow: auto;
             }
 
             paper-tab {
@@ -97,6 +98,8 @@
                 padding: 40px;
                 /*margin: 0px 40px 20px 0;*/
                 background: white;
+                overflow: auto;
+                display: block;
             }
 
             .details paper-input {
@@ -251,7 +254,7 @@
 
             .editUser, .editGroup {
                 width: 100%;
-                height: 100%;
+                overflow:auto;
             }
 
             paper-icon-button.back, paper-icon-button.back {
@@ -480,7 +483,7 @@
                 <paper-icon-button class="back" icon="close" on-click="_userBack"
                                    autofocus></paper-icon-button>
 
-                <div class="details animated zoomIn fadeIn">
+                <div class="details animated zoomIn">
                     <h2>User</h2>
                     <iron-form id="userForm" allow-redirect="false">
                         <form action="" method="">
@@ -526,7 +529,7 @@
                 <paper-icon-button class="back" icon="close" on-click="_groupBack"
                                    autofocus></paper-icon-button>
 
-                <div class="details animated zoomIn fadeIn">
+                <div class="details animated zoomIn">
                     <h2>Group</h2>
                     <iron-form id="groupForm" allow-redirect="false">
                         <form action="" method="">
@@ -662,6 +665,8 @@
 //                this.$.loadUserList.generateRequest();
 //                this.$.loadGroupList.url = this.importPath + 'api/group/';
 //                this.$.loadGroupList.generateRequest();
+
+                this.$.userLayout.resetLayout();
             }
 
             ready() {
@@ -717,6 +722,8 @@
                     this.$.loadGroupList.url = this.importPath + 'api/group/';
                     this.$.loadGroupList.generateRequest();
                 }
+                this.$.userLayout.resetLayout();
+                this.$.userLayout.notifyResize();
             }
 
             // <<<<<<<<<< PAGE SWITCHING LOGIC AND ANIMATIONS <<<<<<<<<<

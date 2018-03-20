@@ -1,0 +1,25 @@
+{
+  "name": "repo-elements",
+  "main": "repo-app.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0"
+  },
+  "resolutions": {
+    "polymer": "^2.0.0"
+  },
+  "ignore": [
+    "git",
+    ".git",
+    ".idea"
+  ],
+  "private": true,
+  "_cacheHeaders": {
+    "ETag": "\"ef0980a32da78d7e01663d0df5ea5eab31f9efd4\"",
+    "Content-Type": "application/zip",
+    "Content-Disposition": "attachment; filename=repo-elements-master.zip"
+  },
+  "_release": "e-tag:ef0980a32",
+  "_source": "https://github.com/eXist-db/repo-elements/archive/master.zip",
+  "_target": "*",
+  "_originalSource": "https://github.com/eXist-db/repo-elements/archive/master.zip"
+}

@@ -1,11 +1,11 @@
 <!--
-`repo-app`
+`packagemanager-app`
 element for displaying package metadata
 
 @demo demo/doc.html
 -->
 
-<dom-module id="repo-app">
+<dom-module id="packagemanager-app">
     <template>
         <custom-style>
             <style is="custom-style">
@@ -16,23 +16,24 @@ element for displaying package metadata
         </custom-style>
         <style>
             :host {
-                display: flex;
-                flex-direction: row;
+                display: block;
                 padding: 30px;
                 position: relative;
                 background: white;
-                margin-bottom:10px;
-                min-height:70px;
+                margin-bottom:2px;
+                min-width:300px;
 
                 --paper-icon-button: {
                     color: var(--paper-blue-700);
                 };
-
                 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12),0 3px 1px -2px rgba(0, 0, 0, 0.2);
-
                 cursor: pointer;
-                /*--paper-progress-container-color:white;*/
 
+            }
+            :host:focus{
+                box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+                0 3px 14px 2px rgba(0, 0, 0, 0.12),
+                0 5px 5px -3px rgba(0, 0, 0, 0.4);
             }
             #progress{
                 position: absolute;
@@ -41,6 +42,7 @@ element for displaying package metadata
                 width:100%;
                 display: block;
             }
+
             :host ::slotted(*){
                 @apply(--paper-font-common-base);
             }
@@ -55,14 +57,12 @@ element for displaying package metadata
                 z-index:100;
             }
             #install:not([hidden]){
-                /*position: absolute;*/
                 display: inline-block;
                 top:10px;
                 right:40px;
             }
 
             existdb-package-remove-action{
-                /*position: absolute;*/
                 top:10px;
                 right:40px;
                 display: inline-block;
@@ -75,27 +75,29 @@ element for displaying package metadata
                 padding:10px;
             }
             /* styles for metadata elements */
-            :host ::slotted(repo-icon){
-                width:120px;
+            .wrapper ::slotted(repo-icon){
+                width:64px;
                 display: inline-block;
-            }
-            ::slotted(repo-icon) img{
-                /*max-width: 100px;*/
-                width: 100px;
+                position: absolute;
+                top:30px;
+                left:30px;
             }
 
             .wrapper{
-                display: inline-block;
+/*
+                display: table-cell;
                 padding-left:20px;
+*/
+                display: flex;
+                flex-direction: column ;
+                padding-left:100px;
+                /*min-width:380px;*/
             }
 
             .wrapper ::slotted(repo-type){
                 display:block;
                 color:var(--paper-blue--700);
-                font-size:16px;
-                position:absolute;
-                top:0px;
-                padding-top:15px;
+                font-size:14px;
                 text-transform:uppercase;
             }
             :host[type='library'] .wrapper ::slotted(repo-type){
@@ -103,12 +105,13 @@ element for displaying package metadata
             }
 
             .wrapper ::slotted(repo-title){
-                font-size:24px;
+                font-size:22px;
                 font-weight:500;
                 margin:10px 0;
                 display: inline-block;
                 @apply(--paper-font-common-base);
-
+            }
+            .wrapper ::slotted(repo-version){
             }
 
             .wrapper ::slotted(repo-name),
@@ -153,7 +156,7 @@ element for displaying package metadata
             {
 
                 display:table-row;
-                padding:10px 0;
+                padding:4px 0;
                 margin-bottom: 6px;
             }
 
@@ -168,12 +171,17 @@ element for displaying package metadata
                 margin:0;
             }
 
+            .wrapper[show-all] ::slotted(*){
+                /*padding-left:10px;*/
+            }
             /* CSS Labels for the meta elements */
             .wrapper[show-all] ::slotted(*)::before{
                 display: table-cell;
                 min-width: 120px;
                 padding:2px;
+                font-weight: bold;
             }
+
 
             .wrapper[show-all] ::slotted(repo-requires)::after{
                 display:table-row;
@@ -241,6 +249,9 @@ element for displaying package metadata
                 content:'Notes';
             }
 
+
+
+/*
             :host(.update):before{
                 content: "updated";
                 position:absolute;
@@ -252,15 +263,19 @@ element for displaying package metadata
                 width: 120px;
                 text-align: center;
             }
+*/
+
             [hidden]{
                 display: none;
             }
 
+
         </style>
         <paper-progress id="progress" class="slow"></paper-progress>
-        <slot name="icon"></slot>
+
+        <paper-ripple></paper-ripple>
         <div id="wrapper" class="wrapper" url="[[url]]">
-            <slot></slot>
+            <slot id="slot"></slot>
             <div class="actions">
                 <existdb-package-install-action
                         id="install"
@@ -271,17 +286,16 @@ element for displaying package metadata
                         hidden></existdb-package-install-action>
 
                 <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}" no-remove="{{readonly}}"></existdb-package-remove-action>
-
                 <paper-icon-button id="info" icon="info" on-click="_showInfo"></paper-icon-button>
             </div>
         </div>
     </template>
 
     <script>
-        class RepoApp extends Polymer.Element {
+        class PackagemanagerApp extends Polymer.Element {
 
             static get is() {
-                return 'repo-app';
+                return 'packagemanager-app';
             }
 
             static get properties() {
@@ -323,10 +337,12 @@ element for displaying package metadata
                         reflectToAttribute: true,
                         notify: true
                     },
+/*
                     showAll: {
                         type: Boolean,
                         reflectToAttribute: true
                     },
+*/
                     path: {
                         type: String,
                         reflectToAttribute: true
@@ -339,36 +355,22 @@ element for displaying package metadata
             }
 
             constructor() {
-//                console.log('constructor RepoApp')
+//                console.log('constructor Packagemanager-app')
                 super();
             }
 
 
-            handleInfo (e) {
-                e.stopPropagation()
-                e.preventDefault()
-               var detail = this.querySelector('table');
-                if(detail.hasAttribute("class")){
-                   detail.removeAttribute("class")
-                }else{
-                    detail.setAttribute("class","hidden")
-                }
-
-            }
 
             connectedCallback() {
                 super.connectedCallback();
-//                console.log("repo-app attached");
                 this.setAttribute('tabindex','0');
 
-//                this.$.remove.addEventListener('click',e => this._doRemove(e));
-//                this.addEventListener('click',this._doRemove);
-                console.log("repo-app readonly: ", this.readonly);
+//                console.log('my parent ',this.parentNode);
             }
 
             ready () {
                 super.ready();
-//                console.log('repo-app ready');
+//                console.log('packagemanager-app ready');
 
                 this.addEventListener('keyup',this._handleEnter);
 
@@ -376,15 +378,7 @@ element for displaying package metadata
                 this.$.install.addEventListener('package-installed',e => this._onInstalled(e));
                 this.$.remove.addEventListener('package-remove-started',e => this._onRemove(e));
                 this.addEventListener('click',e => this._handleTap(e));
-
-                var that = this;
-                this.querySelector("repo-title").addEventListener('click', function(e){
-                    that._handleTap(e);
-                });
-
                 this.addEventListener('requestInstall', this._installOtherVersion);
-
-                this.$.remove.packageTitle = this.querySelector('repo-title').textContent;
             }
 
             _handleTap (e) {
@@ -417,7 +411,7 @@ element for displaying package metadata
 //                console.log("node ", originalTarget.nodeName);
 
                 if(originalTarget.nodeName == 'PAPER-ICON-BUTTON') return;
-                if (e.target.nodeName.toLowerCase() == "repo-app" && e.keyCode == 13) {
+                if (e.target.nodeName.toLowerCase() == "packagemanager-app" && e.keyCode == 13) {
 //                    console.log('_handleEnter key enter fired');
                     this._openApp()
                 }
@@ -488,7 +482,7 @@ element for displaying package metadata
             }
 
         }
-        window.customElements.define(RepoApp.is, RepoApp);
+        window.customElements.define(PackagemanagerApp.is, PackagemanagerApp);
 
     </script>
 </dom-module>

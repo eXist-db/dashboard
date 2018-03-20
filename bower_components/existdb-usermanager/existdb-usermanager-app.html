@@ -1,0 +1,116 @@
+<dom-module id="existdb-usermanager-app">
+    <template>
+        <style>
+            :host {
+                --paper-tabs-selection-bar-color: var(--paper-pink-500);
+                @apply(--paper-font-common-base);
+                display: block;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                /*--iron-icon-fill-color: var(--paper-grey-500);*/
+                /*--iron-icon-width: 62px;*/
+                /*--iron-icon-height: 62px;*/
+                /*--paper-icon-button-ink-color: var(--paper-grey-700);*/
+                --paper-tabs-selection-bar:{
+                    border-width: 5px;
+                };
+
+
+            }
+
+            app-header-layout {
+                position: absolute;
+                top: 0px;
+                right: 0px;
+                bottom: 0px;
+                left: 0px;
+                /*height: calc(100% - 200px);*/
+                background-color: #eee;
+                overflow: hidden;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            }
+
+
+            app-header {
+                background: rgb(0, 136, 204);
+                padding: 0px;
+                color: white;
+                height: 60px;
+            }
+
+            a{
+                color:white;
+                font-size:18px;
+                font-weight:300;
+                margin-right:20px;
+            }
+
+/*
+            existdb-usermanager paper-tabs{
+                position:absolute;
+            }
+*/
+        </style>
+
+        <app-header-layout id="outer" fullbleed has-scrolling-region>
+            <app-header id="header" slot="header" fixed>
+                <app-toolbar>
+                    <slot name="toggleIcon"></slot>
+
+                    <div main-title>User Manager</div>
+                    <a href="index.html?logout=true">logout</a>
+                </app-toolbar>
+            </app-header>
+            <existdb-usermanager></existdb-usermanager>
+        </app-header-layout>
+    </template>
+
+    <script>
+        /**
+         * `existdb-usermanager`
+         *
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class ExistdbUsermanagerApp extends Polymer.Element {
+
+            static get is() {
+                return 'existdb-usermanager-app';
+            }
+
+            /**
+             * declared properties of this component
+             */
+            static get properties() {
+                return {
+                };
+            }
+
+
+            connectedCallback() {
+                super.connectedCallback();
+                console.log('existdb-usermanager-app connected');
+                this.$.outer.resetLayout();
+                this.$.header.resetLayout();
+            }
+
+            ready() {
+                super.ready();
+//                console.log('existdb-usermanager-app ready');
+            }
+
+
+            // ########################## private part ##########################
+            // ########################## private part ##########################
+            // ########################## private part ##########################
+
+        }
+
+        window.customElements.define(ExistdbUsermanagerApp.is, ExistdbUsermanagerApp);
+    </script>
+</dom-module>
+

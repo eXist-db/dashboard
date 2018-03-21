@@ -18,7 +18,8 @@ an application bundling all admin apps in one place.
                 @apply(--paper-font-common-base);
                 color: var(--google-grey-900);
                 --app-drawer-scrim-background: rgba(0, 0, 0, 0.3);
-
+                --app-drawer-width: 256px;
+            }
             }
 
             paper-item {
@@ -154,28 +155,27 @@ an application bundling all admin apps in one place.
                 </paper-item>
             </app-drawer>
             <iron-lazy-pages id="pages" attr-for-selected="name" selected="{{routeData.page}}">
-                <div name="launcher" data-path="bower_components/existdb-launcher/dependencies.html">
+                <template is="dom-if" name="launcher" data-path="bower_components/existdb-launcher/dependencies.html" restamp>
                     <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager"]'>
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
                     </existdb-launcher-app>
-                </div>
-                <div id="packagemanager" name="packagemanager"
-                     data-path="bower_components/existdb-packagemanager/dependencies.html">
+                </template>
+                <template is="dom-if" name="packagemanager" data-path="bower_components/existdb-packagemanager/dependencies.html" restamp>
                     <existdb-packagemanager>
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
                     </existdb-packagemanager>
-                </div>
-                <div id="usermanager" name="usermanager"
-                     data-path="bower_components/existdb-usermanager/dependencies.html">
+                </template>
+                <template is="dom-if" name="usermanager" data-path="bower_components/existdb-usermanager/dependencies.html" restamp>
                     <existdb-usermanager-app>
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
                     </existdb-usermanager-app>
-                </div>
-                <div id="settings" name="settings" data-route="settings">
+                </template>
+
+                <template is="dom-if" name="settings" data-path="existdb-settings.html" restamp>
                     <existdb-settings>
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
                     </existdb-settings>
-                </div>
+                </template>
             </iron-lazy-pages>
 
             <!--</app-header-layout>-->
@@ -215,6 +215,7 @@ an application bundling all admin apps in one place.
                 super.connectedCallback();
                 console.log("dashboard connected");
                 console.log("dashboard connected route ", this.route);
+
             }
 
             ready() {
@@ -224,6 +225,7 @@ an application bundling all admin apps in one place.
                     this.route = {};
                     this.set('route.path', '/launcher');
                 }
+                this.$.drawerLayout.resetLayout();
             }
 
             routeChanged(event) {
@@ -237,16 +239,19 @@ an application bundling all admin apps in one place.
                     this.$.drawer.close();
                 }
                 this.$.drawerLayout.resetLayout();
+
             }
 
             _toggleDrawer() {
                 this.$.drawer.toggle();
             }
 
+/*
             _handleLoad() {
                 console.log("items: ", this.$.loadDashboard.lastResponse);
                 this.menuItems = this.$.loadDashboard.lastResponse;
             }
+*/
 
             _showLauncher(e) {
                 console.log('show.... ', e);
@@ -260,6 +265,8 @@ an application bundling all admin apps in one place.
 
             _showUserManager(e) {
                 this.$.pages.select('usermanager');
+
+//                this.$.drawerLayout.resetLayout();
             }
 
             _showSettings(e) {

@@ -11,9 +11,10 @@
         width:100%;
         height:100%;
         margin:0;
-        padding:0;
+        /*padding:0;*/
         @apply(--paper-font-common-base);
         color:white;
+        padding:30px;
       }
 
       app-header-layout {
@@ -36,20 +37,30 @@
         height: 60px;
       }
 
-      paper-material{
-        padding:20px;
-        max-width: 600px;
-        min-width:300px;
-        margin:20px;
-      }
-
-
       h1{
         color:var(--paper-grey-900);
       }
+
+      paper-card{
+        max-width: 600px;
+        min-width: 320px;
+        padding: 20px;
+        margin:50px auto;
+      }
+      .hint{
+        color:var(--paper-grey-900);
+        font-size:14px;
+        font-style: italic;
+      }
     </style>
 
-    <app-header-layout id="outer" fullbleed has-scrolling-region>
+    <iron-ajax id="getPublicUrl"
+               verbose with-credentials
+               method="get" handle-as="text"
+               on-response="_handleUrl"
+               auto></iron-ajax>
+
+    <app-header-layout id="outer" fullbleed>
       <app-header slot="header" fixed>
         <app-toolbar>
           <slot name="toggleIcon"></slot>
@@ -58,9 +69,12 @@
         </app-toolbar>
       </app-header>
 
-      <paper-material>
-        <paper-input label="Public Repository URL"></paper-input>
-      </paper-material>
+      <paper-card heading="General Settings">
+        <div class="card-content">
+          <paper-input id="publicUrl" label="Public Repository URL" aria-readonly="true" readOnly></paper-input>
+          <span class="hint">Url from which publically available eXist-db apps and libraries are loaded. Don't change this value unless you're using your own repository.</span>
+        </div>
+      </paper-card>
     </app-header-layout>
 
 
@@ -73,6 +87,17 @@
       static get properties() {
         return {
         };
+      }
+
+      ready(){
+          super.ready();
+//          this.$.outer.resetLayout();
+          this.$.getPublicUrl.url = this.importPath + '../packageservice/packages/public-url';
+      }
+
+      _handleUrl(){
+          console.log(this.$.getPublicUrl.lastResponse);
+          this.$.publicUrl.value = this.$.getPublicUrl.lastResponse;
       }
 
     }

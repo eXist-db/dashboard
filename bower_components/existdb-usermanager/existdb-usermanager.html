@@ -29,11 +29,9 @@
                 display: block;
                 overflow: auto;
             }
-
             paper-tab {
                 font-size: 24px;
                 font-weight: 400;
-
             }
 
             paper-fab {
@@ -240,6 +238,7 @@
                 margin: 0;
                 font-size: 20px;
                 color: white;
+                z-index:100;
             }
 
             paper-toast.errorReporter {
@@ -295,7 +294,7 @@
 
             paper-tabs {
                 height: 60px;
-                position: fixed;
+                /*position: fixed;*/
                 top: 0;
                 left: 0;
                 z-index: 10;
@@ -429,7 +428,7 @@
         <iron-pages id="pages" selected="{{selected}}">
             <div>
                 <app-header-layout id="userLayout" has-scrolling-region>
-                    <app-header slot="header" sticky fixed>
+                    <app-header id="header" slot="header" sticky fixed>
                         <paper-tabs selected="{{selected}}">
                             <paper-tab>Users</paper-tab>
                             <paper-tab>Groups</paper-tab>
@@ -666,12 +665,12 @@
 //                this.$.loadGroupList.url = this.importPath + 'api/group/';
 //                this.$.loadGroupList.generateRequest();
 
-                this.$.userLayout.resetLayout();
             }
 
             ready() {
                 super.ready();
                 console.log('Usermanager ready');
+                this.$.pages.select(0);
 
             }
 
@@ -715,15 +714,13 @@
             }
 
             _pageChanged(page) {
-                console.log('_pageChanged: ', page);
+//                console.log('_pageChanged: ', page);
                 if (page == 0) {
                     this.$.loadUserList.url = this.importPath + 'api/user/';
                     this.$.loadUserList.generateRequest();
                     this.$.loadGroupList.url = this.importPath + 'api/group/';
                     this.$.loadGroupList.generateRequest();
                 }
-                this.$.userLayout.resetLayout();
-                this.$.userLayout.notifyResize();
             }
 
             // <<<<<<<<<< PAGE SWITCHING LOGIC AND ANIMATIONS <<<<<<<<<<
@@ -740,7 +737,12 @@
              */
             _handleUsers() {
                 console.log('_handleUsers', this.$.loadUserList.lastResponse);
-                this.users = this.$.loadUserList.lastResponse
+                this.users = this.$.loadUserList.lastResponse;
+                this.$.userLayout.resetLayout();
+//                this.$.header.resetLayout();
+//                Polymer.AppLayout.scroll({ top: scrollTop, behavior: 'silent' });
+
+
             }
 
             /**
@@ -934,7 +936,9 @@
 
 
             _handleGroups() {
-                this.groups = this.$.loadGroupList.lastResponse
+                this.groups = this.$.loadGroupList.lastResponse;
+                this.$.userLayout.resetLayout();
+
             }
 
             _handleGroupListError(e) {

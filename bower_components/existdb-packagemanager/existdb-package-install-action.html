@@ -81,14 +81,6 @@ implements an interaction with the package repository
 
             }
 
-/*
-                listeners: {
-                'install.tap': 'submit',
-                'iron-form-response': 'handleResponse',
-                'iron-form-error': 'handleError'
-            }
-*/
-
             submit (e) {
 //                console.log("install action submit ",e);
                 e.stopPropagation();
@@ -113,12 +105,21 @@ implements an interaction with the package repository
 
             _handleResponse (data) {
 //                console.log("response: ", data);
-//                console.log("install response: ", this.url);
-                this.dispatchEvent(new CustomEvent('package-installed', {bubbles: true, composed: true, detail: {abbrev:this.abbrev}}));
+//                console.log("install response: ", JSON.parse(this.$.installPackage.lastResponse).err);
+
+                var error = JSON.parse(this.$.installPackage.lastResponse).error;
+                console.log("_handleResponse ", error);
+
+                if(error != undefined){
+                    this.dispatchEvent(new CustomEvent('package-install-error', {bubbles: true, composed: true, detail: {error:error}}));
+                }else{
+                    this.dispatchEvent(new CustomEvent('package-installed', {bubbles: true, composed: true, detail: {abbrev:this.abbrev}}));
+                }
             }
 
             _handleError (e) {
 //                console.log("error: ", e)
+                //todo: this seems to be never triggered since we get 200 even in case of errors
                 this.dispatchEvent(new CustomEvent('package-install-error', {bubbles: true, composed: true, detail: {error:e.detail}}));
 
             }

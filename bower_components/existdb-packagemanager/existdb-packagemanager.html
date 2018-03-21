@@ -49,6 +49,7 @@ a web component implementing eXistdb packagemanager
                     color:var(--paper-blue-100);
                 };
                 /*--iron-icon-stroke-color:white;*/
+                position: relative;
 
             }
 
@@ -183,6 +184,9 @@ a web component implementing eXistdb packagemanager
             #updates #label{
                 display: inline-block;
                 padding-right:20px;
+            }
+            #updates paper-icon-button{
+                float:right;
             }
 
             [type='search'] {
@@ -449,11 +453,11 @@ a web component implementing eXistdb packagemanager
         </iron-pages>
 
 
-        <paper-toast id="toast" text="" duration="5000"></paper-toast>
-        <paper-toast id="toastError" text="" duration="-1">
+        <paper-toast id="toast" text="" class="fit-bottom" duration="5000"></paper-toast>
+        <paper-toast id="toastError" text="" duration="-1" class="fit-bottom">
             <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
         </paper-toast>
-        <paper-toast id="updates" text="Updates available" auto-fit-on-attach duration="15000">
+        <paper-toast id="updates" text="Updates available" auto-fit-on-attach duration="15000" class="fit-bottom" always-on-top>
             <paper-button on-click="_goToAvailable">install...</paper-button>
             <paper-icon-button icon="clear" on-click="_hideUpdatesToast"></paper-icon-button>
         </paper-toast>
@@ -570,12 +574,43 @@ a web component implementing eXistdb packagemanager
                 this._switchToInstalled();
                 this.$.remoteService.loadPackages();
                 this.$.filterLocal.focus();
+
+                //todo: redo listeners with arrow operator and cleanup listeners in disconnected
+                window.addEventListener('package-installed', function (e) {
+                    console.log('packagemanager package-installed ', e);
+                    this._toast('Package has been installed: ' + e.detail.abbrev)
+                }.bind(this));
+
+                window.addEventListener('package-install-error', function (e) {
+                    this._toastError(e.detail.error);
+                }.bind(this));
+
+                window.addEventListener('package-removed', function(e){
+//                    console.log("packagemanager package was removed", e);
+                    this._toast('successfully removed "' + e.detail.abbrev + '"');
+                }.bind(this));
+
+                window.addEventListener('package-remove-error', function (e) {
+                    this._toastError(e.detail.error.error.message)
+                }.bind(this));
+
+                window.addEventListener('packages-load-error', function (e) {
+                    this._toastError(e.detail.error)
+                }.bind(this));
+
+                this.$.toast.fitInto=this;
+                this.$.toastError.fitInto=this;
+                this.$.updates.fitInto=this;
+            }
+
+            _installed(e){
+                this._toast('Package has been installed: ' + e.detail.abbrev);
             }
 
             disconnectedCallback() {
                 super.disconnectedCallback();
+                console.log("disconnected - cleaning up");
                 window.removeEventListener('packages-loaded', e => this._handlePackagesLoaded(e));
-
             }
 
             _handleESC (e) {

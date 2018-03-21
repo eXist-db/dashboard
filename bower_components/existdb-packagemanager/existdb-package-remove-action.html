@@ -55,6 +55,10 @@ implements an interaction with the package repository
                     noRemove: {
                         type: String,
                         reflectToAttribute: true
+                    },
+                    abbrev:{
+                        type: String,
+                        reflectToAttribute:true
                     }
                 };
             }
@@ -102,7 +106,7 @@ implements an interaction with the package repository
 //                var r = confirm('Really remove package "' + this.packageTitle + '"?');
                 var r = confirm('Really remove package?');
                 if (r == true) {
-                    this.dispatchEvent(new CustomEvent('package-remove-started', {bubbles: true, composed: true, detail: {}}));
+                    this.dispatchEvent(new CustomEvent('package-remove-started', {bubbles: true, composed: true, detail: {"abbrev":this.abbrev}}));
                 }
             }
 
@@ -113,7 +117,8 @@ implements an interaction with the package repository
 
             _handleResponse (data) {
 //                console.log("response: ", data);
-                this.dispatchEvent(new CustomEvent('package-removed', {bubbles: true, composed: true, detail: {package: this.packageTitle}}));
+                //todo: error handling for 200 responses - see install-action
+                this.dispatchEvent(new CustomEvent('package-removed', {bubbles: true, composed: true, detail: {abbrev: this.abbrev}}));
             }
 
             _handleError (e) {

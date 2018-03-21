@@ -17,8 +17,8 @@ element for displaying package metadata
                 background: whitesmoke;
                 margin:0;
                 padding:0;
-                /*height: 100%;*/
-                /*width: 100%;*/
+                height: 100%;
+                width: 100%;
 
                 --paper-icon-button: {
                     color: var(--paper-blue-300);
@@ -59,15 +59,20 @@ element for displaying package metadata
                 --paper-progress-height: 5px;
 
             }
-            #toast {
+            #toast2 {
                 --paper-toast-background-color: var(--paper-blue-700);
                 --paper-toast-color: white;
+                bottom:0;
             }
-            #toastError{
+            #toastError2{
                 background:var(--paper-red-500);
             }
             [hidden]{
                 display:none;
+            }
+            .fit-bottom{
+                bottom:0;
+                top:initial;
             }
         </style>
 
@@ -85,10 +90,12 @@ element for displaying package metadata
         </div>
 
 
-        <paper-toast id="toast" text="" duration="4000"></paper-toast>
-        <paper-toast id="toastError" text="" duration="-1">
+<!--
+        <paper-toast id="toast2" text="" duration="-1" class="fit-bottom" auto-fit-on-attach always-on-top></paper-toast>
+        <paper-toast id="toastError2" text="" duration="-1" class="fit-bottom">
             <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
         </paper-toast>
+-->
 
     </template>
 
@@ -147,22 +154,36 @@ element for displaying package metadata
 
                 window.addEventListener('package-removed', function(e){
 //                    console.log("package was removed", e);
-                    this._toast('successfully removed "' + e.detail.package + '"');
+//                    this._toast('successfully removed "' + e.detail.package + '"');
                     this.loadPackages();
                 }.bind(this));
 
+                window.addEventListener('package-installed', function (e) {
+                    console.log('package-installed ', e);
+                    this.loadPackages();
+                }.bind(this));
+
+                /*
                 window.addEventListener('package-remove-error', function (e) {
                     this._toastError(e.detail.error.error.message)
                 }.bind(this));
 
                 window.addEventListener('package-installed', function (e) {
-//                    console.log('package-installed ', e);
+                    console.log('package-installed ', e);
                     this._toast('Package has been installed: ' + e.detail.abbrev)
                     this.loadPackages();
                 }.bind(this));
                 window.addEventListener('package-install-error', function (e) {
                     this._toastError(e.detail.error.error.message)
                 }.bind(this));
+*/
+
+
+
+/*
+                this.$.toast2.fitInto = this;
+                this.$.toastError2.fitInto = this;
+*/
             }
 
             getPackages(){
@@ -187,7 +208,9 @@ element for displaying package metadata
             _handleLocalError(e) {
 //                console.log("loading of available packages failed", e.detail.error)
                 this._resetAndHideProgress()
-                this._toastError('loading of available packages failed')
+
+                this.dispatchEvent(new CustomEvent('packages-load-error', {bubbles: true, composed: true, detail: {error:'loading of available packages failed'}}));
+//                this._toastError2('loading of available packages failed')
             }
 
             loadPackages(){
@@ -212,15 +235,20 @@ element for displaying package metadata
                 this.$.progress.hidden=true
             }
 
+/*
             _toast (msg) {
-                this.$.toast.text = msg
-                this.$.toast.open()
+                this.$.toast2.text = msg
+                this.$.toast2.open()
+                this.$.toast2.style.bottom = 0;
+                this.$.toast2.style.top = "initial";
+
             }
 
             _toastError (msg) {
-                this.$.toastError.text = msg
-                this.$.toastError.open()
+                this.$.toastError2.text = msg
+                this.$.toastError2.open()
             }
+*/
 
             _serviceChanged(e){
 //                console.log("the service has changed!");

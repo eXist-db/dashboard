@@ -567,7 +567,7 @@
         </iron-pages>
 
 
-        <paper-toast id="messenger" class="messenger" text=""></paper-toast>
+        <paper-toast id="messenger" class="messenger fit-bottom" text=""></paper-toast>
         <paper-toast id="errorReporter" class="errorReporter" text="" duration="0">
             <a href="#" on-tap="_closeToast">close</a>
         </paper-toast>
@@ -671,6 +671,8 @@
                 super.ready();
                 console.log('Usermanager ready');
                 this.$.pages.select(0);
+                this.$.messenger.fitInto = this;
+                this.$.errorReporter.fitInto = this;
 
             }
 

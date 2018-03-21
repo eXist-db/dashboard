@@ -21,7 +21,8 @@
     "existdb-usermanager": "https://github.com/eXist-db/usermanager.git#^0.16.3",
     "repo-elements": "https://github.com/eXist-db/repo-elements/archive/master.zip",
     "iron-lazy-pages": "^2.1.1",
-    "paper-card": "PolymerElements/paper-card#^2.0.0"
+    "paper-card": "PolymerElements/paper-card#^2.0.0",
+    "paper-tabs": "PolymerElements/paper-tabs#^2.0.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

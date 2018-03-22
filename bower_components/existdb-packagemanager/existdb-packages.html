@@ -59,21 +59,26 @@ element for displaying package metadata
                 --paper-progress-height: 5px;
 
             }
-            #toast2 {
-                --paper-toast-background-color: var(--paper-blue-700);
-                --paper-toast-color: white;
-                bottom:0;
-            }
-            #toastError2{
-                background:var(--paper-red-500);
-            }
             [hidden]{
                 display:none;
             }
-            .fit-bottom{
-                bottom:0;
-                top:initial;
+            .spin-wrapper{
+                position: relative;
+                width: 100%;
+                text-align: center;
+                height: 1px;
+                z-index: 10;
+                top: 20px;
             }
+            paper-spinner{
+                padding: 10px;
+                background: var(--paper-grey-200);
+                border-radius: 24px;
+                box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14),
+                0 1px 10px 0 rgba(0, 0, 0, 0.12),
+                0 2px 4px -1px rgba(0, 0, 0, 0.4);
+            }
+
         </style>
 
         <iron-ajax id="loadPackages"
@@ -83,19 +88,13 @@ element for displaying package metadata
                    on-error="_handleLocalError"></iron-ajax>
 
 
-        <paper-progress id="progress" class="paper-progress" value=""></paper-progress>
+        <div class="spin-wrapper" id="spinner">
+            <paper-spinner active></paper-spinner>
+        </div>
 
         <div id="localItemList" class="items" type="packagemanager">
             <slot></slot>
         </div>
-
-
-<!--
-        <paper-toast id="toast2" text="" duration="-1" class="fit-bottom" auto-fit-on-attach always-on-top></paper-toast>
-        <paper-toast id="toastError2" text="" duration="-1" class="fit-bottom">
-            <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
-        </paper-toast>
--->
 
     </template>
 
@@ -115,8 +114,7 @@ element for displaying package metadata
                     service:{
                         type: String,
                         reflectToAttribute:true,
-                        notify:true,
-//                        observer: '_serviceChanged'
+//                        notify:true
                     },
                     autoLoad:{
                         type:Boolean,
@@ -140,7 +138,6 @@ element for displaying package metadata
             connectedCallback() {
                 super.connectedCallback();
 //                console.log("existdb-packages connected");
-
             }
 
 
@@ -153,8 +150,6 @@ element for displaying package metadata
                 }
 
                 window.addEventListener('package-removed', function(e){
-//                    console.log("package was removed", e);
-//                    this._toast('successfully removed "' + e.detail.package + '"');
                     this.loadPackages();
                 }.bind(this));
 
@@ -178,12 +173,6 @@ element for displaying package metadata
                 }.bind(this));
 */
 
-
-
-/*
-                this.$.toast2.fitInto = this;
-                this.$.toastError2.fitInto = this;
-*/
             }
 
             getPackages(){
@@ -194,68 +183,35 @@ element for displaying package metadata
             _handlePackages (data) {
 //                console.log('existdb-packages._handlePackages');
                 this.$.localItemList.innerHTML = this.$.loadPackages.lastResponse
-                this._resetProgress();
-
 
 //                console.log('repo-packages ', this.shadowRoot.querySelector('repo-packages'));
-
                 this.packages = this.shadowRoot.querySelectorAll('repo-app')
                 this.count = this.packages.length;
 
                 this.dispatchEvent(new CustomEvent('packages-loaded', {bubbles: true, composed: true, detail: {type:this.id}}));
+                this._hideSpinner();
             }
 
             _handleLocalError(e) {
 //                console.log("loading of available packages failed", e.detail.error)
-                this._resetAndHideProgress()
+                this._hideSpinner();
 
                 this.dispatchEvent(new CustomEvent('packages-load-error', {bubbles: true, composed: true, detail: {error:'loading of available packages failed'}}));
-//                this._toastError2('loading of available packages failed')
             }
 
             loadPackages(){
-                this.$.progress.indeterminate = true
+                this.$.spinner.hidden=false;
                 this.$.loadPackages.url = this.service;
                 this.$.loadPackages.generateRequest();
             }
 
-            _resetProgress () {
-                this.$.progress.value = 100
-                var self = this;
-                setTimeout(function () {
-                    self.$.progress.value = 0
-                    self.$.progress.indeterminate = false
-                }, 1000)
-
+            _hideSpinner(){
+//                setTimeout(function () {
+                    this.$.spinner.hidden=true;
+//                }, 600)
             }
 
-            _resetAndHideProgress () {
-                this.$.progress.indeterminate = false;
-                this.$.progress.value = 0;
-                this.$.progress.hidden=true
-            }
 
-/*
-            _toast (msg) {
-                this.$.toast2.text = msg
-                this.$.toast2.open()
-                this.$.toast2.style.bottom = 0;
-                this.$.toast2.style.top = "initial";
-
-            }
-
-            _toastError (msg) {
-                this.$.toastError2.text = msg
-                this.$.toastError2.open()
-            }
-*/
-
-            _serviceChanged(e){
-//                console.log("the service has changed!");
-                // DO NOT!!!!
-//                this.$.loadPackages.generateRequest();
-
-            }
             _handleCount(newValue, oldValue){
 //                console.log("_handleCount ", newValue, oldValue)
             }

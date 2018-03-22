@@ -24,7 +24,10 @@
     "vaadin-upload": "^3.0.2",
     "web-animations-js": "^2.3.1",
     "repo-elements": "https://github.com/eXist-db/repo-elements/archive/master.zip",
-    "iron-meta": "PolymerElements/iron-meta#^2.0.0"
+    "iron-meta": "PolymerElements/iron-meta#^2.0.0",
+    "paper-tabs": "PolymerElements/paper-tabs#^2.0.0",
+    "paper-badge": "PolymerElements/paper-badge#^2.0.0",
+    "paper-spinner": "PolymerElements/paper-spinner#^2.0.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
@@ -52,12 +55,13 @@
   ],
   "private": true,
   "_cacheHeaders": {
-    "ETag": "\"0333b1681584d9a4a6887d4347bfbe79782a6a36\"",
+    "ETag": "\"82bc6bd53b611d5a4b1f5c12e26c9f29a3f12c43\"",
     "Content-Type": "application/zip",
-    "Content-Disposition": "attachment; filename=packagemanager-4.4.1.zip"
+    "Content-Disposition": "attachment; filename=packagemanager-4.5.0.zip"
   },
-  "_release": "e-tag:0333b1681",
-  "_source": "https://github.com/eXist-db/existdb-packagemanager/archive/v4.4.1.zip",
+  "_release": "e-tag:82bc6bd53",
+  "_source": "https://github.com/eXist-db/packagemanager/archive/v4.5.0.zip",
   "_target": "*",
-  "_originalSource": "https://github.com/eXist-db/existdb-packagemanager/archive/v4.4.1.zip"
+  "_originalSource": "https://github.com/eXist-db/packagemanager/archive/v4.5.0.zip",
+  "_direct": true
 }

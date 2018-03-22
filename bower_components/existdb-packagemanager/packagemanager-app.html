@@ -21,7 +21,6 @@ element for displaying package metadata
                 position: relative;
                 background: white;
                 margin-bottom:2px;
-                min-width:300px;
 
                 --paper-icon-button: {
                     color: var(--paper-blue-700);
@@ -133,7 +132,8 @@ element for displaying package metadata
             .wrapper ::slotted(repo-installed):before{
                 content: "Installed Version ";
                 color:var(--paper-orange-700);
-                display: table-cell;
+                /*display: table-cell;*/
+                display: inline-block;
                 padding-right:4px;
             }
             .wrapper ::slotted(repo-installed){
@@ -269,6 +269,11 @@ element for displaying package metadata
                 display: none;
             }
 
+            @media only screen and (min-width: 768px) {
+                :host{
+                    min-width:300px;
+                }
+            }
 
         </style>
         <paper-progress id="progress" class="slow"></paper-progress>

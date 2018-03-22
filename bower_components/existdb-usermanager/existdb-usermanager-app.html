@@ -34,7 +34,7 @@
 
 
             app-header {
-                background: rgb(0, 136, 204);
+                background: var(--paper-blue-500);
                 padding: 0px;
                 color: white;
                 height: 60px;
@@ -60,7 +60,9 @@
                     <slot name="toggleIcon"></slot>
 
                     <div main-title>User Manager</div>
-                    <a href="index.html?logout=true">logout</a>
+                    <template is="dom-if" if="{{_showLogout()}}">
+                        <a href="index.html?logout=true">logout</a>
+                    </template>
                 </app-toolbar>
             </app-header>
             <existdb-usermanager></existdb-usermanager>
@@ -87,6 +89,10 @@
              */
             static get properties() {
                 return {
+                    logout:{
+                        type: Boolean,
+                        value:true
+                    }
                 };
             }
 
@@ -105,6 +111,9 @@
             // ########################## private part ##########################
             // ########################## private part ##########################
             // ########################## private part ##########################
+            _showLogout(){
+                return this.getAttribute('logout') == 'true';
+            }
 
         }
 

@@ -14,11 +14,11 @@
   ],
   "private": true,
   "_cacheHeaders": {
-    "ETag": "\"ef0980a32da78d7e01663d0df5ea5eab31f9efd4\"",
+    "ETag": "\"acaba3464066d471630224ef5280711f604573b7\"",
     "Content-Type": "application/zip",
     "Content-Disposition": "attachment; filename=repo-elements-master.zip"
   },
-  "_release": "e-tag:ef0980a32",
+  "_release": "e-tag:acaba3464",
   "_source": "https://github.com/eXist-db/repo-elements/archive/master.zip",
   "_target": "*",
   "_originalSource": "https://github.com/eXist-db/repo-elements/archive/master.zip"

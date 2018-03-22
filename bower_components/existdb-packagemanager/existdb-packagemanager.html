@@ -43,13 +43,22 @@ a web component implementing eXistdb packagemanager
                     padding:0;
                 };
 
+                --paper-input-container-underline:{
+                    border:none;
+                };
+/*
                 --paper-input-container-underline-focus:{
                     background: var(--paper-blue-900);
                     border:var(--paper-blue-900);
                     color:var(--paper-blue-100);
                 };
+*/
                 /*--iron-icon-stroke-color:white;*/
                 position: relative;
+
+                --paper-tabs-selection-bar:{
+                    border:3px;
+                };
 
             }
 
@@ -64,9 +73,30 @@ a web component implementing eXistdb packagemanager
                 height: 128px;
             }
 
+            paper-tabs{
+                background: var(--paper-blue-300);
+                --paper-tabs-selection-bar:{
+                    border:3px solid var(--paper-blue-700);
+                };
+
+            }
+            paper-tab{
+                position: relative;
+                --paper-tab-ink:var(--paper-blue-100);
+            }
+
+
+
             #pages{
                 display: block;
+                margin-top:56px;
             }
+/*
+            .iron-selected{
+                color:white;
+            }
+*/
+
             #pages > div{
                 width: 100%;
                 height:100%;
@@ -97,18 +127,18 @@ a web component implementing eXistdb packagemanager
                 width:100%;
                 border:none;
                 outline:none;
-                width: 260px;
+                /*width: 260px;*/
                 font-size:16px;
-                background: var(--paper-blue-700);
-                color:var(--paper-blue-100);
+                background: var(--paper-blue-300);
+                color:var(--paper-blue-900);
                 padding:10px;
 
                 --paper-input-container-underline:{
-                    color: var(--paper-blue-700);
+                    border:none;
                 };
             }
             .filter::placeholder{
-                color:var(--paper-blue-100);
+                color:var(--paper-blue-900);
             }
             ::selection{
                 /*background: var(--paper-blue-700);*/
@@ -127,8 +157,9 @@ a web component implementing eXistdb packagemanager
 
             app-toolbar {
                 z-index: 10;
-                /*background: var(--paper-blue-500);*/
-                background: rgb(0, 136, 204);
+                background: var(--paper-blue-500);
+                /*background: rgb(0, 136, 204);*/
+                /*background: rgb(0, 136, 204);*/
                 color:white;
             }
 
@@ -146,6 +177,7 @@ a web component implementing eXistdb packagemanager
                 padding:11px 0;
                 color:var(--paper-blue-900);
                 font-weight:300;
+                display: inline-block;
             }
             [slot="drop-label-icon"] {
                 margin: 0 1em;
@@ -207,6 +239,12 @@ a web component implementing eXistdb packagemanager
                 display: none;
             }
 
+            .x{
+                width:36px;
+                height:36px;
+                margin-right:10px;
+            }
+
             @media only screen and (min-width: 768px) {
                 .heading {
                     width: 100%;
@@ -219,8 +257,7 @@ a web component implementing eXistdb packagemanager
             }
             @media only screen and (max-width: 768px) {
                 .filter{
-                    width:120px;
-                    font-size:18px;
+                    margin-left:4px;
                 }
                 [main-title]{
                     font-size:18px;
@@ -231,6 +268,12 @@ a web component implementing eXistdb packagemanager
 
                 [slot="drop-label"], [slot="drop-label-icon"] {
                     display: none;
+                }
+                .x{
+                    display:none;
+                }
+                app-toolbar{
+                    padding-right:0;
                 }
 
             }
@@ -287,10 +330,6 @@ a web component implementing eXistdb packagemanager
                 margin-top:2px;
             }
 
-            .wrapService{
-                padding-top:66px;
-            }
-
             [hidden]{
                 display: none;
             }
@@ -306,6 +345,23 @@ a web component implementing eXistdb packagemanager
 
             #localService{
                 margin-top:9px;
+            }
+
+            paper-badge{
+                /*--paper-badge-margin-left:-20px;*/
+                position: absolute;
+                top:12px !important;
+                right:0 !important;
+                left:auto !important;
+                z-index: 10;
+                --paper-badge-background:var(--paper-blue-500);
+                --paper-badge-width:26px;
+                --paper-badge-height:26px;
+
+                --paper-badge:{
+                    font-size: 14px;
+                };
+
             }
         </style>
 <!--
@@ -377,74 +433,70 @@ a web component implementing eXistdb packagemanager
                 <paper-button id="closeCard" on-click="_showHideShortcuts">close</paper-button>
             </div>
         </paper-card>
-<!--
-        <neon-animated-pages id="pages" nolibs="true" selected="{{selected}}" entry-animation="[[entryAnimation]]"
-                             exit-animation="[[exitAnimation]]">
--->
-        <iron-pages id="pages" nolibs="true" selected="{{selected}}">
-
-            <div id="localPage">
-                <app-header-layout fullbleed has-scrolling-region>
-                    <app-header slot="header" class="app-header" reveals condenses effects="waterfall" fixed>
-
-                        <app-toolbar id="maintool" style="height:64px;" sticky>
-                            <slot name="toggleIcon"></slot>
-
-                            <!--<iron-icon icon="apps"></iron-icon>-->
-                            <div main-title>PackageManager</div>
-                            <span class="heading">Installed packages <span class="count">[[count]]</span></span>
-
-                            <paper-input-container>
-                                <iron-input slot="input">
-                                    <input id="filterLocal" class="filter" type="text" name="query"
-                                       tabindex="0" on-keyup="_handleFilter" autofocus placeholder="type here to filter" title="type here to filter - ESC to reset">
-                                </iron-input>
-                            </paper-input-container>
-
-                            <paper-menu-button id="moreMenu" close-on-activate horizontal-align="right" tabindex="-1">
-                                <paper-icon-button icon="more-vert" mini slot="dropdown-trigger"></paper-icon-button>
-                                <paper-listbox slot="dropdown-content">
-                                    <paper-item id="libSwitch" on-click="_showLibraries">show libraries</paper-item>
-                                    <paper-item on-click="_showHideShortcuts">show shortcuts</paper-item>
-                                    <paper-item><a href="index.html?logout=true">logout</a></paper-item>
-                                </paper-listbox>
-                            </paper-menu-button>
 
 
-                        </app-toolbar>
 
-                        <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}" tabindex="-1">
-                            <iron-icon class="drop-icon" slot="drop-label-icon" icon="image:adjust" size="48" width="48"></iron-icon>
-                            <div slot="drop-label">DROPZONE - put your package(s) here.</div>
-                            <paper-button id="uploadBtn" slot="add-button">upload</paper-button>
-                        </vaadin-upload>
+        <app-header-layout fullbleed has-scrolling-region>
+            <app-header slot="header" class="app-header" reveals condenses effects="waterfall" fixed>
 
+                <app-toolbar id="maintool" style="height:64px;" sticky>
+                    <!--<iron-icon icon="apps"></iron-icon>-->
+                    <img class="x" src="{{importPath}}icon.svg" style="width:36px;height:36px;margin-right:10px;" title="[[version]]">
+                    <slot name="toggleIcon"></slot>
+                    <div main-title>PackageManager</div>
 
-                    </app-header>
-
-
-                    <existdb-packages id="localService"
-                                      service="../packageservice/packages/apps"></existdb-packages>
-                    <paper-fab id="showRepo" icon="add" on-click="_switchToAvailable"></paper-fab>
-
-                </app-header-layout>
-            </div>
-
-            <div id="repoPage">
-
-                <app-toolbar class="repo-toolbar">
-                    <paper-icon-button icon="chevron-left" on-click="_switchToInstalled"></paper-icon-button>
-                    <div class="heading" main-title>Available Packages <span class="count">[[count]]</span></div>
-
-                    <paper-input-container class="remote-filter-wrapper">
+                    <paper-input-container>
                         <iron-input slot="input">
-                            <input id="filterRepo" class="filter" type="text" name="query"
+                            <input id="filterLocal" class="filter" type="text" name="query"
                                    tabindex="0" on-keyup="_handleFilter" autofocus placeholder="type here to filter" title="type here to filter - ESC to reset">
                         </iron-input>
                     </paper-input-container>
 
+                    <paper-menu-button id="moreMenu" close-on-activate horizontal-align="right" tabindex="-1">
+                        <paper-icon-button icon="more-vert" mini slot="dropdown-trigger"></paper-icon-button>
+                        <paper-listbox slot="dropdown-content">
+                            <paper-item id="libSwitch" on-click="_showLibraries">show libraries</paper-item>
+                            <paper-item on-click="_showHideShortcuts">show shortcuts</paper-item>
+
+                            <template is="dom-if" if="{{_showLogout()}}">
+                                <paper-item><a href="index.html?logout=true">logout</a></paper-item>
+                            </template>
+                        </paper-listbox>
+                    </paper-menu-button>
+
+
                 </app-toolbar>
-                <div class="wrapService">
+
+                <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}" tabindex="-1">
+                    <iron-icon class="drop-icon" slot="drop-label-icon" icon="image:adjust" size="48" width="48"></iron-icon>
+                    <div slot="drop-label">DROPZONE - put your package(s) here.</div>
+                    <paper-button id="uploadBtn" slot="add-button">upload</paper-button>
+                </vaadin-upload>
+
+                <paper-tabs selected="{{selected}}">
+                    <paper-tab class="installedTab" id="installedTab">
+                        Installed
+                        <paper-badge label="[[localCount]]" for="installedTab"></paper-badge>
+                    </paper-tab>
+                    <paper-tab class="availableTab" id="availableTab">
+                        Available
+                        <paper-badge label="[[remoteCount]]" for="availableTab"></paper-badge>
+                    </paper-tab>
+                </paper-tabs>
+            </app-header>
+
+
+
+
+
+        <iron-pages id="pages" nolibs="true" selected="{{selected}}">
+
+            <div id="localPage">
+                    <existdb-packages id="localService"
+                                      service="../packageservice/packages/apps"></existdb-packages>
+            </div>
+
+            <div id="repoPage">
                 <existdb-packages id="remoteService"
                                   service="../packageservice/packages/remote"></existdb-packages>
                 </div>
@@ -497,7 +549,17 @@ a web component implementing eXistdb packagemanager
                     currentFocus:{
                         type:Number
                     },
+/*
                     count:{
+                        type:Number,
+                        value:0
+                    },
+*/
+                    localCount:{
+                        type:Number,
+                        value:0
+                    },
+                    remoteCount:{
                         type:Number,
                         value:0
                     },
@@ -508,6 +570,11 @@ a web component implementing eXistdb packagemanager
                     remote:{
                         type:Array,
                         value:[]
+                    },
+                    logout:{
+                        type: Boolean,
+                        value:false,
+                        reflectToAttribute:true
                     }
                 };
             }
@@ -520,7 +587,7 @@ a web component implementing eXistdb packagemanager
 
             connectedCallback() {
                 super.connectedCallback();
-                console.log('packagemanager rootPath: ', this.rootPath);
+//                console.log('packagemanager rootPath: ', this.rootPath);
                 this.focus();
             }
 
@@ -609,8 +676,8 @@ a web component implementing eXistdb packagemanager
 
             disconnectedCallback() {
                 super.disconnectedCallback();
-                console.log("disconnected - cleaning up");
                 window.removeEventListener('packages-loaded', e => this._handlePackagesLoaded(e));
+
             }
 
             _handleESC (e) {
@@ -632,18 +699,13 @@ a web component implementing eXistdb packagemanager
 
                 this.local = this.$.localService.getPackages();
                 this.remote = this.$.remoteService.getPackages();
-
-//                if(e.detail.type == 'remoteService'){
-//                }
+                this.localCount = this.$.localService.count;
+                this.remoteCount = this.$.remoteService.count;
 
                 if(this.selected == 0){
-                    this.$.filterLocal.focus();
-                    this.count = this.$.localService.count;
                     this._checkForUpdates();
-                }else{
-                    this.$.filterRepo.focus();
-                    this.count = this.$.remoteService.count;
                 }
+                this.$.filterLocal.focus();
 
             }
 
@@ -671,7 +733,7 @@ a web component implementing eXistdb packagemanager
                     this.focus();
                     this.$.filterLocal.focus();
                 }else{
-                    this.$.filterRepo.focus();
+//                    this.$.filterRepo.focus();
                 }
             }
 
@@ -679,17 +741,23 @@ a web component implementing eXistdb packagemanager
 //                console.log('_handleFilter', e);
 
 
-                var apps, filterString;
+                var apps = [];
+                var filterString = this.$.filterLocal.value.toLowerCase();
+
                 if(this.selected == 0){
                     // ### on local page
                     apps = this.local;
-                    filterString = this.$.filterLocal.value.toLowerCase();
+//                    filterString = this.$.filterLocal.value.toLowerCase();
+                    this.localCount = this._filter(apps,filterString);
+
                 }else{
                     // ### on remote page
                     apps = this.remote;
-                    filterString = this.$.filterRepo.value.toLowerCase();
+                    this.remoteCount = this._filter(this.remote, filterString);
+//                    filterString = this.$.filterRepo.value.toLowerCase();
                 }
 
+/*
                 this.count = apps.length;
                 for (var i = 0; i < apps.length; ++i) {
                     var app = apps[i]
@@ -702,11 +770,30 @@ a web component implementing eXistdb packagemanager
                         app.removeAttribute('hidden')
                     }
                 }
+*/
+
+
+            }
+
+            _filter(apps, filterString){
+                var cnt = apps.length;
+                for (var i = 0; i < apps.length; ++i) {
+                    var app = apps[i]
+                    var shortTitle = app.querySelector("repo-title").textContent;
+
+                    if (!shortTitle.toLowerCase().includes(filterString)) {
+                        app.setAttribute('hidden', '')
+                        cnt--;
+                    } else if (app.hasAttribute('hidden')) {
+                        app.removeAttribute('hidden')
+                    }
+                }
+                return cnt;
             }
 
             _resetFilters () {
                 this.$.filterLocal.value='';
-                this.$.filterRepo.value='';
+//                this.$.filterRepo.value='';
             }
 
             _switchToInstalled () {
@@ -792,6 +879,11 @@ a web component implementing eXistdb packagemanager
             _goToAvailable(e){
                 this.$.updates.close();
                 this._switchToAvailable(e);
+            }
+
+            _showLogout(){
+//                console.log('showLogout ', this.logout);
+                return this.getAttribute('logout') == 'true';
             }
 
         }

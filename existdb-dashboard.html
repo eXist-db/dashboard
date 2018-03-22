@@ -64,9 +64,13 @@ an application bundling all admin apps in one place.
             }
 
             app-drawer iron-icon {
-                color: rgb(0, 136, 204);
+                /*color: rgb(0, 136, 204);*/
+                color: var(--paper-blue-500);
                 margin-right: 20px;
 
+            }
+            app-drawer img{
+                margin-right: 20px;
             }
 
             .logo {
@@ -100,6 +104,13 @@ an application bundling all admin apps in one place.
                 height: 36px;
                 margin-right: 10px;
             }
+            .currentUser{
+                padding:4px 0;
+                font-size:12px;
+            }
+            .currentUser [icon='social:person']{
+                margin:0;
+            }
         </style>
 
 
@@ -121,11 +132,22 @@ an application bundling all admin apps in one place.
                    on-response="_handleVersion"
                    url="/exist/apps/existdb-dashboard/modules/dashboard.xql"></iron-ajax>
 
+        <iron-ajax id="getCurrentUser"
+                   with-credentials
+                   method="get"
+                   handle-as="text"
+                   on-response="_handleCurrentUser"
+                   url="/exist/apps/existdb-dashboard/modules/getCurrentUser.xql" auto></iron-ajax>
+
         <app-drawer-layout id="drawerLayout" fullbleed>
             <app-drawer id="drawer" slot="drawer">
                 <div class="drawerbar">
                     <img class="logo" src="resources/images/existdb-web.svg">
                     <div class="subitem">Dashboard</div>
+                    <div class="currentUser">
+                        <iron-icon icon="social:person"></iron-icon>
+                        [[currentUser]]
+                    </div>
                 </div>
 
                 <paper-item id="launcherItem" on-click="_showLauncher" role="menuitem">
@@ -153,6 +175,11 @@ an application bundling all admin apps in one place.
                     <span class="menuitem">About</span>
                     <paper-ripple></paper-ripple>
                 </paper-item>
+                <paper-item id="about" on-click="_logout" role="menuItem">
+                    <img src="resources/images/logout.svg">
+                    <span class="menuitem">Logout</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
             </app-drawer>
             <iron-lazy-pages id="pages" attr-for-selected="name" selected="{{routeData.page}}">
                 <template is="dom-if" name="launcher" data-path="bower_components/existdb-launcher/dependencies.html" restamp>
@@ -161,12 +188,12 @@ an application bundling all admin apps in one place.
                     </existdb-launcher-app>
                 </template>
                 <template is="dom-if" name="packagemanager" data-path="bower_components/existdb-packagemanager/dependencies.html" restamp>
-                    <existdb-packagemanager>
+                    <existdb-packagemanager logout="false">
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
                     </existdb-packagemanager>
                 </template>
                 <template is="dom-if" name="usermanager" data-path="bower_components/existdb-usermanager/dependencies.html" restamp>
-                    <existdb-usermanager-app>
+                    <existdb-usermanager-app logout="false">
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
                     </existdb-usermanager-app>
                 </template>
@@ -286,6 +313,16 @@ an application bundling all admin apps in one place.
             _handleVersion() {
                 this.$.version.innerHTML = this.$.getVersion.lastResponse;
                 this.$.versionDialog.open();
+            }
+
+            _logout(e){
+                this.route.path = "/#";
+                window.location.href="index.html?logout=true";
+            }
+
+            _handleCurrentUser(){
+                console.log('_handleCurrentUser ', this.$.getCurrentUser.lastResponse);
+                this.currentUser = this.$.getCurrentUser.lastResponse;
             }
 
         }

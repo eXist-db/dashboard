@@ -1,8 +1,7 @@
 <dom-module id="existdb-usermanager">
     <template>
-        <style>
+        <style include="existdb-styles">
             :host {
-                --paper-tabs-selection-bar-color: var(--paper-blue-500);
                 @apply(--paper-font-common-base);
                 display: block;
                 padding: 0;
@@ -13,6 +12,9 @@
                 --iron-icon-width: 62px;
                 --iron-icon-height: 62px;
                 --paper-icon-button-ink-color: var(--paper-grey-700);
+
+/*
+                --paper-tabs-selection-bar-color: var(--paper-blue-500);
                 --paper-tabs-selection-bar: {
                     border-width: 5px;
                 };
@@ -22,6 +24,7 @@
                 };
 
                 --paper-tab-ink:var(--paper-blue-300);
+*/
 
 
                 position: relative;
@@ -29,10 +32,12 @@
                 display: block;
                 overflow: auto;
             }
+/*
             paper-tab {
                 font-size: 24px;
                 font-weight: 400;
             }
+*/
 
             paper-fab {
                 position: fixed;
@@ -292,15 +297,32 @@
                 height: 60px;
             }
 
+/*
             paper-tabs {
                 height: 60px;
-                /*position: fixed;*/
                 top: 0;
                 left: 0;
                 z-index: 10;
                 width: 100%;
-                background: var(--paper-blue-100);
+                background: var(--paper-blue-300);
             }
+*/
+
+/*
+            paper-tabs{
+                background: var(--paper-blue-300);
+                --paper-tabs-selection-bar:{
+                    border:3px solid var(--paper-blue-700);
+                };
+
+            }
+            paper-tab{
+                position: relative;
+                --paper-tab-ink:var(--paper-blue-100);
+            }
+*/
+
+
 
             iron-pages {
                 /*margin-top:70px;*/

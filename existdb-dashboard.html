@@ -120,24 +120,12 @@ an application bundling all admin apps in one place.
                    pattern="/:page"
                    data="{{routeData}}"></app-route>
 
-        <paper-dialog id="versionDialog">
-            <img src="resources/images/existdb.png" style="width:120px;">
-            <div id="version"></div>
-        </paper-dialog>
-
-        <iron-ajax id="getVersion"
-                   with-credentials
-                   method="get"
-                   handle-as="text"
-                   on-response="_handleVersion"
-                   url="/exist/apps/existdb-dashboard/modules/dashboard.xql"></iron-ajax>
-
         <iron-ajax id="getCurrentUser"
                    with-credentials
                    method="get"
-                   handle-as="text"
+                   handle-as="json"
                    on-response="_handleCurrentUser"
-                   url="/exist/apps/existdb-dashboard/modules/getCurrentUser.xql" auto></iron-ajax>
+                   url="/exist/apps/existdb-dashboard/currentUser"></iron-ajax>
 
         <app-drawer-layout id="drawerLayout" fullbleed>
             <app-drawer id="drawer" slot="drawer">
@@ -170,12 +158,7 @@ an application bundling all admin apps in one place.
                     <span class="menuitem">Settings</span>
                     <paper-ripple></paper-ripple>
                 </paper-item>
-                <paper-item id="about" on-click="_showAbout" role="menuItem">
-                    <iron-icon icon="info-outline"></iron-icon>
-                    <span class="menuitem">About</span>
-                    <paper-ripple></paper-ripple>
-                </paper-item>
-                <paper-item id="about" on-click="_logout" role="menuItem">
+                <paper-item id="logout" on-click="_logout" role="menuItem">
                     <img src="resources/images/logout.svg">
                     <span class="menuitem">Logout</span>
                     <paper-ripple></paper-ripple>
@@ -233,7 +216,6 @@ an application bundling all admin apps in one place.
                         type: Boolean,
                         value: false
                     }
-
                 };
             }
 
@@ -242,6 +224,8 @@ an application bundling all admin apps in one place.
                 super.connectedCallback();
                 console.log("dashboard connected");
                 console.log("dashboard connected route ", this.route);
+                this.$.getCurrentUser.generateRequest();
+//                this.$.getVersion.generateRequest();
 
             }
 
@@ -252,6 +236,17 @@ an application bundling all admin apps in one place.
                     this.route = {};
                     this.set('route.path', '/launcher');
                 }
+
+/*
+                                window.addEventListener('focus', function (e) {
+                                    console.log('###### window focussed');
+                                    var loc = window.location.href;
+                                    if(this.user == null){
+                                        window.location.href='login';
+                                    }
+                                }.bind(this));
+                */
+
                 this.$.drawerLayout.resetLayout();
             }
 
@@ -273,13 +268,6 @@ an application bundling all admin apps in one place.
                 this.$.drawer.toggle();
             }
 
-/*
-            _handleLoad() {
-                console.log("items: ", this.$.loadDashboard.lastResponse);
-                this.menuItems = this.$.loadDashboard.lastResponse;
-            }
-*/
-
             _showLauncher(e) {
                 console.log('show.... ', e);
                 this.$.pages.select('launcher');
@@ -292,7 +280,6 @@ an application bundling all admin apps in one place.
 
             _showUserManager(e) {
                 this.$.pages.select('usermanager');
-
 //                this.$.drawerLayout.resetLayout();
             }
 
@@ -302,17 +289,6 @@ an application bundling all admin apps in one place.
 
             _toggleDrawer(e) {
                 this.$.drawer.close();
-            }
-
-            _showAbout(e) {
-                console.log('show version');
-                this.$.getVersion.url = this.importPath + 'modules/getVersion.xql';
-                this.$.getVersion.generateRequest();
-            }
-
-            _handleVersion() {
-                this.$.version.innerHTML = this.$.getVersion.lastResponse;
-                this.$.versionDialog.open();
             }
 
             _logout(e){

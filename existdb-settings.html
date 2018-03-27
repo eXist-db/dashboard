@@ -53,6 +53,22 @@
         font-size:14px;
         font-style: italic;
       }
+      .content{
+        display: block;
+      }
+      paper-card{
+        width: 100%;
+        display: block;
+
+      }
+      .card-content{
+        color:var(--paper-grey-900);
+      }
+      .existdb-version{
+        color:var(--paper-blue-500);
+        font-size: 18px;
+        padding: 10px;
+      }
     </style>
 
     <iron-ajax id="getPublicUrl"
@@ -60,6 +76,14 @@
                method="get" handle-as="text"
                on-response="_handleUrl"
                auto></iron-ajax>
+
+    <iron-ajax id="getVersion"
+               with-credentials
+               method="get"
+               handle-as="text"
+               on-response="_handleVersion"
+               auto></iron-ajax>
+
 
     <app-header-layout id="outer" fullbleed>
       <app-header slot="header" fixed>
@@ -70,12 +94,21 @@
         </app-toolbar>
       </app-header>
 
-      <paper-card heading="General Settings">
-        <div class="card-content">
-          <paper-input id="publicUrl" label="Public Repository URL" aria-readonly="true" readOnly></paper-input>
-          <span class="hint">Url from which publically available eXist-db apps and libraries are loaded. Don't change this value unless you're using your own repository.</span>
-        </div>
-      </paper-card>
+      <div class="content">
+        <paper-card heading="eXist-db Version">
+          <div class="card-content">
+            Your are running
+            <div class="existdb-version">[[versionString]]</div>
+          </div>
+        </paper-card>
+
+        <paper-card heading="General Settings">
+          <div class="card-content">
+            <paper-input id="publicUrl" label="Public Repository URL" aria-readonly="true" readOnly></paper-input>
+            <span class="hint">Url from which publically available eXist-db apps and libraries are loaded. Don't change this value unless you're using your own repository.</span>
+          </div>
+        </paper-card>
+      </div>
     </app-header-layout>
 
 
@@ -87,6 +120,10 @@
 
       static get properties() {
         return {
+            versionString:{
+                type: String,
+                reflectToAttribute:true
+            }
         };
       }
 
@@ -94,12 +131,17 @@
           super.ready();
 //          this.$.outer.resetLayout();
           this.$.getPublicUrl.url = this.importPath + '../packageservice/packages/public-url';
+          this.$.getVersion.url = this.importPath + 'modules/getVersion.xql';
       }
 
       _handleUrl(){
           console.log(this.$.getPublicUrl.lastResponse);
           this.$.publicUrl.value = this.$.getPublicUrl.lastResponse;
       }
+
+        _handleVersion(){
+          this.versionString = this.$.getVersion.lastResponse;
+        }
 
     }
 

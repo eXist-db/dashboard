@@ -10,11 +10,11 @@ a web component implementing eXistdb packagemanager
 
 <dom-module id="existdb-packagemanager">
     <template>
-        <style>
+        <style include="existdb-styles">
             :host {
                 display: block;
 
-                --paper-tabs-selection-bar-color: var(--paper-blue-700);
+                /*--paper-tabs-selection-bar-color: var(--paper-blue-700);*/
                 @apply(--paper-font-common-base);
                 position: relative;
                 /*background: var(--paper-blue-100);*/
@@ -56,9 +56,11 @@ a web component implementing eXistdb packagemanager
                 /*--iron-icon-stroke-color:white;*/
                 position: relative;
 
+/*
                 --paper-tabs-selection-bar:{
                     border:3px;
                 };
+*/
 
             }
 
@@ -73,6 +75,7 @@ a web component implementing eXistdb packagemanager
                 height: 128px;
             }
 
+/*
             paper-tabs{
                 background: var(--paper-blue-300);
                 --paper-tabs-selection-bar:{
@@ -85,6 +88,7 @@ a web component implementing eXistdb packagemanager
                 --paper-tab-ink:var(--paper-blue-100);
             }
 
+*/
 
 
             #pages{
@@ -475,12 +479,12 @@ a web component implementing eXistdb packagemanager
 
                 <paper-tabs selected="{{selected}}">
                     <paper-tab class="installedTab" id="installedTab">
-                        Installed
-                        <paper-badge label="[[localCount]]" for="installedTab"></paper-badge>
+                        Installed ([[localCount]])
+                        <!--<paper-badge label="[[localCount]]" for="installedTab"></paper-badge>-->
                     </paper-tab>
                     <paper-tab class="availableTab" id="availableTab">
-                        Available
-                        <paper-badge label="[[remoteCount]]" for="availableTab"></paper-badge>
+                        Available ([[remoteCount]])
+                        <!--<paper-badge label="[[remoteCount]]" for="availableTab"></paper-badge>-->
                     </paper-tab>
                 </paper-tabs>
             </app-header>

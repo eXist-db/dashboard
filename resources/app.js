@@ -6,9 +6,3 @@ function postRoute(){
         document.getElementById('route').value = ref;
     }
 }
-
-function passRoute(){
-    var loc = window.location.href;
-    var ref = loc.substring(loc.indexOf('#'));
-    console.log('ref ' ,ref );
-}

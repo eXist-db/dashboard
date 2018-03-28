@@ -31,6 +31,22 @@ else if ($exist:path = "/") then(
         <redirect url="index.html"/>
     </dispatch>
 )
+else if($exist:path = "/login") then
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <redirect url="login.html">
+            <cache-control cache="no"/>
+            <set-header name="Cache-Control" value="no-cache"/>
+        </redirect>
+    </dispatch>
+else if($exist:path = "/logout") then(
+    login:set-user("org.exist.login", (), false()),
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <redirect url="index.html?logout=true">
+            <cache-control cache="no"/>
+            <set-header name="Cache-Control" value="no-cache"/>
+        </redirect>
+    </dispatch>
+)
 else if ($exist:path = "/admin") then (
     login:set-user("org.exist.login", (), true()),
     let $user := request:get-attribute("org.exist.login.user")
@@ -44,12 +60,14 @@ else if ($exist:path = "/admin") then (
     return
     if($user and sm:is-dba($user)) then(
 
+(:
         let $log := util:log("info", "user is dba")
         let $log := util:log("info", "effective " || request:get-uri())
         let $log := util:log("info", "uri " || request:get-uri())
         let $log := util:log("info", "pathinfo " || request:get-path-info())
         let $log := util:log("info", "url " || request:get-url())
         return
+:)
 
 
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

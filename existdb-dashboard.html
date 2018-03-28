@@ -239,36 +239,23 @@ an application bundling all admin apps in one place.
                 console.log('dashboard ready route attr ', this.path);
                 this.$.location.addEventListener('path-changed', event => this.routeChanged(event));
 
-
+//                console.log('setting path if available: ', this.path.substring(1));
 
                 if (!this.route || !this.route.path) {
                     this.route = {};
-                    this.set('route.path', '/launcher');
-/*
                     if(this.path != ""){
-                        this.set('route.path',this.path);
+                        this.set('route.path',this.path.substring(1));
                     }else{
                         this.set('route.path', '/launcher');
                     }
-*/
                 }
-
-/*
-                                window.addEventListener('focus', function (e) {
-                                    console.log('###### window focussed');
-                                    var loc = window.location.href;
-                                    if(this.user == null){
-                                        window.location.href='login';
-                                    }
-                                }.bind(this));
-                */
 
                 this.$.drawerLayout.resetLayout();
             }
 
             routeChanged(event) {
 //                console.log("route changed ", event);
-                console.log("route changed ", this.route);
+//                console.log("route changed ", this.route);
 
                 var s = this.route.path;
                 console.log("route path changed ", s);
@@ -290,7 +277,7 @@ an application bundling all admin apps in one place.
             }
 
             _showPackageManager(e) {
-                console.log('show _showPackageManager ', e);
+//                console.log('show _showPackageManager ', e);
                 this.$.pages.select('packagemanager');
             }
 
@@ -309,7 +296,7 @@ an application bundling all admin apps in one place.
 
             _logout(e){
                 this.route.path = "/#";
-                window.location.href="?logout=true";
+                window.location.href="logout?logout=true";
             }
 
             _handleCurrentUser(){

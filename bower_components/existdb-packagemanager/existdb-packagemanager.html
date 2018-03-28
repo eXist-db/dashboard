@@ -134,8 +134,8 @@ a web component implementing eXistdb packagemanager
                 color:var(--paper-blue-900);
                 padding:10px;
 
-                --paper-input-container-underline:{
-                    border:none;
+                --paper-input-container-underline-focus:{
+                    border:transparent;
                 };
             }
             .filter::placeholder{
@@ -346,6 +346,16 @@ a web component implementing eXistdb packagemanager
 
             #localService{
                 margin-top:9px;
+            }
+
+            paper-input-container{
+                margin-right:22px;
+
+                --paper-input-container-underline:{
+                    border:none;
+                    outline: none;
+
+                };
             }
 
             paper-badge{

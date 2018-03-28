@@ -47,16 +47,36 @@
                 margin-right:20px;
             }
 
+            [icon="social:people"]{
+                --iron-icon-fill-color:white;
+                margin-right:10px;
+                --iron-icon-width: 30px;
+                --iron-icon-height: 30px;
+            }
 /*
             existdb-usermanager paper-tabs{
                 position:absolute;
             }
 */
+            @media only screen and (max-width: 768px) {
+                [main-title]{
+                    font-size:18px;
+                }
+                .x{
+                    display:none;
+                }
+                app-toolbar{
+                    padding-right:0;
+                }
+
+            }
+
         </style>
 
         <app-header-layout id="outer" fullbleed has-scrolling-region>
             <app-header id="header" slot="header" fixed>
                 <app-toolbar>
+                    <iron-icon class="x" icon="social:people"></iron-icon>
                     <slot name="toggleIcon"></slot>
 
                     <div main-title>User Manager</div>

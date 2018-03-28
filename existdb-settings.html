@@ -69,6 +69,26 @@
         font-size: 18px;
         padding: 10px;
       }
+
+      [icon="settings"]{
+        --iron-icon-fill-color:white;
+        margin-right:10px;
+        --iron-icon-width: 30px;
+        --iron-icon-height: 30px;
+      }
+      @media only screen and (max-width: 768px) {
+        [main-title]{
+          font-size:18px;
+        }
+        .x{
+          display:none;
+        }
+        app-toolbar{
+          padding-right:0;
+        }
+
+      }
+
     </style>
 
     <iron-ajax id="getPublicUrl"
@@ -88,6 +108,7 @@
     <app-header-layout id="outer" fullbleed>
       <app-header slot="header" fixed>
         <app-toolbar>
+          <iron-icon icon="settings" class="x"></iron-icon>
           <slot name="toggleIcon"></slot>
 
           <div main-title>Settings</div>

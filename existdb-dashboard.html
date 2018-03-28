@@ -162,7 +162,8 @@ an application bundling all admin apps in one place.
                     <paper-ripple></paper-ripple>
                 </paper-item>
                 <paper-item id="settingsItem" on-click="_showSettings" role="menuitem">
-                    <iron-icon icon="build"></iron-icon>
+                    <!--<iron-icon icon="build"></iron-icon>-->
+                    <iron-icon icon="settings"></iron-icon>
                     <span class="menuitem">Settings</span>
                     <paper-ripple></paper-ripple>
                 </paper-item>
@@ -174,7 +175,7 @@ an application bundling all admin apps in one place.
             </app-drawer>
             <iron-lazy-pages id="pages" attr-for-selected="name" selected="{{routeData.page}}">
                 <template is="dom-if" name="launcher" data-path="bower_components/existdb-launcher/dependencies.html" restamp>
-                    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager"]'>
+                    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard","existdb-dashboard"]'>
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
                     </existdb-launcher-app>
                 </template>

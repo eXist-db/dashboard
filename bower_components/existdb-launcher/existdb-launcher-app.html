@@ -50,11 +50,24 @@
                             background: ghostwhite;
                         }
             */
+            @media only screen and (max-width: 768px) {
+                [main-title]{
+                    font-size:18px;
+                }
+                .x{
+                    display:none;
+                }
+                app-toolbar{
+                    padding-right:0;
+                }
+
+            }
 
         </style>
         <app-header-layout id="outer" fullbleed has-scrolling-region>
             <app-header slot="header" fixed>
                 <app-toolbar>
+                    <img class="x" src="{{importPath}}resources/icon.svg" style="width:36px;height:36px;margin-right:10px;">
                     <slot name="toggleIcon"></slot>
                     <!--<img src="{{baseUrl}}/resources/icon.svg" style="width:36px;height:36px;padding-right:6px;">-->
                     <div main-title>Launcher</div>

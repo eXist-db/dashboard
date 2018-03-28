@@ -10,7 +10,7 @@ a web component implementing eXistdb packagemanager
 
 <dom-module id="existdb-packagemanager">
     <template>
-        <style include="existdb-styles">
+        <style>
             :host {
                 display: block;
 
@@ -24,11 +24,7 @@ a web component implementing eXistdb packagemanager
                 width: 100%;
                 height:100%;
                 overflow:auto;
-/*
-                --vaadin-upload-button-add: {
-                    background: var(--paper-blue-700);
-                };
-*/
+                position: relative;
 
                 --paper-toggle-button-checked-button-color: var(--paper-blue-700);
 
@@ -39,35 +35,32 @@ a web component implementing eXistdb packagemanager
                 --paper-input-container:{
                     font-size:18px;
                     margin-top:-18px;
-                    /*background: var(--paper-blue-900);*/
                     padding:0;
                 };
 
                 --paper-input-container-underline:{
                     border:none;
                 };
-/*
-                --paper-input-container-underline-focus:{
-                    background: var(--paper-blue-900);
-                    border:var(--paper-blue-900);
-                    color:var(--paper-blue-100);
-                };
-*/
-                /*--iron-icon-stroke-color:white;*/
-                position: relative;
-
-/*
-                --paper-tabs-selection-bar:{
-                    border:3px;
-                };
-*/
-
             }
 
+
+/*
             app-header-layout{
-                /*background: var(--paper-blue-300);*/
+                background: var(--paper-blue-300);
             }
+*/
 
+            app-header-layout {
+                position: absolute;
+                top: 0px;
+                right: 0px;
+                bottom: 0px;
+                left: 0px;
+                /*height: calc(100% - 200px);*/
+                background-color: #eee;
+                overflow: hidden;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            }
 
             app-header {
                 background: var(--paper-blue-500);
@@ -75,11 +68,17 @@ a web component implementing eXistdb packagemanager
                 height: 128px;
             }
 
-/*
             paper-tabs{
                 background: var(--paper-blue-300);
                 --paper-tabs-selection-bar:{
                     border:3px solid var(--paper-blue-700);
+                };
+
+                height:50px;
+
+                --paper-tab-content:{
+                    color:white;
+                    font-size:16px;
                 };
 
             }
@@ -87,8 +86,6 @@ a web component implementing eXistdb packagemanager
                 position: relative;
                 --paper-tab-ink:var(--paper-blue-100);
             }
-
-*/
 
 
             #pages{
@@ -352,7 +349,6 @@ a web component implementing eXistdb packagemanager
             }
 
             paper-badge{
-                /*--paper-badge-margin-left:-20px;*/
                 position: absolute;
                 top:12px !important;
                 right:0 !important;
@@ -440,7 +436,7 @@ a web component implementing eXistdb packagemanager
 
 
 
-        <app-header-layout fullbleed has-scrolling-region>
+        <app-header-layout id="layout" fullbleed has-scrolling-region>
             <app-header slot="header" class="app-header" reveals condenses effects="waterfall" fixed>
 
                 <app-toolbar id="maintool" style="height:64px;" sticky>
@@ -591,7 +587,8 @@ a web component implementing eXistdb packagemanager
 
             connectedCallback() {
                 super.connectedCallback();
-//                console.log('packagemanager rootPath: ', this.rootPath);
+                console.log('packagemanager rootPath: ', this.rootPath);
+                this.$.layout.resetLayout();
                 this.focus();
             }
 
@@ -710,7 +707,7 @@ a web component implementing eXistdb packagemanager
                     this._checkForUpdates();
                 }
                 this.$.filterLocal.focus();
-
+                this.$.layout.resetLayout();
             }
 
             _handlePageChange (newValue, oldValue) {

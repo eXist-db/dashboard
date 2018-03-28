@@ -14,38 +14,69 @@ declare variable $exist:controller external;
 declare variable $exist:prefix external;
 declare variable $exist:root external;
 
+(:
+let $log := util:log("info", "path " || $exist:path)
+let $log := util:log("info", "resource " || $exist:resource)
+let $log := util:log("info", "controller " || $exist:controller)
+let $log := util:log("info", "")
 
+return
+:)
 if ($exist:path eq '') then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <redirect url="{request:get-uri()}/"/>
     </dispatch>
-else if(starts-with($exist:path,'/demo/settings.html')) then
-    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <cache-control cache="no"/>
-    </dispatch>
 else if ($exist:path = "/") then(
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <redirect url="index.html"/>
+    </dispatch>
+)
+else if ($exist:path = "/admin") then (
     login:set-user("org.exist.login", (), true()),
     let $user := request:get-attribute("org.exist.login.user")
+
+    let $route := request:get-parameter("route","")
+    let $log := util:log("info", "path " || $exist:path)
+    let $log := util:log("info", "route " || $route)
+
+    (:let $log := util:log("info", "login matched " || $exist:controller):)
+
     return
-        if($user and sm:is-dba($user)) then
-            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <forward url="{$exist:controller}/admin.html"></forward>
+    if($user and sm:is-dba($user)) then(
+
+        let $log := util:log("info", "user is dba")
+        let $log := util:log("info", "effective " || request:get-uri())
+        let $log := util:log("info", "uri " || request:get-uri())
+        let $log := util:log("info", "pathinfo " || request:get-path-info())
+        let $log := util:log("info", "url " || request:get-url())
+        return
+
+
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            <forward url="admin.xql?route={$route}">
                 <cache-control cache="no"/>
-            </dispatch>
-        else
-            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <forward url="{$exist:controller}/guest.html"></forward>
-            </dispatch>
-            )
-else if(starts-with($exist:path,"/apps/local")) then
-    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <forward url="../modules/local-applications.xql"></forward>
-    </dispatch>
-else if($exist:path eq '/login') then
-    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <forward url="login.html"/>
-    </dispatch>
+                <set-header name="Cache-Control" value="no-cache"/>
+            </forward>
+        </dispatch>
+    )
+    else(
+(:
+        let $log := util:log("info", "user is not logged in")
+        return
+:)
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            (:<forward url="{$exist:controller}/index.html"></forward>:)
+            <redirect url="login.html">
+                <cache-control cache="no"/>
+                <set-header name="Cache-Control" value="no-cache"/>
+            </redirect>
+        </dispatch>
+        )
+)
 else
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <cache-control cache="yes"/>
     </dispatch>
+
+
+

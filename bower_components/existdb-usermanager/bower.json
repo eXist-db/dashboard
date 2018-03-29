@@ -43,7 +43,6 @@
     "test",
     "build.xml",
     "expath-pkg.xml",
-    "existdb-usermanager-app.html",
     "dependencies-local.html",
     "gulpfile.js",
     "package.json",

@@ -81,7 +81,7 @@
 
                     <div main-title>User Manager</div>
                     <template is="dom-if" if="{{_showLogout()}}">
-                        <a href="index.html?logout=true">logout</a>
+                    <a href="index.html?logout=true">logout</a>
                     </template>
                 </app-toolbar>
             </app-header>
@@ -120,6 +120,7 @@
             connectedCallback() {
                 super.connectedCallback();
                 console.log('existdb-usermanager-app connected');
+                this.$.outer.notifyResize();
             }
 
             ready() {

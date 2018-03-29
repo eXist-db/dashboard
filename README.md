@@ -1,4 +1,6 @@
-# \<existdb-dashboard\>
+# eXist-db Admin Dashboard
+
+
 
 a eXistdb launchpad 
 

@@ -43,7 +43,6 @@
     "test",
     "build.xml",
     "expath-pkg.xml",
-    "existdb-usermanager-app.html",
     "dependencies-local.html",
     "gulpfile.js",
     "package.json",
@@ -52,15 +51,14 @@
   ],
   "private": true,
   "homepage": "https://github.com/eXist-db/usermanager",
-  "version": "0.16.3",
-  "_release": "0.16.3",
+  "version": "0.16.4",
+  "_release": "0.16.4",
   "_resolution": {
     "type": "version",
-    "tag": "v0.16.3",
-    "commit": "74926a9e32ffed381b03cdde94658ae4625fe1b1"
+    "tag": "v0.16.4",
+    "commit": "bc0d331d768e49433da095d9c6cd24a8ecd742ad"
   },
   "_source": "https://github.com/eXist-db/usermanager.git",
-  "_target": "^0.16.3",
-  "_originalSource": "https://github.com/eXist-db/usermanager.git",
-  "_direct": true
+  "_target": "^0.16.4",
+  "_originalSource": "https://github.com/eXist-db/usermanager.git"
 }

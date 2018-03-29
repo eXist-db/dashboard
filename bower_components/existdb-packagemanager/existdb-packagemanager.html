@@ -335,7 +335,7 @@ a web component implementing eXistdb packagemanager
                 display: none;
             }
 
-            paper-item a{
+            #moreMenu a{
                 text-decoration: none;
                 color:inherit;
             }
@@ -358,21 +358,6 @@ a web component implementing eXistdb packagemanager
                 };
             }
 
-            paper-badge{
-                position: absolute;
-                top:12px !important;
-                right:0 !important;
-                left:auto !important;
-                z-index: 10;
-                --paper-badge-background:var(--paper-blue-500);
-                --paper-badge-width:26px;
-                --paper-badge-height:26px;
-
-                --paper-badge:{
-                    font-size: 14px;
-                };
-
-            }
         </style>
 <!--
         <iron-a11y-keys id="a11y1" target="[[target]]" keys="ctrl+h"
@@ -469,7 +454,7 @@ a web component implementing eXistdb packagemanager
                             <paper-item on-click="_showHideShortcuts">show shortcuts</paper-item>
 
                             <template is="dom-if" if="{{_showLogout()}}">
-                                <paper-item><a href="index.html?logout=true">logout</a></paper-item>
+                                <a href="login.html?logout=true" tabindex="-1"><paper-item>logout</paper-item></a>
                             </template>
                         </paper-listbox>
                     </paper-menu-button>
@@ -486,11 +471,9 @@ a web component implementing eXistdb packagemanager
                 <paper-tabs selected="{{selected}}">
                     <paper-tab class="installedTab" id="installedTab">
                         Installed ([[localCount]])
-                        <!--<paper-badge label="[[localCount]]" for="installedTab"></paper-badge>-->
                     </paper-tab>
                     <paper-tab class="availableTab" id="availableTab">
                         Available ([[remoteCount]])
-                        <!--<paper-badge label="[[remoteCount]]" for="availableTab"></paper-badge>-->
                     </paper-tab>
                 </paper-tabs>
             </app-header>
@@ -597,7 +580,7 @@ a web component implementing eXistdb packagemanager
 
             connectedCallback() {
                 super.connectedCallback();
-                console.log('packagemanager rootPath: ', this.rootPath);
+//                console.log('packagemanager rootPath: ', this.rootPath);
                 this.$.layout.resetLayout();
                 this.focus();
             }

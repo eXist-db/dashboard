@@ -64,7 +64,7 @@
       .card-content{
         color:var(--paper-grey-900);
       }
-      .existdb-version{
+      .highlight{
         color:var(--paper-blue-500);
         font-size: 18px;
         padding: 10px;
@@ -119,14 +119,16 @@
         <paper-card heading="eXist-db Version">
           <div class="card-content">
             Your are running
-            <div class="existdb-version">[[versionString]]</div>
+            <div class="highlight">[[versionString]]</div>
           </div>
         </paper-card>
 
         <paper-card heading="General Settings">
           <div class="card-content">
-            <paper-input id="publicUrl" label="Public Repository URL" aria-readonly="true" readOnly></paper-input>
-            <span class="hint">Url from which publically available eXist-db apps and libraries are loaded. Don't change this value unless you're using your own repository.</span>
+            <!--<paper-input id="publicUrl" label="Public Repository URL" aria-readonly="true" readOnly></paper-input>-->
+            Public Repository URL
+            <div class="highlight" id="publicUrl"></div>
+            <span class="hint">Url from which publically available eXist-db apps and libraries are loaded.</span>
           </div>
         </paper-card>
       </div>
@@ -157,7 +159,8 @@
 
       _handleUrl(){
           console.log(this.$.getPublicUrl.lastResponse);
-          this.$.publicUrl.value = this.$.getPublicUrl.lastResponse;
+//          this.$.publicUrl.value = this.$.getPublicUrl.lastResponse;
+          this.$.publicUrl.innerHTML = this.$.getPublicUrl.lastResponse;;
       }
 
         _handleVersion(){

@@ -87,5 +87,17 @@ Admin Dashboard at all but just e.g. a Launcher. On production system however yo
 
 These scenarios are made possible by these hybrid components. 
 
+## Compatibility
+
+The application has been tested on:
+
+* Chrome 65.0.3325.181 / OSX 10.13.3
+* Firefox 59.0.2 / OSX 10.13.3
+* Safari 11.0.3 / OSX 10.13.3
+
+Admin Dashboard is built with [Polymer 2](https://polymer-project.org). See their compatibility table [here](https://www.polymer-project.org/2.0/docs/browsers).
+
+
+
 
 

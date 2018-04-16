@@ -80,6 +80,11 @@
                 <li>New major version to signal break in compatibility with pre-eXist 4.0.0 Dashboard</li>
             </ul>
         </change>
+        <change xmlns="http://www.w3.org/1999/xhtml" version="1.0.1">
+            <ul>
+                <li>Fixed: Removed "Remember me" checkbox from login dialog to workaround problem - <a href="https://github.com/eXist-db/dashboard/pull/64">#64</a></li>
+            </ul>
+        </change>
     </changelog>
     <deployed>2013-07-06T19:48:05.794+02:00</deployed>
 </meta>

@@ -65,7 +65,6 @@ return
                                 || "&amp;package=" || encode-for-uri($package)
                                 || "&amp;repo-path=" || encode-for-uri($pkg-metadata/@repo-path)
                                 || "&amp;file-name=" || encode-for-uri($pkg-metadata/@file-name)
-                                || "&amp;upgrade-query=" || encode-for-uri($modules-col || "/" || $upgrade-query-name)
                             ))
                     else
                         let $doc-name := apputil:deploy-upload($pkg-metadata, xs:anyURI($server-url))
@@ -92,32 +91,22 @@ return
                     let $package := request:get-parameter("package", ())
                     let $repo-path := request:get-parameter("repo-path", ())
                     let $file-name := request:get-parameter("file-name", ())
-                    let $upgrade-query := request:get-parameter("upgrade-query", ())
                     return
                         let $doc-name := apputil:deploy-upload($package, $repo-path, $file-name, xs:anyURI($server-url))
                         return
                             response:redirect-to(xs:anyURI("install.xql" || "?action=finish-upgrade-self"
-                                || "&amp;upgrade-query=" || encode-for-uri($upgrade-query)
                                 || "&amp;doc-name=" || encode-for-uri($doc-name)
                             ))
 
                 case "finish-upgrade-self"
                 return
-                    let $upgrade-query := request:get-parameter("upgrade-query", ())
                     let $doc-name := request:get-parameter("doc-name", ())
                     return
-                        (: clean up after ourselves, seems not to be needed? :)
-                        let $modules-col := replace($upgrade-query, "(.+)/.+", "$1")
-                        let $upgrade-query-name := replace($upgrade-query, ".+/(.+)", "$1")
-                        (:
-                        let $_ := xmldb:remove($modules-col, $upgrade-query-name)
-                        :)
-                        return
-                            <result>
-                                <json:value json:array="true">
-                                    <file>{$doc-name}</file>
-                                </json:value>
-                            </result>
+                        <result>
+                            <json:value json:array="true">
+                                <file>{$doc-name}</file>
+                            </json:value>
+                        </result>
 
                 case "remove"
                 return

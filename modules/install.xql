@@ -57,6 +57,7 @@ return
                         let $_ := xmldb:copy($modules-col, $tmp-col, "install.xql")
                         let $_ := xmldb:rename($tmp-col, "install.xql", $upgrade-query-name)
                         let $_ := xmldb:copy($tmp-col, $modules-col, $upgrade-query-name)
+                        let $_ := sm:chmod(xs:anyURI($modules-col || "/" || $upgrade-query-name), "rwxr-xr-x")
                         let $_ := xmldb:remove($tmp-col)
 
                         return

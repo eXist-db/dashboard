@@ -133,21 +133,22 @@ declare %private function packages:public-repo-contents($installed as element(ap
             if ($status != 200) then
                 response:set-status-code($status)
             else
-                map(function($app as element(app)) {
-                    (: Ignore apps which are already installed :)
-                    if ($app/abbrev = $installed/abbrev) then
-                        if (packages:is-newer($app/version/string(), $installed[abbrev = $app/abbrev]/version)) then
-                            element { node-name($app) } {
-                                attribute available { $app/version/string() },
-                                attribute installed { $installed[abbrev = $app/abbrev]/version/string() },
-                                $app/@*,
-                                $app/*
-                            }
+                for-each($data[2]//app,
+                    function($app as element(app)) {
+                        (: Ignore apps which are already installed :)
+                        if ($app/abbrev = $installed/abbrev) then
+                            if (packages:is-newer($app/version/string(), $installed[abbrev = $app/abbrev]/version)) then
+                                element { node-name($app) } {
+                                    attribute available { $app/version/string() },
+                                    attribute installed { $installed[abbrev = $app/abbrev]/version/string() },
+                                    $app/@*,
+                                    $app/*
+                                }
+                            else
+                                ()
                         else
-                            ()
-                    else
-                        $app
-                }, $data[2]//app)
+                            $app
+                    })
     } catch * {
         util:log("ERROR", "Error while retrieving app packages: " || $err:description)
     }

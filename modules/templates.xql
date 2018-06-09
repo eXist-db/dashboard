@@ -40,13 +40,13 @@ declare variable $templates:root-collection :=
 :)
 declare function templates:apply($content as node()+, $resolver as function(xs:string, xs:int) as item()?, $model as map(*)?,
     $configuration as map(*)?) {
-    let $model := if ($model) then $model else map:new()
+    let $model := if ($model) then $model else map {}
     let $configuration := 
         if (exists($configuration)) then 
-            map:new(($configuration, map { "resolve" := $resolver }))
+            map:merge(($configuration, map { "resolve" := $resolver }))
         else
             map { "resolve" := $resolver }
-    let $model := map:new(($model, map:entry($templates:CONFIGURATION, $configuration)))
+    let $model := map:merge(($model, map:entry($templates:CONFIGURATION, $configuration)))
     for $root in $content
     return
         templates:process($root, $model)
@@ -174,7 +174,7 @@ declare %private function templates:process-output($node as element(), $model as
 declare %private function templates:process-output($node as element(), $model as map(*), $output as item()*) {
     typeswitch($output)
         case map(*) return
-            templates:process($node/node(), map:new(($model, $output)))
+            templates:process($node/node(), map:merge(($model, $output)))
         default return
             $output
 };
@@ -246,7 +246,7 @@ declare %private function templates:resolve($arity as xs:int, $func as xs:string
 };
 
 declare %private function templates:parse-parameters($paramStr as xs:string?) as map(xs:string, xs:string) {
-    map:new(
+    map:merge(
         for $param in tokenize($paramStr, "&amp;")
         let $key := substring-before($param, "=")
         let $value := substring-after($param, "=")

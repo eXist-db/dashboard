@@ -2,11 +2,20 @@
 
 Admin Dashboard is a replacement of the older [Dashboard](https://github.com/eXist-db/dashboard) and will replace it from eXist-db 5.0.0 onwards.
 
-## Building
+## Building for development
+
 
 The application is build with Apache Ant by executing
 
 ```ant xar```
+
+This creates an unoptimized package for development purposes.
+
+## Building for production
+
+To create a minified package execute:
+
+```ant production-xar```
 
 ### A note on client-side dependencies
 

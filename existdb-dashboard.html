@@ -73,7 +73,7 @@ an application bundling all admin apps in one place.
 
             }
             paper-item img{
-                margin-right: 20px;
+                /*margin-right: 20px;*/
             }
 
             .logo {
@@ -102,10 +102,10 @@ an application bundling all admin apps in one place.
                 padding: 20px;
             }
 
-            .launcherIcon {
+            .item-img {
                 width: 36px;
                 height: 36px;
-                margin-right: 10px;
+                margin-right: 8px;
             }
             .currentUser{
                 padding:4px 0;
@@ -146,7 +146,7 @@ an application bundling all admin apps in one place.
                 </div>
 
                 <paper-item id="launcherItem" on-click="_showLauncher" role="menuitem">
-                    <img class="launcherIcon" src="resources/images/launcher.svg">
+                    <img class="item-img" src="resources/images/launcher.svg">
                     <span class="menuitem">Launcher</span>
                     <paper-ripple></paper-ripple>
                 </paper-item>
@@ -167,7 +167,7 @@ an application bundling all admin apps in one place.
                     <paper-ripple></paper-ripple>
                 </paper-item>
                 <paper-item id="logout" on-click="_logout" role="menuItem">
-                    <img src="resources/images/logout.svg">
+                    <img class="item-img" src="resources/images/logout.svg">
                     <span class="menuitem">Logout</span>
                     <paper-ripple></paper-ripple>
                 </paper-item>

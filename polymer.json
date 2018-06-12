@@ -1,7 +1,22 @@
 {
-  "lint": {
-    "rules": [
-      "polymer-2"
-    ]
-  }
+  "shell": "build.html",
+  "extraDependencies":[
+    "bower_components/vaadin-progress-bar/**"
+  ],
+  "sources":[
+
+  ],
+  "builds": [
+    {
+      "name": "production",
+      "js": {"compile": false, "minify": true},
+      "css": {"minify": true},
+      "sourceMaps":true,
+      "html": {
+        "minify": true
+      },
+      "stripComments":true
+    }
+  ]
 }
+

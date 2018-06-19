@@ -7,16 +7,16 @@ element for displaying package metadata
 
 <dom-module id="repo-authors">
     <template>
-        <style>
-            :host {
-                display:block;
-            }
-
-            ::slotted(repo-author){
-                display: block;
+        <style include="repo-styles">
+            .content ::slotted(repo-author){
+                display:table-row;
             }
         </style>
-        <slot></slot>
+
+        <span class="label">Author(s)</span>
+        <span class="content">
+            <slot></slot>
+        </span>
     </template>
 
     <script>

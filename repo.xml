@@ -10,4 +10,12 @@
     <target>existdb-dashboard</target>
     <prepare></prepare>
     <finish/>
+    <changelog>
+        <change version="1.1.0">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>updated dependencies</li>
+                <li>updated packagemanager and repo elements</li>
+            </ul>
+        </change>
+    </changelog>
 </meta>

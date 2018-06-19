@@ -31,12 +31,12 @@
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
     "web-component-tester": "*"
   },
-  "version": "2.2.0",
-  "_release": "2.2.0",
+  "version": "2.3.0",
+  "_release": "2.3.0",
   "_resolution": {
     "type": "version",
-    "tag": "2.2.0",
-    "commit": "d6eb92afa6a61ab6ad1fed4825088aa80c74a0bd"
+    "tag": "2.3.0",
+    "commit": "a4e62989932314838b6c4468f47f01140cc3b0ba"
   },
   "_source": "https://github.com/Collaborne/paper-password-input.git",
   "_target": "^2.0.0",

@@ -86,19 +86,29 @@ interface IronLocationElement extends Polymer.Element {
   urlSpaceRegex: string|RegExp|null;
 
   /**
+   * A flag that specifies whether the spaces in query that would normally be
+   * encoded as %20 should be encoded as +.
+   *
+   * Given an example text "hello world", it is encoded in query as
+   * - "hello%20world" without the parameter
+   * - "hello+world" with the parameter
+   */
+  encodeSpaceAsPlusInQuery: boolean|null|undefined;
+
+  /**
    * urlSpaceRegex, but coerced into a regexp.
    */
   readonly _urlSpaceRegExp: RegExp|null;
   _lastChangedAt: number|null|undefined;
   _initialized: boolean|null|undefined;
   hostAttributes: object|null;
-  created(): any;
-  attached(): any;
-  detached(): any;
-  _hashChanged(): any;
-  _urlChanged(): any;
+  created(): void;
+  attached(): void;
+  detached(): void;
+  _hashChanged(): void;
+  _urlChanged(): void;
   _getUrl(): any;
-  _updateUrl(): any;
+  _updateUrl(): void;
 
   /**
    * A necessary evil so that links work as expected. Does its best to
@@ -106,7 +116,7 @@ interface IronLocationElement extends Polymer.Element {
    *
    * @param event .
    */
-  _globalOnClick(event: MouseEvent|null): any;
+  _globalOnClick(event: MouseEvent|null): void;
 
   /**
    * Returns the absolute URL of the link (if any) that this click event

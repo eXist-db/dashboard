@@ -1,0 +1,19 @@
+<dom-module id="repo-changelog">
+    <template>
+        <style include="repo-styles">
+        </style>
+        <span class="label">Changelog</span>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+    <script>
+        class RepoChangelog extends Polymer.Element {
+            static get is() {
+                return 'repo-changelog';
+            }
+        }
+
+        window.customElements.define(RepoChangelog.is, RepoChangelog);
+    </script>
+</dom-module>

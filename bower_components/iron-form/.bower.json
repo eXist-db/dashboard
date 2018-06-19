@@ -1,6 +1,6 @@
 {
   "name": "iron-form",
-  "version": "2.1.4",
+  "version": "2.3.0",
   "description": "Wrapper around native form that submits native and custom elements",
   "keywords": [
     "web-components",
@@ -34,6 +34,7 @@
     "paper-listbox": "PolymerElements/paper-listbox#1 - 2",
     "paper-spinner": "PolymerElements/paper-spinner#1 - 2",
     "paper-styles": "PolymerElements/paper-styles#1 - 2",
+    "web-animations-js": "web-animations/web-animations-js#^2.2",
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
   },
@@ -55,6 +56,7 @@
         "paper-spinner": "PolymerElements/paper-spinner#^1.0.0",
         "paper-styles": "PolymerElements/paper-styles#^1.0.0",
         "test-fixture": "PolymerElements/test-fixture#^1.0.0",
+        "web-animations-js": "web-animations/web-animations-js#^2.2",
         "web-component-tester": "Polymer/web-component-tester#^4.0.0",
         "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
       },
@@ -66,11 +68,11 @@
   "resolutions": {
     "webcomponentsjs": "^1.0.0"
   },
-  "_release": "2.1.4",
+  "_release": "2.3.0",
   "_resolution": {
     "type": "version",
-    "tag": "v2.1.4",
-    "commit": "4e2e88ca722eab9baa4834cb64a97ea013e7b5f4"
+    "tag": "v2.3.0",
+    "commit": "b2c0d4b0f2701988b0ee7d6ea17a075f0471d5c7"
   },
   "_source": "https://github.com/PolymerElements/iron-form.git",
   "_target": "^2.0.0",

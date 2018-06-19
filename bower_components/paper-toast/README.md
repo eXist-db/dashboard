@@ -1,7 +1,5 @@
 [![Build status](https://travis-ci.org/PolymerElements/paper-toast.svg?branch=master)](https://travis-ci.org/PolymerElements/paper-toast)
-
-_[Demo and API docs](https://elements.polymer-project.org/elements/paper-toast)_
-
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/PolymerElements/paper-toast)
 
 ## &lt;paper-toast&gt;
 
@@ -42,6 +40,17 @@ Example:
   <a href="#">Show more</a>
 </paper-toast>
 ```
+
+`<paper-toast>` is affected by the [stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context) of its container. Adding `<paper-toast>` inside elements that create a new stacking context - e.g. `<app-drawer>`, `<app-layout>` or `<iron-list>` - might result in toasts partially obstructed or clipped. Add `<paper-toast>` to the top level (`<body>`) element, outside the structure, e.g.:
+
+```html
+  <!-- ... -->
+  </app-drawer-layout>
+  <paper-toast id="toast"></paper-toast>
+</template>
+```
+
+You can then use custom events to communicate with it from within child components, using `addEventListener` and `dispatchEvent`.
 
 ### Styling
 

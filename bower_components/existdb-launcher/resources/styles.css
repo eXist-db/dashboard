@@ -46,3 +46,6 @@ repo-url,
 repo-license {
     display:none;
 }
+[unresolved]{
+    display:none;
+}

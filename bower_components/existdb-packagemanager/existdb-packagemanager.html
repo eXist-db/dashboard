@@ -502,7 +502,7 @@ a web component implementing eXistdb packagemanager
         <paper-toast id="toastError" text="" duration="-1" class="fit-bottom">
             <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
         </paper-toast>
-        <paper-toast id="updates" text="Updates available" auto-fit-on-attach duration="15000" class="fit-bottom" always-on-top>
+        <paper-toast id="updates" text="Updates available" duration="15000" class="fit-bottom" always-on-top>
             <paper-button on-click="_goToAvailable">install...</paper-button>
             <paper-icon-button icon="clear" on-click="_hideUpdatesToast"></paper-icon-button>
         </paper-toast>
@@ -583,6 +583,7 @@ a web component implementing eXistdb packagemanager
 //                console.log('packagemanager rootPath: ', this.rootPath);
                 this.$.layout.resetLayout();
                 this.focus();
+                this.updateStyles();
             }
 
             ready () {

@@ -21,6 +21,7 @@ instanciate the appropriate template.#
                 display: block;
                 /*border:thin solid blue;*/
                 position: relative;
+                cursor:pointer;
             }
             :focus{
                 border:none;
@@ -30,8 +31,13 @@ instanciate the appropriate template.#
                 0 3px 14px 2px rgba(0, 0, 0, 0.12),
                 0 5px 5px -3px rgba(0, 0, 0, 0.4);
                 background:white;
+
+                margin:10px 0;
             }
 
+            :host(.update) packagemanager-app ::slotted(repo-version){
+                display: none;
+            }
         </style>
 
         <!-- select a different sub-component depending on context (packagemanager or launcher) -->

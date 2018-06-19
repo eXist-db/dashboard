@@ -1,0 +1,19 @@
+<dom-module id="repo-abbrev">
+    <template>
+        <style include="repo-styles">
+        </style>
+        <span class="label">Abbreviation</span>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+    <script>
+        class RepoAbbrev extends Polymer.Element {
+            static get is() {
+                return 'repo-abbrev';
+            }
+        }
+
+        window.customElements.define(RepoAbbrev.is, RepoAbbrev);
+    </script>
+</dom-module>

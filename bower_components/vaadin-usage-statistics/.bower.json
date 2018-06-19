@@ -11,11 +11,11 @@
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
   },
   "homepage": "https://github.com/vaadin/vaadin-usage-statistics",
-  "version": "1.0.6",
-  "_release": "1.0.6",
+  "version": "1.0.8",
+  "_release": "1.0.8",
   "_resolution": {
     "type": "version",
-    "tag": "v1.0.6",
+    "tag": "v1.0.8",
     "commit": "b3b561bb1f190db27f70cdb7d9140a96ef2e7222"
   },
   "_source": "https://github.com/vaadin/vaadin-usage-statistics.git",

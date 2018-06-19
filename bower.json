@@ -22,7 +22,7 @@
     "iron-lazy-pages": "^2.1.1",
     "paper-card": "PolymerElements/paper-card#^2.0.0",
     "paper-tabs": "PolymerElements/paper-tabs#^2.0.0",
-    "existdb-packagemanager": "https://github.com/eXist-db/packagemanager/archive/v4.5.1.zip"
+    "existdb-packagemanager": "https://github.com/eXist-db/packagemanager/archive/v4.6.0.zip"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

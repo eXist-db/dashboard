@@ -83,16 +83,28 @@ element for displaying package metadata
             }
 
             .wrapper{
-/*
-                display: table-cell;
-                padding-left:20px;
-*/
                 display: flex;
                 flex-direction: column ;
                 padding-left:100px;
-                /*min-width:380px;*/
             }
 
+            /* hiding meta information for a package by default */
+            .wrapper ::slotted(repo-name),
+            .wrapper ::slotted(repo-description),
+            .wrapper ::slotted(repo-authors),
+            .wrapper ::slotted(repo-abbrev),
+            .wrapper ::slotted(repo-license),
+            .wrapper ::slotted(repo-website),
+            .wrapper ::slotted(repo-url),
+            .wrapper ::slotted(repo-requires),
+            .wrapper ::slotted(repo-changelog),
+            .wrapper ::slotted(repo-other),
+            .wrapper ::slotted(repo-note)
+            {
+                display:none;
+            }
+
+            /* 'application' or 'library' label */
             .wrapper ::slotted(repo-type){
                 display:block;
                 color:var(--paper-blue--700);
@@ -110,36 +122,7 @@ element for displaying package metadata
                 display: inline-block;
                 @apply(--paper-font-common-base);
             }
-            .wrapper ::slotted(repo-version){
-            }
 
-            .wrapper ::slotted(repo-name),
-            .wrapper ::slotted(repo-description),
-            .wrapper ::slotted(repo-authors),
-            .wrapper ::slotted(repo-abbrev),
-            .wrapper ::slotted(repo-license),
-            .wrapper ::slotted(repo-website),
-            .wrapper ::slotted(repo-url),
-            .wrapper ::slotted(repo-requires),
-            .wrapper ::slotted(repo-changelog),
-            .wrapper ::slotted(repo-other),
-            .wrapper ::slotted(repo-note),
-            .wrapper ::slotted(repo-available)
-            {
-                display:none;
-            }
-
-            .wrapper ::slotted(repo-installed):before{
-                content: "Installed Version ";
-                color:var(--paper-orange-700);
-                /*display: table-cell;*/
-                display: inline-block;
-                padding-right:4px;
-            }
-            .wrapper ::slotted(repo-installed){
-                color:var(--paper-orange-700);
-
-            }
 
             .wrapper[show-all] ::slotted(repo-name),
             .wrapper[show-all] ::slotted(repo-description),
@@ -155,115 +138,9 @@ element for displaying package metadata
             .wrapper[show-all] ::slotted(repo-note)
             {
 
-                display:table-row;
-                padding:4px 0;
+                display:var(--app-details);
                 margin-bottom: 6px;
             }
-
-            .wrapper[show-all] ::slotted(repo-other) repo-version repo-requires{
-                display: table-cell;
-            }
-            .wrapper[show-all] ::slotted(repo-changelog) {
-                padding-top:10px;
-            }
-            .wrapper[show-all] ::slotted(repo-changelog) repo-change ul{
-                padding:0 0 10px 10px;
-                margin:0;
-            }
-
-            .wrapper[show-all] ::slotted(*){
-                /*padding-left:10px;*/
-            }
-            /* CSS Labels for the meta elements */
-            .wrapper[show-all] ::slotted(*)::before{
-                display: table-cell;
-                min-width: 120px;
-                padding:2px;
-                font-weight: bold;
-            }
-
-
-            .wrapper[show-all] ::slotted(repo-requires)::after{
-                display:table-row;
-                content: 'eXistdb ' attr(semver-min);
-            }
-
-            .wrapper[show-all] ::slotted(repo-version) repo-change{
-                display:table-row;
-            }
-            .wrapper[show-all] ::slotted(repo-version) repo-change:before{
-                content:attr(version);
-            }
-
-            .wrapper[show-all] ::slotted(repo-name)::before{
-                content: "Name: ";
-            }
-            .wrapper[show-all] ::slotted(repo-description)::before{
-                content:"Description: ";
-            }
-            .wrapper[show-all] ::slotted(repo-authors)::before{
-                content:"Author(s):";
-            }
-            .wrapper[show-all] ::slotted(repo-abbrev)::before{
-                content:"Abbreviation:";
-            }
-            .wrapper[show-all] ::slotted(repo-website)::before{
-                content:"Website:";
-            }
-            .wrapper[show-all] ::slotted(repo-url)::before{
-                content:"Url:";
-            }
-            .wrapper[show-all] ::slotted(repo-license)::before{
-                content:"License:";
-            }
-
-            .wrapper[show-all] ::slotted(repo-version)::before{
-                display:inline-block;
-            }
-            .wrapper[show-all] ::slotted(repo-version[version])::before{
-                min-width: auto;
-            }
-
-            .wrapper[show-all] ::slotted(repo-requires):before{
-                content:'Requires';
-            }
-
-            .wrapper[show-all] ::slotted(repo-changelog) repo-change:before{
-                content:'Changes in ' attr(version);
-            }
-
-            .wrapper[show-all] ::slotted(repo-changelog):before{
-                content:'Changelog';
-                paddding-top:10px;
-            }
-
-            .wrapper[show-all] ::slotted(repo-other){
-                display: table-row;
-            }
-            .wrapper[show-all] ::slotted(repo-other):before{
-                content:'Older versions';
-                display: table-cell;
-            }
-
-            .wrapper[show-all] ::slotted(repo-note):before{
-                content:'Notes';
-            }
-
-
-
-/*
-            :host(.update):before{
-                content: "updated";
-                position:absolute;
-                bottom:14px;
-                left:30px;
-                background: var(--paper-orange-700);
-                color:var(--paper-orange-100);
-                padding:4px 0;
-                width: 120px;
-                text-align: center;
-            }
-*/
 
             [hidden]{
                 display: none;
@@ -371,6 +248,19 @@ element for displaying package metadata
                 this.setAttribute('tabindex','0');
 
 //                console.log('my parent ',this.parentNode);
+
+//                var s = this.querySelector('slot');
+//                console.log("assigned ", s.assignedNodes());
+//                console.log("assigned ", 'repo-available' in s);
+//                console.log("assigned ", s.assignedNodes().includes('repo-available'));
+                console.log("available ", this.$.slot.querySelector('repo-available'));
+                console.log("available ", this.childNodes);
+
+
+
+
+
+
             }
 
             ready () {
@@ -384,6 +274,7 @@ element for displaying package metadata
                 this.$.remove.addEventListener('package-remove-started',e => this._onRemove(e));
                 this.addEventListener('click',e => this._handleTap(e));
                 this.addEventListener('requestInstall', this._installOtherVersion);
+
             }
 
             _handleTap (e) {
@@ -447,14 +338,21 @@ element for displaying package metadata
             _showInfo(e){
 //                console.log('_showInfo ', e);
                 e.stopPropagation();
-                e.preventDefault();
+//                e.preventDefault();
                 var showsAll = this.$.wrapper.getAttribute('show-all');
 
                 if(!showsAll){
                     this.$.wrapper.setAttribute('show-all','true');
+//                    this.$.wrapper.classList.add('show');
+                    this.updateStyles({'--app-details': 'table-row'});
+
                 }else{
                     this.$.wrapper.removeAttribute('show-all');
+//                    this.$.wrapper.classList.remove('show');
+                    this.updateStyles({'--app-details': 'none'});
                 }
+
+//                this.updateStyles();
 
             }
 

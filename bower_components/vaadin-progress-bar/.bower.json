@@ -1,6 +1,6 @@
 {
   "name": "vaadin-progress-bar",
-  "homepage": "https://vaadin.com/elements",
+  "homepage": "https://vaadin.com/components",
   "authors": [
     "Vaadin Ltd"
   ],
@@ -36,12 +36,12 @@
     "web-component-tester": "^6.1.5",
     "vaadin-demo-helpers": "^1.2.0"
   },
-  "version": "1.0.0-beta1",
-  "_release": "1.0.0-beta1",
+  "version": "1.0.0",
+  "_release": "1.0.0",
   "_resolution": {
     "type": "version",
-    "tag": "v1.0.0-beta1",
-    "commit": "68925f90c550e77f4fc2646cb6ba6172bf277edf"
+    "tag": "v1.0.0",
+    "commit": "dcc59c7af809004ae241e1d95d3f892a8e2e6173"
   },
   "_source": "https://github.com/vaadin/vaadin-progress-bar.git",
   "_target": "^1.0.0",

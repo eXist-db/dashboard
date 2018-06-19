@@ -6,12 +6,14 @@
     "type": "git",
     "url": "git://github.com/PolymerElements/iron-location.git"
   },
-  "license": "http://polymer.github.io/LICENSE.txt",
+  "license": "BSD-3-Clause",
   "devDependencies": {
-    "@polymer/gen-typescript-declarations": "^1.0.1",
-    "bower": "^1.8.0"
+    "@polymer/gen-typescript-declarations": "^1.2.0",
+    "bower": "^1.8.0",
+    "webmat": "^0.2.0"
   },
   "scripts": {
-    "update-types": "rm -f *.d.ts **/*.d.ts && bower install && gen-typescript-declarations --outDir ."
+    "update-types": "bower install && gen-typescript-declarations --deleteExisting --outDir .",
+    "format": "webmat && npm run update-types"
   }
 }

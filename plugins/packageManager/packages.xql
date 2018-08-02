@@ -129,6 +129,7 @@ declare %private function packages:public-repo-contents($installed as element(ap
             </http:request>
         let $data := http:send-request($request)
         let $status := xs:int($data[1]/@status)
+        let $data   := if ($data[2] instance of xs:string) then ($data[1] | util:parse($data[2])) else $data
         return
             if ($status != 200) then
                 response:set-status-code($status)

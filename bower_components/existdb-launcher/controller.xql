@@ -28,7 +28,10 @@ else if (ends-with($exist:path, ".html")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <cache-control cache="no"/>
     </dispatch>
-
+else if($exist:path = "/getversion") then
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <forward url="modules/getVersion.xql"/>
+    </dispatch>
 else
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <cache-control cache="no"/>

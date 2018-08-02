@@ -114,6 +114,13 @@ an application bundling all admin apps in one place.
             .currentUser [icon='social:person']{
                 margin:0;
             }
+            existdb-version{
+                font-size: small;
+                display: block;
+                margin-top:-6px;
+                margin-bottom:6px;
+                width: 100%;
+            }
         </style>
 
 
@@ -136,6 +143,7 @@ an application bundling all admin apps in one place.
             <app-drawer id="drawer" slot="drawer">
                 <div class="drawerbar">
                     <img class="logo" src="resources/images/existdb-web.svg">
+                    <existdb-version></existdb-version>
                     <div class="subitem">Dashboard</div>
 <!--
                     <div class="currentUser">
@@ -174,7 +182,7 @@ an application bundling all admin apps in one place.
             </app-drawer>
             <iron-lazy-pages id="pages" attr-for-selected="name" selected="{{routeData.page}}">
                 <template is="dom-if" name="launcher" data-path="bower_components/existdb-launcher/dependencies.html" restamp>
-                    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard","existdb-dashboard"]'>
+                    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard","existdb-dashboard"]' show-branding="false">
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
                     </existdb-launcher-app>
                 </template>

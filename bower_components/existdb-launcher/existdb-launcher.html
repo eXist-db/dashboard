@@ -5,15 +5,6 @@
                 display: block;
                 position:relative;
                 background:ghostwhite;
-                text-align: center;
-            }
-
-            :focus{
-                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-                0 1px 5px 0 rgba(0, 0, 0, 0.12),
-                0 3px 1px -2px rgba(0, 0, 0, 0.2);
-                border:none;
-                outline:0;
             }
 
             [launcher] repo-packages{
@@ -28,14 +19,7 @@
                 height:150px;
                 position:relative;
                 cursor: pointer;
-                /*border: thin solid;*/
                 margin:10px;
-                /*
-                                padding:10px;
-                */
-/*
-                display:table;
-*/
             }
             [launcher] repo-title{
                 font-size:12px;
@@ -47,7 +31,6 @@
                 width: 100%;
                 text-align: center;
                 height:36px;
-                /*background: yellow;*/
                 text-shadow: -2px 2px 2px rgba(108,98,98,0.3);
                 color:var(--paper-grey-900);
             }
@@ -71,18 +54,23 @@
                 display:none;
             }
 
+            [hidden]{
+                display: none;
+            }
         </style>
         <iron-ajax id="loadApplications"
                    method="get"
                    handle-as="text"
                    on-response="_displayApplications"
                    url="[[basePath]]/packageservice/packages/apps"
-                   on-error="_handleError" auto>
+                   on-error="_handleError">
         </iron-ajax>
 
 
-        <div id="apps" launcher type="launcher">
-            <slot></slot>
+
+        <div id="apps" class="apps" launcher type="launcher">
+            <div id="logo"></div>
+            <slot id="slot"></slot>
         </div>
 
     </template>
@@ -139,16 +127,20 @@
 
             ready(){
                 super.ready();
-
-//                window.addEventListener('click', function(e){
-//                    console.log("fired ", e);
-//                });
-
             }
 
 
             _displayApplications(e){
+                console.log('_displayApplications ', e);
                 this.$.apps.innerHTML = this.$.loadApplications.lastResponse;
+
+                // show branding unless we're embedded in dashboard
+                if(!this._isEmbedded()){
+                    var branding = document.createElement('existdb-branding');
+                    var packageRoot = this.$.apps.querySelector('repo-packages');
+                    packageRoot.insertBefore(branding, packageRoot.querySelector('repo-app'));
+                }
+
                 var apps = this.shadowRoot.querySelectorAll('repo-app');
 //                console.log("apps: ", apps);
 //                console.log("ignores: ", this.ignores);
@@ -161,19 +153,9 @@
 
                     if(this.ignores != undefined && this.ignores.indexOf(abbrev) != -1){
 //                        console.log('ignoring ', abbrev);
-
                         apps[i].style.display='none';
                     }
                 }
-
-
-
-
-
-//                var first = this.querySelectorAll('repo-app')[0];
-//                first.focus();
-
-
             }
 
             _onClick(e){
@@ -183,6 +165,10 @@
 
             _handleError(){
 
+            }
+
+            _isEmbedded(){
+                return document.querySelector('existdb-dashboard') != null;
             }
 
 

@@ -11,6 +11,11 @@
     <prepare></prepare>
     <finish/>
     <changelog>
+        <change version="1.2.0">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>integrated backup component</li>
+            </ul>
+        </change>
         <change version="1.1.0">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>updated dependencies</li>

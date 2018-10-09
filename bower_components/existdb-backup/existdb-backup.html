@@ -1,0 +1,326 @@
+<!--<link rel="import" href="bower_components/polymer/polymer-element.html">-->
+
+<dom-module id="existdb-backup">
+    <template>
+        <style>
+            :host {
+                display: block;
+                @apply(--paper-font-common-base);
+                display: block;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+/*
+            app-header-layout {
+                position: absolute;
+                top: 0px;
+                right: 0px;
+                bottom: 0px;
+                left: 0px;
+                !*height: calc(100% - 200px);*!
+                background-color: #eee;
+                overflow: hidden;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            }
+
+            app-header {
+                background: var(--paper-blue-500);
+                padding: 0px;
+                color: white;
+                height: 60px;
+            }
+*/
+
+/*
+            a {
+                color: white;
+                font-size: 18px;
+                font-weight: 300;
+                margin-right: 20px;
+            }
+*/
+
+            .x {
+                --iron-icon-fill-color: white;
+                margin-right: 10px;
+                --iron-icon-width: 30px;
+                --iron-icon-height: 30px;
+            }
+
+            paper-checkbox {
+                display: block;
+                padding: 10px 0;
+            }
+
+            paper-button {
+                margin: 10px 0;
+            }
+
+            caption, th {
+                text-align: left;
+            }
+
+            caption {
+                font-size: larger;
+                font-weight: 500;
+                padding: 10px;
+                background: var(--paper-blue-700);
+                color: white;
+            }
+
+            /*
+                        thead{
+                            background: var(--paper-blue-500);
+                            color:white;
+                        }
+            */
+            th {
+                padding: 10px;
+                color: var(--paper-blue-700);
+            }
+
+            tr {
+                background: white;
+            }
+
+            td {
+                padding: 10px;
+            }
+
+            td:nth-child(3), td:nth-child(4) {
+                text-align: center;
+            }
+
+            paper-icon-button {
+                color: var(--paper-blue-500);
+            }
+
+            paper-icon-button.disabled {
+                color: var(--paper-grey-500);
+            }
+
+            paper-card {
+                width: max-content;
+                margin: 50px;
+                display: table;
+
+                --paper-card-header: {
+                    background: var(--paper-blue-700);
+                };
+                --paper-card-header-text: {
+                    color: white;
+                };
+            }
+
+            h3 {
+                width: 100%;
+                text-align: center;
+                color: var(--paper-grey-700);
+            }
+
+            [icon='error-outline'] {
+                margin-right: 6px;
+                color: var(--paper-orange-500);
+            }
+
+            paper-dialog {
+                background: transparent;
+                border: none;
+                box-shadow: none;
+            }
+
+            paper-spinner {
+                width: 50px;
+                height: 50px;
+            }
+
+            iron-overlay-backdrop {
+                background: var(--paper-grey-100);
+            }
+
+            a.downloadLink {
+                padding: 0;
+                margin: 0;
+            }
+
+            .wrapper {
+                padding-bottom: 50px;
+            }
+        </style>
+
+        <paper-dialog id="backdrop" modal>
+            <paper-spinner active></paper-spinner>
+        </paper-dialog>
+
+        <iron-ajax id="loadBackups"
+                   verbose with-credentials
+                   method="get"
+                   handle-as="json"
+                   on-response="_handleResponse"
+                   on-error="_handleError"></iron-ajax>
+
+        <iron-ajax id="triggerBackup"
+                   verbose with-credentials
+                   method="post"
+                   handle-as="json"
+                   on-response="_handleBackupResponse"></iron-ajax>
+
+        <!--
+                <app-header-layout id="outer" fullbleed has-scrolling-region>
+                    <app-header id="header" slot="header" fixed>
+                        <app-toolbar>
+                            <iron-icon class="x" icon="restore"></iron-icon>
+                            <slot name="toggleIcon"></slot>
+
+                            <div main-title>Backup</div>
+                            <template is="dom-if" if="{{_showLogout()}}">
+                                <a href="index.html?logout=true">logout</a>
+                            </template>
+                        </app-toolbar>
+                    </app-header>
+        -->
+        <div class="wrapper">
+            <paper-card heading="Backups">
+                <div class="card-actions">
+                    <iron-form id="backupForm">
+                        <form method="post">
+                            <paper-checkbox name="zip">zip (Don't use for database with more than 4gb)</paper-checkbox>
+                            <paper-checkbox name="inc">incremental</paper-checkbox>
+                            <paper-button raised on-tap="_trigger">trigger backup</paper-button>
+                        </form>
+                    </iron-form>
+                    <h3>
+                        <iron-icon icon="error-outline"></iron-icon>
+                        For security reasons only zipped backups can be downloaded
+                    </h3>
+                </div>
+
+                <div class="card-content">
+                    <table>
+                        <!--<caption>Backups</caption>-->
+                        <thead>
+                            <th>Name</th>
+                            <th>Created</th>
+                            <th>Incremental</th>
+                            <th></th>
+                        </thead>
+                        <template id="backupList" is="dom-repeat" items="{{backups}}" as="item">
+                            <tr>
+                                <td>[[item.name]]</td>
+                                <td>[[item.created]]</td>
+                                <td>
+                                    [[item.incremental]]
+                                </td>
+                                <td>
+                                    <template is="dom-if" if="[[_isDownloadable(item.name)]]">
+                                        <a class="downloadLink" href="{{_getHref(item.name)}}" tabindex="-1">
+                                            <paper-icon-button icon="file-download"></paper-icon-button>
+                                        </a>
+                                    </template>
+                                    <template is="dom-if" if="[[_isDisabled(item.name)]]">
+                                        <paper-icon-button class="disabled" icon="file-download"
+                                                           disabled></paper-icon-button>
+                                    </template>
+                                </td>
+                            </tr>
+                        </template>
+                    </table>
+                </div>
+
+            </paper-card>
+        </div>
+        <!--
+
+                </app-header-layout>
+
+        -->
+
+    </template>
+
+    <script>
+        /**
+         * `existdb-backup`
+         * a UI for backup
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class ExistdbBackup extends Polymer.Element {
+
+            static get is() {
+                return 'existdb-backup';
+            }
+
+            static get properties() {
+                return {
+                    backups: {
+                        type: Array,
+                        value: [],
+                        notify: true
+                    },
+                    path: {
+                        type: String,
+                        computed: '_getHref(this.backups)'
+                    }
+                };
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                this.$.loadBackups.url = this.importPath + 'modules/backup.xql';
+                this.$.loadBackups.generateRequest();
+            }
+
+            _handleResponse() {
+                this.backups = this.$.loadBackups.lastResponse;
+                console.log('response ', this.backups);
+            }
+
+            _getHref(name) {
+                console.log('name ', name);
+                return this.importPath + 'modules/backup.xql?action=retrieve&archive=' + name;
+            }
+
+            _isDownloadable(name) {
+                return name.endsWith('.zip');
+            }
+
+            _isDisabled(name) {
+                return !name.endsWith('.zip');
+            }
+
+            _trigger(e) {
+                this.$.triggerBackup.url = this.importPath + 'modules/backup.xql?action=trigger';
+
+                console.log("params ", this.$.backupForm.serializeForm());
+
+                this.$.triggerBackup.params = this.$.backupForm.serializeForm();
+
+                this.$.triggerBackup.generateRequest();
+                this.$.backdrop.open();
+            }
+
+            _handleBackupResponse() {
+                console.log('backup response ', this.$.triggerBackup.lastResponse);
+                this.$.backdrop.close();
+                this.$.loadBackups.generateRequest();
+            }
+
+            _showLogout() {
+//                console.log('showLogout ', this.logout);
+                return this.getAttribute('logout') == 'true';
+            }
+
+            _handleError(){
+                console.log('An error occurred: ', this.$.loadBackups.lastError);
+            }
+
+        }
+
+        window.customElements.define(ExistdbBackup.is, ExistdbBackup);
+    </script>
+</dom-module>

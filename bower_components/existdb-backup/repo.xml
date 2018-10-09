@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta xmlns="http://exist-db.org/xquery/repo">
+    <description>existdb-backup</description>
+    <author/>
+    <website/>
+    <status>alpha</status>
+    <license>GNU-LGPL</license>
+    <copyright>true</copyright>
+    <type>application</type>
+    <target>existdb-backup</target>
+    <prepare></prepare>
+    <finish/>
+    <changelog>
+        <change version="1.1.0">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>split app layout from backup panel</li>
+                <li>prepared for integration in dashboard</li>
+            </ul>
+        </change>
+    </changelog>
+</meta>

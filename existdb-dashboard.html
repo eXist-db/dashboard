@@ -143,7 +143,7 @@ an application bundling all admin apps in one place.
             <app-drawer id="drawer" slot="drawer">
                 <div class="drawerbar">
                     <img class="logo" src="resources/images/existdb-web.svg">
-                    <existdb-version></existdb-version>
+                    <existdb-version> </existdb-version>
                     <div class="subitem">Dashboard</div>
 <!--
                     <div class="currentUser">
@@ -166,6 +166,12 @@ an application bundling all admin apps in one place.
                 <paper-item id="userManagerItem" on-click="_showUserManager" role="menuitem">
                     <iron-icon icon="social:people"></iron-icon>
                     <span class="menuitem">User Manager</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
+                <paper-item id="backupItem" on-click="_showBackup" role="menuitem">
+                    <!--<iron-icon icon="build"></iron-icon>-->
+                    <iron-icon icon="restore"></iron-icon>
+                    <span class="menuitem">Backup</span>
                     <paper-ripple></paper-ripple>
                 </paper-item>
                 <paper-item id="settingsItem" on-click="_showSettings" role="menuitem">
@@ -197,12 +203,19 @@ an application bundling all admin apps in one place.
                     </existdb-usermanager-app>
                 </template>
 
+                <template is="dom-if" name="backup" data-path="bower_components/existdb-backup/dependencies.html" restamp>
+                    <existdb-backup-app logout="false">
+                        <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
+                    </existdb-backup-app>
+                </template>
+
                 <template is="dom-if" name="settings" data-path="existdb-settings.html" restamp>
                     <existdb-settings>
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
                     </existdb-settings>
                 </template>
             </iron-lazy-pages>
+
 
             <!--</app-header-layout>-->
         </app-drawer-layout>
@@ -296,6 +309,10 @@ an application bundling all admin apps in one place.
             _showUserManager(e) {
                 this.$.pages.select('usermanager');
 //                this.$.drawerLayout.resetLayout();
+            }
+
+            _showBackup(e) {
+                this.$.pages.select('backup');
             }
 
             _showSettings(e) {

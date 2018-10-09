@@ -18,11 +18,13 @@
     "paper-ripple": "PolymerElements/paper-ripple#^2.0.0",
     "existdb-launcher": "https://github.com/eXist-db/launcher.git#^1.2.1",
     "existdb-usermanager": "https://github.com/eXist-db/usermanager.git#^0.16.4",
+    "existdb-backup": "https://github.com/eXist-db/existdb-backup.git#^1.1.0",
     "repo-elements": "https://github.com/eXist-db/repo-elements/archive/master.zip",
     "iron-lazy-pages": "^2.1.1",
     "paper-card": "PolymerElements/paper-card#^2.0.0",
     "paper-tabs": "PolymerElements/paper-tabs#^2.0.0",
-    "existdb-packagemanager": "https://github.com/eXist-db/packagemanager/archive/v4.6.0.zip"
+    "existdb-packagemanager": "https://github.com/eXist-db/packagemanager/archive/v4.6.0.zip",
+    "vaadin-usage-statistics": "vaadin/vaadin-usage-statistics#optout"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

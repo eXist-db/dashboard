@@ -102,6 +102,16 @@
             </fileset>
         </copy>
 
+        <copy todir="${bundle.dir}/bower_components/existdb-backup">
+            <fileset dir="${basedir}/bower_components/existdb-backup">
+                <include name="modules/**" />
+                <include name="resources/**" />
+                <include name="*.xml" />
+                <include name="*.xql" />
+                <include name="icon.svg" />
+            </fileset>
+        </copy>
+
         <copy todir="${bundle.dir}/bower_components/vaadin-progress-bar" overwrite="true">
             <fileset dir="${basedir}/bower_components/vaadin-progress-bar">
                 <include name="modules/**" />

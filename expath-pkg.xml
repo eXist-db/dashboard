@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package xmlns="http://expath.org/ns/pkg" name="http://exist-db.org/apps/existdb-dashboard" abbrev="existdb-dashboard" version="1.2.0" spec="1.0">
+<package xmlns="http://expath.org/ns/pkg" name="http://exist-db.org/apps/existdb-dashboard" abbrev="existdb-dashboard" version="1.2.1" spec="1.0">
     <title>existdb-dashboard</title>
     <dependency package="http://www.functx.com" semver-min="1.0"/>
     <dependency package="http://exist-db.org/apps/existdb-packageservice" semver-min="1.3.0"/>

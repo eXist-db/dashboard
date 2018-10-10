@@ -261,7 +261,7 @@ an application bundling all admin apps in one place.
 
             ready() {
                 super.ready();
-                console.log('dashboard ready route attr ', this.path);
+//                console.log('dashboard ready route attr ', this.path);
                 this.$.location.addEventListener('path-changed', event => this.routeChanged(event));
 
 //                console.log('setting path if available: ', this.path.substring(1));
@@ -283,7 +283,9 @@ an application bundling all admin apps in one place.
 //                console.log("route changed ", this.route);
 
                 var s = this.route.path;
-                console.log("route path changed ", s);
+
+//                console.log("route path changed event", event);
+//                console.log("route path changed ", this.route);
 
                 if (this.$.drawerLayout.narrow) {
                     this.$.drawer.close();

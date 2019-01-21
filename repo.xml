@@ -7,7 +7,7 @@
     <license>GNU-LGPL</license>
     <copyright>true</copyright>
     <type>application</type>
-    <target>existdb-dashboard</target>
+    <target>dashboard</target>
     <prepare></prepare>
     <finish/>
     <changelog>

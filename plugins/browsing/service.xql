@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace service="http://exist-db.org/apps/dashboard/service";
 
@@ -347,7 +347,8 @@ function service:change-properties($resources as xs:string, $owner as xs:string?
 (:    return:)
 (:        <result>:)
 (:        {:)
-(:            map-pairs(function($name, $file) {:)
+(:            for-each-pair($names, $files, :)
+(:            function($name, $file) {:)
 (:                let $stored := xmldb:store($collection, xmldb:encode-uri($name), $file):)
 (:                let $log := util:log("DEBUG", ("Uploaded: ", $stored)):)
 (:                return:)
@@ -356,7 +357,7 @@ function service:change-properties($resources as xs:string, $owner as xs:string?
 (:                        <size>xmldb:size($collection, $name)</size>:)
 (:                        <type>xmldb:get-mime-type($stored)</type>:)
 (:                    </json:value>:)
-(:            }, $names, $files):)
+(:            }):)
 (:        }:)
 (:        </result>:)
 (:};:)
@@ -442,7 +443,7 @@ declare %private function service:canWriteResource($collection as xs:string, $re
 };
 
 declare %private function service:merge-properties($maps as map(*)) {
-    map:new(
+    map:merge(
         for $key in map:keys($maps[1])
         let $values := distinct-values(for $map in $maps return $map($key))
         return

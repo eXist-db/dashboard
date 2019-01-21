@@ -42,7 +42,7 @@ else if (ends-with($exist:resource, ".xql")) then
         <set-attribute name="$exist:path" value="{$exist:path}"/>
     </dispatch>
     
-else if (starts-with($exist:path, "/contents") or starts-with($exist:path, "/properties") or starts-with($exist:path, "/permissions") or starts-with($exist:path, "/acl")) then
+else if (starts-with($exist:path, "/users") or starts-with($exist:path, "/groups") or starts-with($exist:path, "/contents") or starts-with($exist:path, "/properties") or starts-with($exist:path, "/permissions") or starts-with($exist:path, "/acl")) then
     let $funcs := (util:list-functions(), util:list-functions("http://exist-db.org/apps/dashboard/service"))
     let $login := $login("org.exist.login", (), true())
     return

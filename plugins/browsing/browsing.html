@@ -65,7 +65,7 @@
                             <label for="resourceName">Resource:</label>
                         </span>
                         <span>
-                            <input class="labelBox" id="resourceName" name="resourceName" value="" data-dojo-type="dijit.form.TextBox"/>
+                            <input readonly="readonly" class="labelBox" id="resourceName" name="resourceName" value="" data-dojo-type="dijit.form.TextBox"/>
                         </span>
                     </div>
                     <div>
@@ -81,7 +81,7 @@
                             <label for="created">Created:</label>
                         </span>
                         <span>
-                            <input class="labelBox" type="text" id="created" name="created" value="" data-dojo-type="dijit.form.TextBox"/>
+                            <input readonly="readonly" class="labelBox" type="text" id="created" name="created" value="" data-dojo-type="dijit.form.TextBox"/>
                         </span>
                     </div>
                     <div>
@@ -89,7 +89,7 @@
                             <label for="lastModified">Last Modified:</label>
                         </span>
                         <span>
-                            <input class="labelBox" type="text" id="lastModified" name="lastModified" value="" data-dojo-type="dijit.form.TextBox"/>
+                            <input readonly="readonly" class="labelBox" type="text" id="lastModified" name="lastModified" value="" data-dojo-type="dijit.form.TextBox"/>
                         </span>
                     </div>
                 </fieldset>
@@ -98,17 +98,13 @@
                         <span>
                             <label for="owner">Owner:</label>
                         </span>
-                        <span>
-                            <input id="owner" name="owner" value="" data-dojo-type="dijit.form.TextBox"/>
-                        </span>
+                        <span id="ownerSelect"/>
                     </div>
                     <div>
                         <span>
                             <label for="group">Group:</label>
                         </span>
-                        <span>
-                            <input id="group" name="group" value="" data-dojo-type="dijit.form.TextBox"/>
-                        </span>
+                        <span id="groupSelect"/>
                     </div>
                     <div>
                         <div>

@@ -73,7 +73,7 @@ define([
                 var $this = this;
 
                 this.loadCSS("plugins/browsing/browsing.css");
-                
+
                 // json data store
                 var restStore = new dojo.store.JsonRest({ target: "plugins/browsing/contents/" });
                 this.store = new dojo.data.ObjectStore({ objectStore: restStore });
@@ -151,6 +151,40 @@ define([
                 });
                 
                 query("#saveProperties").on("click", function(ev) {
+                    var changes = false;
+                    
+                    if (registry.byId("owner").getValue() !== $this.originalOwner) {
+                        changes = true;
+                    }
+                    // has the group changed?
+                    
+                    if (registry.byId("group").getValue() !== $this.originalGroup) {
+                        changes = true;
+                    }
+                    if (registry.byId("internetMediaType").getValue() !== $this.originalMime) {
+                        changes = true;
+                    }
+                    
+                    if (changes) {
+                        var params = {
+                            resource: $this.itemId,
+                            owner: registry.byId("owner").getValue(), 
+                            group : registry.byId("group").getValue(),
+                            mime: registry.byId("internetMediaType").getValue()};
+                        dojo.xhrPost({
+                            url: "plugins/browsing/properties/",
+                            content: params,
+                            handleAs: "json",
+                            load: function(data) {
+                                $this.refresh();
+                                $this.actionEnd();
+                            },
+                            error: function() {
+                                $this.actionEnd();
+                                util.message("Server Error", "An error occurred while communicating with the server!");
+                            }
+                        });
+                    }
                    
                     //do we need to save basic permissions?
                     if($this.permissionsStore.isDirty()) {
@@ -165,7 +199,7 @@ define([
                                     $this.aclStore.save({
                                        onComplete: function() {
                                            $this.grid._refresh(); //update the main grid
-                                           changePage("browsingPage");
+                                           changePage("browsingPage"); 
                                        } 
                                     });
                                 } else {
@@ -195,6 +229,7 @@ define([
                 });
                 
                 query("#closeProperties").on("click", function(ev) {
+                    
                    changePage("browsingPage"); 
                 });
                 
@@ -291,6 +326,16 @@ define([
                   {name: 'Special', field: 'specialLabel', width: '10%', editable: false },
                   {name: ' ', field: 'special', width: '15%', type: dojox.grid.cells.Bool, editable: true }
                 ]];
+                
+                this.ownerSelect = new dijit.form.Select({
+                    name: "owner",
+                    id: "owner"
+                },"ownerSelect");
+                
+                this.groupSelect = new dijit.form.Select({
+                    name:"group",
+                    id: "group"
+                },"groupSelect");
                 
                 this.permissionsGrid = new dojox.grid.DataGrid(
                     {
@@ -400,7 +445,7 @@ define([
             },*/
 
             applyProperties: function(dlg, resources) {
-                console.debug("applyProperties");
+                console.log("applyProperties");
                 var $this = this;
                 var form = dom.byId("browsing-dialog-form");
                 var params = forms.toObject(form);
@@ -474,7 +519,7 @@ define([
                 );
             },
 
-            delete: function(ev) {
+            "delete": function(ev) {
                 ev.preventDefault();
                 var $this = this;
                 var resources = $this.getSelected();
@@ -630,8 +675,22 @@ define([
             registry.byId("internetMediaType").set("value", item.internetMediaType);
             registry.byId("created").set("value", item.created);
             registry.byId("lastModified").set("value", item.lastModified);
-            registry.byId("owner").set("value", item.owner);
-            registry.byId("group").set("value", item.group);
+            $this.itemId = item.id;
+            $this.originalOwner = item.owner;
+            $this.originalGroup = item.group;
+            $this.originalMime = item.internetMediaType;
+            
+            //load the users
+            var restUsers = new dojo.store.JsonRest({ target: "plugins/browsing/users/" });
+            var usersStore = new dojo.data.ObjectStore({ objectStore: restUsers });
+            $this.ownerSelect.setStore(usersStore);
+            $this.ownerSelect.setValue(item.owner); // set current value
+            
+            //load the groups
+            var restGroups = new dojo.store.JsonRest({ target: "plugins/browsing/groups/" });
+            var groupsStore = new dojo.data.ObjectStore({ objectStore: restGroups });
+            $this.groupSelect.setStore(groupsStore);
+            $this.groupSelect.setValue(item.group); // set current value
             
             //reload the permissions store and grid
             $this.permissionsStore.close();

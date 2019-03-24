@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <meta xmlns="http://exist-db.org/xquery/repo">
-    <description>existdb-dashboard</description>
+    <description>Dashboard</description>
     <author>Joern Turner</author>
     <website/>
     <status>beta</status>
@@ -11,25 +11,9 @@
     <prepare></prepare>
     <finish/>
     <changelog>
-        <change version="1.2.2">
+        <change version="2.0.0">
             <ul xmls="http://www.w3.org/1999/xhtml">
-                <li>fixes misbehaving backup download link</li>
-            </ul>
-        </change>
-        <change version="1.2.1">
-            <ul xmls="http://www.w3.org/1999/xhtml">
-                <li>fixed missing script</li>
-            </ul>
-        </change>
-        <change version="1.2.0">
-            <ul xmls="http://www.w3.org/1999/xhtml">
-                <li>integrated backup component</li>
-            </ul>
-        </change>
-        <change version="1.1.0">
-            <ul xmls="http://www.w3.org/1999/xhtml">
-                <li>updated dependencies</li>
-                <li>updated packagemanager and repo elements</li>
+                <li>First release of Dashboard v2.0.0 - <a href="https://github.com/eXist-db/existdb-dashboard/issues/15">#15</a></li>
             </ul>
         </change>
     </changelog>

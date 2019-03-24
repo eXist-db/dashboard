@@ -136,7 +136,7 @@ an application bundling all admin apps in one place.
                    method="get"
                    handle-as="json"
                    on-response="_handleCurrentUser"
-                   url="/exist/apps/existdb-dashboard/currentUser"></iron-ajax>
+                   url="/exist/apps/dashboard/currentUser"></iron-ajax>
 -->
 
         <app-drawer-layout id="drawerLayout" fullbleed>
@@ -188,7 +188,7 @@ an application bundling all admin apps in one place.
             </app-drawer>
             <iron-lazy-pages id="pages" attr-for-selected="name" selected="{{routeData.page}}">
                 <template is="dom-if" name="launcher" data-path="bower_components/existdb-launcher/dependencies.html" restamp>
-                    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard","existdb-dashboard"]' show-branding="false">
+                    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard"]' show-branding="false">
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
                     </existdb-launcher-app>
                 </template>

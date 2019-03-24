@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg fill="#0088cc" height="64px" width="64px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M 4 8 L 8 8 L 8 4 L 4 4 L 4 8 Z"/>
+  <path d="M 16 20 L 20 20 L 20 16 L 16 16 L 16 20 Z"/>
+  <path d="M 16 14 L 20 14 L 20 10 L 16 10 L 16 14 Z" style="fill: rgb(189, 189, 189);"/>
+  <path d="M 10 8 L 14 8 L 14 4 L 10 4 L 10 8 Z" style="fill: rgb(189, 189, 189);"/>
+  <path d="M 16 4 L 16 8 L 20 8 L 20 4 L 16 4 Z" style="fill: rgb(189, 189, 189);"/>
+  <path d="M 10 14 L 14 14 L 14 10 L 10 10 L 10 14 Z"/>
+  <path d="M 4 14 L 8 14 L 8 10 L 4 10 L 4 14 Z" style="fill: rgb(77, 76, 78);"/>
+  <path d="M 4 20 L 8 20 L 8 16 L 4 16 L 4 20 Z" style="fill: rgb(77, 76, 78);"/>
+  <path d="M 10 20 L 14 20 L 14 16 L 10 16 L 10 20 Z" style="fill: rgb(77, 76, 78);"/>
+  <path d="M0 0h24v24H0z" fill="none"/>
+</svg>

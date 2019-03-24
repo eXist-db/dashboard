@@ -1,0 +1,18 @@
+{
+  "name": "vaadin-usage-statistics",
+  "main": "vaadin-usage-statistics.html",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "homepage": "https://github.com/vaadin/vaadin-usage-statistics",
+  "_release": "61ea3401b3",
+  "_resolution": {
+    "type": "branch",
+    "branch": "optout",
+    "commit": "61ea3401b3121a42d538438a3f3db720f80a752e"
+  },
+  "_source": "https://github.com/vaadin/vaadin-usage-statistics.git",
+  "_target": "optout",
+  "_originalSource": "vaadin/vaadin-usage-statistics",
+  "_direct": true
+}

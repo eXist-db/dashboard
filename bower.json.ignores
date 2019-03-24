@@ -1,0 +1,26 @@
+{
+  "name": "existdb-dashboard",
+  "description": "",
+  "main": "index.html",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eXist-db/existdb-packagemanager.git"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "ignore": [
+    ".idea",
+    "build",
+    "bower_components",
+    "node_modules",
+    "test",
+    "build.xml",
+    "expath-pkg.xml",
+    "repo.xml",
+    "package.json",
+    "gulpfile.js"
+  ],
+  "private": true
+}

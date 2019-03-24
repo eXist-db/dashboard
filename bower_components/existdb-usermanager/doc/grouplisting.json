@@ -1,0 +1,46 @@
+[
+  {
+    "group": "dba",
+    "description": "Database Administrators",
+    "members": [
+      {
+        "member": "SYSTEM",
+        "isManager": false
+      },
+      {
+        "member": "admin",
+        "isManager": true
+      }
+    ]
+  },
+  {
+    "group": "eXide",
+    "description": null,
+    "members": [
+      {
+        "member": "eXide",
+        "isManager": false
+      }
+    ]
+  },
+  {
+    "group": "guest",
+    "description": "Anonymous Users",
+    "members": [
+      {
+        "member": "guest",
+        "isManager": false
+      }
+    ]
+  },
+  {
+    "group": "monex",
+    "description": null,
+    "members": [
+      {
+        "member": "monex",
+        "isManager": false
+      }
+    ]
+  }
+]

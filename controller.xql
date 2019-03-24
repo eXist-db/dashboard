@@ -1,13 +1,12 @@
-xquery version "3.0";
+xquery version "3.1";
 
-declare namespace json="http://www.json.org";
-declare namespace control="http://exist-db.org/apps/dashboard/controller";
-declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
-declare namespace rest="http://exquery.org/ns/restxq";
-
-import module namespace restxq="http://exist-db.org/xquery/restxq" at "modules/restxq.xql";
-import module namespace login-helper="http://exist-db.org/apps/dashboard/login-helper" at "modules/login-helper.xql";
 import module namespace login="http://exist-db.org/xquery/login" at "resource:org/exist/xquery/modules/persistentlogin/login.xql";
+import module namespace functx = "http://www.functx.com";
+
+
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
+declare option output:method "html5";
+declare option output:media-type "text/html";
 
 declare variable $exist:path external;
 declare variable $exist:resource external;
@@ -15,85 +14,87 @@ declare variable $exist:controller external;
 declare variable $exist:prefix external;
 declare variable $exist:root external;
 
-declare variable $login := login-helper:get-login-method();
+(:
+let $log := util:log("info", "path " || $exist:path)
+let $log := util:log("info", "resource " || $exist:resource)
+let $log := util:log("info", "controller " || $exist:controller)
+let $log := util:log("info", "")
 
-request:set-attribute("betterform.filter.ignoreResponseBody", "true"),
+return
+:)
 if ($exist:path eq '') then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <redirect url="{concat(request:get-uri(), '/')}"/>
+        <redirect url="{request:get-uri()}/"/>
     </dispatch>
-
-else if ($exist:path = "/") then
-    (: forward root path to index.xql :)
+else if ($exist:path = "/") then(
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-    {
-        if (request:get-uri() eq "/exist/apps/dashboard/" and
-            request:get-header("X-Forwarded-URI") eq "/apps/dashboard/")
-        then
-            <redirect url="/apps/dashboard/index.html"/>
-        else
-            <redirect url="index.html"/>
-    }
+        <redirect url="index.html"/>
     </dispatch>
-
-else if ($exist:resource = "get-icon.xql") then
+)
+else if($exist:path = "/login") then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <cache-control cache="yes"/>
+        <redirect url="login.html">
+            <cache-control cache="no"/>
+            <set-header name="Cache-Control" value="no-cache"/>
+        </redirect>
     </dispatch>
-
-else if (matches($exist:path, ".xql/?$")) then
+else if($exist:path = "/logout") then(
+    login:set-user("org.exist.login", (), false()),
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        { $login("org.exist.login", (), true()) }
-        <set-attribute name="$exist:path" value="{$exist:path}"/>
+        <redirect url="index.html?logout=true">
+            <cache-control cache="no"/>
+            <set-header name="Cache-Control" value="no-cache"/>
+        </redirect>
     </dispatch>
+)
+else if ($exist:path = "/admin") then (
+    login:set-user("org.exist.login", (), true()),
+    let $user := request:get-attribute("org.exist.login.user")
 
-else if ($exist:resource = "login") then (
-    util:declare-option("exist:serialize", "method=json media-type=application/json"),
-    try {
-        let $loggedIn := $login("org.exist.login", (), true())
-        let $user := request:get-attribute("org.exist.login.user")
+    let $route := request:get-parameter("route","")
+    let $log := util:log("info", "path " || $exist:path)
+    let $log := util:log("info", "route " || $route)
+
+    (:let $log := util:log("info", "login matched " || $exist:controller):)
+
+    return
+    if($user and sm:is-dba($user)) then(
+
+(:
+        let $log := util:log("info", "user is dba")
+        let $log := util:log("info", "effective " || request:get-uri())
+        let $log := util:log("info", "uri " || request:get-uri())
+        let $log := util:log("info", "pathinfo " || request:get-path-info())
+        let $log := util:log("info", "url " || request:get-url())
         return
-            if ($user and sm:is-dba($user)) then
-                <response>
-                    <user>{$user}</user>
-                    <isDba json:literal="true">true</isDba>
-                </response>
-            else (
-                <response>
-                    <fail>Wrong user or password</fail>
-                </response>
-            )
-    } catch * {
-        <response>
-            <fail>{$err:description}</fail>
-        </response>
-    }
+:)
 
-) else if (ends-with($exist:resource, ".html")) then
-    (:~
-     : Pages ending with .html are run through view.xql to
-     : expand templates.
-     :)
-    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <view>
-            <forward url="{$exist:controller}/modules/view.xql">
-                {$login("org.exist.login", (), true())}
-                <set-attribute name="$exist:prefix" value="{$exist:prefix}"/>
+
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            <forward url="admin.xql?route={$route}">
+                <cache-control cache="no"/>
                 <set-header name="Cache-Control" value="no-cache"/>
             </forward>
-        </view>
-    	<error-handler>
-			<forward url="{$exist:controller}/error-page.html" method="get"/>
-			<forward url="{$exist:controller}/modules/view.xql"/>
-		</error-handler>
-    </dispatch>
-
-else if (starts-with($exist:path, "/_shared/")) then
-    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <forward url="/shared-resources/{substring-after($exist:path, '/_shared/')}"/>
-    </dispatch>
-
+        </dispatch>
+    )
+    else(
+(:
+        let $log := util:log("info", "user is not logged in")
+        return
+:)
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            (:<forward url="{$exist:controller}/index.html"></forward>:)
+            <redirect url="login.html">
+                <cache-control cache="no"/>
+                <set-header name="Cache-Control" value="no-cache"/>
+            </redirect>
+        </dispatch>
+        )
+)
 else
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <cache-control cache="yes"/>
     </dispatch>
+
+
+

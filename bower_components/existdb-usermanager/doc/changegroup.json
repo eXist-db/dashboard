@@ -1,0 +1,18 @@
+{
+  "group": "foogroup",
+  "description": null,
+  "members": [
+    {
+      "member": "foo",
+      "isManager": false
+    },
+    {
+      "member": "admin",
+      "isManager": false
+    },
+    {
+      "member": "guest",
+      "isManager": false
+    }
+  ]
+}

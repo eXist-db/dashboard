@@ -1,0 +1,10 @@
+{
+  "name": "vaadin-usage-statistics",
+  "main": "vaadin-usage-statistics.html",
+  "license": "Apache-2.0",
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+  
+}

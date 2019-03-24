@@ -1,0 +1,22 @@
+<dom-module id="repo-installed">
+    <template>
+        <style include="repo-styles">
+            .label{
+                padding-right: 10px;
+            }
+        </style>
+        <span class="label">Installed Version</span>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+    <script>
+        class RepoInstalled extends Polymer.Element {
+            static get is() {
+                return 'repo-installed';
+            }
+        }
+
+        window.customElements.define(RepoInstalled.is, RepoInstalled);
+    </script>
+</dom-module>

@@ -1,0 +1,42 @@
+<dom-module id="existdb-version">
+    <template>
+        <style>
+            :host {
+                display: inline;
+            }
+        </style>
+        <iron-ajax id="getVersion"
+                   method="get"
+                   handle-as="text"
+                   on-response="_handleVersion"
+                   auto></iron-ajax>
+        [[versionString]]
+    </template>
+    <script>
+        class ExistdbVersion extends Polymer.Element {
+            static get is() {
+                return 'existdb-version';
+            }
+
+            static get properties() {
+                return {
+                    versionString:{
+                        type: String
+                    }
+                }
+            }
+
+            ready(){
+                super.ready();
+                this.$.getVersion.url = this.importPath + 'modules/getVersion.xql';
+            }
+
+            _handleVersion(){
+                this.versionString = this.$.getVersion.lastResponse;
+            }
+
+        }
+
+        window.customElements.define(ExistdbVersion.is, ExistdbVersion);
+    </script>
+</dom-module>

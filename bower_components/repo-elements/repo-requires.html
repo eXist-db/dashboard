@@ -1,0 +1,31 @@
+<dom-module id="repo-requires">
+    <template>
+        <style include="repo-styles">
+            .requires{
+                display: table-cell;
+            }
+        </style>
+        <span class="label">Requires</span>
+        <span class="requires">eXist-db [[semverMin]]</span>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+    <script>
+        class RepoRequires extends Polymer.Element {
+            static get is() {
+                return 'repo-requires';
+            }
+
+            static get properties() {
+                return {
+                    semverMin:{
+                        type: String
+                    }
+                }
+            }
+        }
+
+        window.customElements.define(RepoRequires.is, RepoRequires);
+    </script>
+</dom-module>

@@ -1,0 +1,22 @@
+<dom-module id="repo-author">
+    <template>
+        <style include="repo-styles">
+            :host{
+                display: table-cell;
+            }
+        </style>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+    <script>
+        class RepoAuthor extends Polymer.Element {
+            static get is() {
+                return 'repo-author';
+            }
+
+        }
+
+        window.customElements.define(RepoAuthor.is, RepoAuthor);
+    </script>
+</dom-module>

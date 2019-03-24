@@ -1,0 +1,37 @@
+{
+  "name": "existdb-dashboard",
+  "description": "a eXistdb launchpad ",
+  "main": "existdb-dashboard.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0",
+    "app-layout": "PolymerElements/app-layout#^2.0.0",
+    "paper-styles": "PolymerElements/paper-styles#^2.0.0",
+    "paper-button": "PolymerElements/paper-button#^2.0.0",
+    "paper-icon-button": "PolymerElements/paper-icon-button#^2.0.0",
+    "iron-icons": "PolymerElements/iron-icons#^2.0.0",
+    "iron-ajax": "PolymerElements/iron-ajax#^2.0.0",
+    "iron-icon": "PolymerElements/iron-icon#^2.0.0",
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^2.0.0",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^2.0.0",
+    "paper-item": "PolymerElements/paper-item#^2.0.0",
+    "app-route": "PolymerElements/app-route#^2.0.0",
+    "paper-ripple": "PolymerElements/paper-ripple#^2.0.0",
+    "existdb-launcher": "https://github.com/eXist-db/launcher.git#^1.2.1",
+    "existdb-usermanager": "https://github.com/eXist-db/usermanager.git#^0.16.4",
+    "existdb-backup": "https://github.com/eXist-db/existdb-backup.git#^1.1.0",
+    "repo-elements": "https://github.com/eXist-db/repo-elements/archive/master.zip",
+    "iron-lazy-pages": "^2.1.1",
+    "paper-card": "PolymerElements/paper-card#^2.0.0",
+    "paper-tabs": "PolymerElements/paper-tabs#^2.0.0",
+    "existdb-packagemanager": "https://github.com/eXist-db/packagemanager/archive/v4.6.0.zip",
+    "vaadin-usage-statistics": "vaadin/vaadin-usage-statistics#optout"
+  },
+  "devDependencies": {
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  },
+  "resolutions": {
+    "polymer": "^2.0.0"
+  }
+}

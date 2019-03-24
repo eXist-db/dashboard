@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   id="svg3749"
+   sodipodi:docname="icon3.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <metadata
+     id="metadata3755">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3753" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2006"
+     inkscape:window-height="1260"
+     id="namedview3751"
+     showgrid="false"
+     inkscape:snap-text-baseline="false"
+     inkscape:zoom="8"
+     inkscape:cx="-9.6240795"
+     inkscape:cy="26.218783"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1"
+     inkscape:snap-to-guides="false" />
+  <path
+     d="m 2.81,14.12 c 1.6359258,-2.123142 2.8900094,-2.84186 5.36,-3.33 3.22,-4.38 9.38,-6.57 11.61,-6.57 0,2.23 -2.19,8.39 -6.57,11.61 -0.104496,2.591397 -1.585449,3.615449 -3.33,5.36 L 9.17,17.66 c -1.41,0 -1.41,0 -2.12,-0.71 C 6.34,16.24 6.34,16.24 6.34,14.83 L 2.81,14.12 M 4.22,15.54 5.46,15.71 3,18.16 v -1.42 l 1.22,-1.2 m 4.07,3 0.17,1.24 L 7.26,21 H 5.84 l 2.45,-2.46"
+     id="path3747"
+     inkscape:connector-curvature="0"
+     style="fill:#FFFFFF;fill-opacity:1"
+     sodipodi:nodetypes="ccccccscccccccccccc"
+     inkscape:export-xdpi="848.56"
+     inkscape:export-ydpi="848.56" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Layer 1"
+     style="display:inline">
+    <ellipse
+       style="fill:#0088cc;fill-opacity:1;stroke-width:0.88836658"
+       id="path4977"
+       cx="14.048673"
+       cy="9.7224817"
+       rx="1.9767697"
+       ry="1.9229802" />
+  </g>
+</svg>

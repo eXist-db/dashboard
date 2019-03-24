@@ -1,0 +1,134 @@
+<!--
+`existdb-package-action`
+implements an interaction with the package repository
+
+@demo demo/index.html 
+-->
+
+<dom-module id="existdb-package-remove-action">
+    <template>
+        <style>
+            :host {
+                display: block;
+                z-index:100;
+
+                --paper-icon-button: {
+                    color: var(--paper-blue-700);
+                }
+
+            }
+
+        </style>
+
+        <iron-ajax id="removePackage"
+                   verbose with-credentials
+                   method="post" handle-as="text"
+                   on-response="_handleResponse"
+                   url="../packageservice/packages/action"
+                   on-error="_handleError"></iron-ajax>
+
+
+        <paper-icon-button id="removeBtn" icon="delete" title="remove this package" on-click="submit"></paper-icon-button>
+        <form id="removeform" is="iron-form" method="post" action="../packageservice/packages/action">
+            <input type="hidden" name="package-url" value="{{url}}"/>
+            <input type="hidden" name="action" value="remove"/>
+        </form>
+    </template>
+
+    <script>
+        class ExistdbPackageRemoveAction extends Polymer.Element{
+
+            static get is() {
+                return 'existdb-package-remove-action';
+            }
+
+            static get properties() {
+                return{
+                    url: {
+                        type: String,
+                        reflectToAttribute:true
+                    },
+                    packageTitle:{
+                        type: String,
+                        reflectToAttribute:true
+                    },
+                    noRemove: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    abbrev:{
+                        type: String,
+                        reflectToAttribute:true
+                    }
+                };
+            }
+
+            constructor() {
+                super();
+//                console.log('ExistdbPackageRemoveAction constructor')
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+//                console.log('ExistdbPackageRemoveAction connectedCallback');
+
+                this.tabindex=0;
+                if(this.noRemove == 'true'){
+                    this.$.removeBtn.disabled = true;
+                    this.$.removeBtn.title = "This app cannot be removed"
+                }
+
+                this.addEventListener('iron-form-response',this.handleResponse);
+                this.addEventListener('iron-form-error', this.handleError);
+
+            }
+
+            ready(){
+                super.ready();
+//                console.log('ExistdbPackageRemoveAction ready')
+
+            }
+
+            submit (e) {
+//                console.log('remove action submit: ', e);
+                e.stopPropagation();
+                e.preventDefault();
+
+                if(this.noRemove == 'true'){
+                    return;
+                }
+
+                if (this.url.endsWith("/packagemanager")) {
+                    this.dispatchEvent(new CustomEvent('packagemanager-remove-attempt', {detail: {}}));
+                    return
+                }
+
+//                var r = confirm('Really remove package "' + this.packageTitle + '"?');
+                var r = confirm('Really remove package?');
+                if (r == true) {
+                    this.dispatchEvent(new CustomEvent('package-remove-started', {bubbles: true, composed: true, detail: {"abbrev":this.abbrev}}));
+                }
+            }
+
+            removeIt(){
+                this.$.removePackage.params = {"package-url":this.url, "action":"remove"};
+                this.$.removePackage.generateRequest();
+            }
+
+            _handleResponse (data) {
+//                console.log("response: ", data);
+                //todo: error handling for 200 responses - see install-action
+                this.dispatchEvent(new CustomEvent('package-removed', {bubbles: true, composed: true, detail: {abbrev: this.abbrev}}));
+            }
+
+            _handleError (e) {
+//                console.log("error: ", e);
+                this.dispatchEvent(new CustomEvent('package-remove-error', {bubbles: true, composed: true, detail: {error: e.detail}}));
+            }
+
+        }
+
+        window.customElements.define(ExistdbPackageRemoveAction.is, ExistdbPackageRemoveAction);
+
+    </script>
+</dom-module>

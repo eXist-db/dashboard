@@ -1,0 +1,18 @@
+<dom-module id="repo-license">
+    <template>
+        <style include="repo-styles">
+        </style>
+        <span class="label">License</span>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+    <script>
+        class RepoLicense extends Polymer.Element {
+            static get is() {
+                return 'repo-license';
+            }
+        }
+        window.customElements.define(RepoLicense.is, RepoLicense);
+    </script>
+</dom-module>

@@ -1,0 +1,24 @@
+<dom-module id="repo-type">
+    <template>
+        <style include="repo-styles">
+            :host{
+                display:block;
+                color:var(--paper-blue-500);
+                font-size:14px;
+                text-transform:uppercase;
+            }
+        </style>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+    <script>
+        class RepoType extends Polymer.Element {
+            static get is() {
+                return 'repo-type';
+            }
+        }
+
+        window.customElements.define(RepoType.is, RepoType);
+    </script>
+</dom-module>

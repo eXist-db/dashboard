@@ -1,0 +1,11 @@
+{
+  "user": "foo",
+  "fullName": "bar",
+  "description": "foobar",
+  "password": "1234",
+  "disabled": false,
+  "umask": "022",
+  "groups": [
+    "guest"
+  ]
+}

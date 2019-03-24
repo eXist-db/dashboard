@@ -1,0 +1,1136 @@
+<dom-module id="existdb-usermanager">
+    <template>
+        <style include="existdb-styles">
+            :host {
+                --paper-tabs-selection-bar-color: var(--paper-blue-500);
+                @apply(--paper-font-common-base);
+                display: block;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                --iron-icon-fill-color: var(--paper-grey-500);
+                --iron-icon-width: 62px;
+                --iron-icon-height: 62px;
+                --paper-icon-button-ink-color: var(--paper-grey-700);
+
+/*
+                --paper-tabs-selection-bar-color: var(--paper-blue-500);
+                --paper-tabs-selection-bar: {
+                    border-width: 5px;
+                };
+
+                --paper-tabs: {
+                    color: var(--paper-blue-700);
+                };
+
+                --paper-tab-ink:var(--paper-blue-300);
+*/
+
+
+                position: relative;
+                /*max-width: 600;*/
+                display: block;
+                overflow: auto;
+            }
+/*
+            paper-tab {
+                font-size: 24px;
+                font-weight: 400;
+
+            }
+*/
+
+            paper-fab {
+                position: fixed;
+                right: 45px;
+                bottom: 40px;
+                z-index: 100;
+                --paper-fab-background: var(--paper-pink-500);
+                --iron-icon-fill-color: var(--paper-grey-50);
+            }
+
+            paper-icon-button {
+                width: 48px;
+                height: 48px;
+                background: var(--paper-grey-200);
+                border-radius: 24px;
+            }
+
+            h1 {
+                @apply(--paper-font-headline);
+                padding-left: 20px;
+            }
+
+            h2 {
+                @apply(--paper-font-headline);
+                color: black;
+            }
+
+            ul {
+                padding: 0 6px;
+                list-style: none;
+            }
+
+            li {
+                padding: 10px;
+                background: white;
+                margin: 10px 0;
+                position: relative;
+                border: 1px solid var(--paper-grey-200);
+                color: black;
+            }
+
+            .user, .group {
+                font-weight: 500;
+                font-size: 20px;
+                @apply(--paper-font-common-code);
+
+            }
+
+            .fullname, .description {
+                display: block;
+                font-size: 12px;
+            }
+
+            paper-icon-button.more {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+
+            .details {
+                padding: 40px;
+                /*margin: 0px 40px 20px 0;*/
+                background: white;
+                overflow: auto;
+                display: block;
+            }
+
+            .details paper-input {
+                @apply(--paper-font-body1);
+            }
+
+            .accountActive {
+                margin: 10px 0;
+            }
+
+            ul.groupMembers li {
+                background: var(--paper-blue-500);
+                color: white;
+                position: relative;
+            }
+
+            .list-heading {
+                display: block;
+                width: 100%;
+            }
+
+            .member-heading {
+                margin-top: 40px;
+                display: inline-block;
+            }
+
+            .isManager {
+                margin-top: 40px;
+                position: absolute;
+                right: 80px;
+                display: inline-block;
+            }
+
+            .group-member {
+                padding: 16px;
+            }
+
+            ul.groupMembers li .remove-group {
+                position: absolute;
+                right: 10px;
+                top: 0;
+            }
+
+            paper-input, paper-password-input {
+                --paper-input-container: {
+                    padding: 4px 0;
+                };
+                padding: 4px 0;
+
+            }
+
+            .details paper-input-container {
+                padding: 4px 0;
+            }
+
+            paper-item {
+                min-height: 28px;
+            }
+
+            paper-item.iron-selected {
+                background: var(--paper-blue-grey-200);
+                color: var(--paper-blue-gray-900);
+            }
+
+            paper-menu-button {
+                position: relative;
+                float: right;
+            }
+
+            paper-icon-button.addGroup {
+                position: absolute;
+                top: -30px;
+                right: 10px;
+            }
+
+            paper-button.save {
+                background: var(--paper-blue-500);
+                color: white;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            paper-button.delete {
+                background: var(--paper-red-500);
+                color: white;
+                float: right;
+                margin-right: 0;
+                margin-top: 10px;
+            }
+
+            .membersOfGroup {
+                position: relative;
+                padding: 0;
+            }
+
+            .membersHeader {
+                padding: 0;
+            }
+
+            .membersOfGroup paper-toggle-button {
+                position: absolute;
+                right: 10px;
+                top: 12px;
+            }
+
+            .membersOfGroup span {
+                width: 50%;
+            }
+
+            ul li:last-child {
+                background: transparent;
+            }
+
+            paper-listbox {
+                border: 1px solid var(--paper-grey-300);
+            }
+
+            .user-entry, .group-entry {
+                min-height: 54px;
+                position: relative;
+                padding: 10px 10px 10px 100px;
+                cursor: pointer;
+            }
+
+            .user-icon, .group-icon {
+                position: absolute;
+                left: 10px;
+                top: 10px;
+            }
+
+            paper-toggle-button.accountActive {
+                margin-top: 20px;
+                --paper-toggle-button-checked-button-color: var(--paper-red-600);
+            }
+
+            paper-toast {
+                /*width: 100%;*/
+                margin: 0;
+                font-size: 20px;
+                color: white;
+                z-index:100;
+            }
+
+            paper-toast.errorReporter {
+                top: 0;
+                --paper-toast-background-color: var(--paper-red-500);
+                --paper-toast-color: white;
+            }
+
+            paper-toast.errorReporter a {
+                float: right;
+            }
+
+            .editUser, .editGroup {
+                width: 100%;
+                overflow:auto;
+            }
+
+            paper-icon-button.back, paper-icon-button.back {
+                position: fixed;
+                top: 80px;
+                right: -32px;
+                z-index: 100;
+                margin-right: 50px;
+                display: block;
+            }
+
+            paper-button.save.disabled {
+                color: var(--paper-grey-300);
+            }
+
+            paper-toggle-button.manager {
+                float: right;
+            }
+
+            .member-user {
+                flex-grow: 3;
+            }
+
+            .checkWrapper {
+                position: relative;
+            }
+
+            paper-checkbox {
+                position: absolute;
+                right: 10px;
+                z-index: 10;
+                top: -23px;
+            }
+
+            app-header {
+                height: 60px;
+            }
+
+/*
+            paper-tabs {
+                height: 60px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 10;
+                width: 100%;
+                background: var(--paper-blue-300);
+            }
+*/
+
+/*
+            paper-tabs{
+                background: var(--paper-blue-300);
+                --paper-tabs-selection-bar:{
+                    border:3px solid var(--paper-blue-700);
+                };
+
+            }
+            paper-tab{
+                position: relative;
+                --paper-tab-ink:var(--paper-blue-100);
+            }
+*/
+
+
+
+            iron-pages {
+                /*margin-top:70px;*/
+                overflow: auto;
+                background: var(--paper-grey-100);
+            }
+
+
+            @-webkit-keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            .fadeIn {
+                -webkit-animation-name: fadeIn;
+                animation-name: fadeIn;
+            }
+
+
+            @-webkit-keyframes zoomIn {
+                from {
+                    opacity: 0;
+                    -webkit-transform: scale3d(.1, .1, .1);
+                    transform: scale3d(.1, .1, .1);
+                }
+
+                50% {
+                    opacity: 0.3;
+                }
+
+            }
+
+            @keyframes zoomIn {
+                from {
+                    opacity: 0;
+                    -webkit-transform: scale3d(.1, .1, .1);
+                    transform: scale3d(.1, .1, .1);
+                }
+
+                50% {
+                    opacity: 0.3;
+                }
+            }
+
+            .zoomIn {
+                -webkit-animation-name: zoomIn;
+                animation-name: zoomIn;
+                /*animation-duration: 0.2s;*/
+            }
+
+            .animated {
+                -webkit-animation-duration: 0.4s;
+                animation-duration: 0.4s;
+                -webkit-animation-fill-mode: both;
+                animation-fill-mode: both;
+            }
+
+
+        </style>
+
+        <iron-ajax id="loadUserList"
+                   with-credentials
+                   method="get"
+                   handle-as="json"
+                   on-response="_handleUsers"
+                   on-error="_handleUserListError"></iron-ajax>
+
+        <iron-ajax id="saveUser"
+                   with-credentials
+                   method="put"
+                   handle-as="json"
+                   on-response="_handleUserSaved"
+                   content-type="application/json"
+                   on-error="_handleSaveUserError"></iron-ajax>
+
+        <iron-ajax id="deleteUser"
+                   with-credentials
+                   method="delete"
+                   handle-as="json"
+                   on-response="_handleUserDeleted"
+                   content-type="application/json"
+                   on-error="_handleUserDeleteError"></iron-ajax>
+
+        <iron-ajax id="loadGroupList"
+                   verbose with-credentials
+                   method="get" handle-as="json"
+                   on-response="_handleGroups"
+                   on-error="_handleGroupListError"></iron-ajax>
+
+        <iron-ajax id="saveGroup"
+                   with-credentials
+                   method="put"
+                   handle-as="json"
+                   on-response="_handleGroupSaved"
+                   content-type="application/json"
+                   on-error="_handleSaveGroupError"></iron-ajax>
+
+        <iron-ajax id="deleteGroup"
+                   with-credentials
+                   method="delete"
+                   handle-as="json"
+                   on-response="_handleGroupDeleted"
+                   content-type="application/json"
+                   on-error="_handleGroupDeletedError"></iron-ajax>
+
+
+        <array-selector id="userselector" items="{{users}}" selected="{{selectedUser}}" multi toggle></array-selector>
+        <array-selector id="groupselector" items="{{groups}}" selected="{{selectedGroup}}" multi toggle></array-selector>
+
+        <iron-pages id="pages" selected="{{selected}}">
+            <div>
+                <app-header-layout id="userLayout" has-scrolling-region>
+                    <app-header id="header" slot="header" sticky fixed>
+                        <paper-tabs selected="{{selected}}">
+                            <paper-tab>Users</paper-tab>
+                            <paper-tab>Groups</paper-tab>
+                        </paper-tabs>
+                    </app-header>
+                    <ul id="userListPage" class="animated fadeIn">
+                        <paper-fab id="addUser" icon="add" on-tap="_handleAddUser"></paper-fab>
+
+                        <template id="userList" is="dom-repeat" items="{{users}}" as="item">
+
+                            <li class="user-entry" on-tap="_editUser">
+                                <iron-icon class="icon user-icon" icon="social:person"></iron-icon>
+                                <span class="user" title="User Name">{{item.user}}</span>
+                                <span class="fullname">{{item.fullName}}</span>
+                                <span class="description">{{item.description}}</span>
+                                <!--<paper-icon-button id="moredetail" class="more" icon="arrow-forward" ></paper-icon-button>-->
+                            </li>
+                        </template>
+                    </ul>
+                </app-header-layout>
+            </div>
+            <div>
+                <app-header-layout has-scrolling-region>
+                    <app-header slot="header" sticky fixed>
+                        <paper-tabs selected="{{selected}}">
+                            <paper-tab>Users</paper-tab>
+                            <paper-tab>Groups</paper-tab>
+                        </paper-tabs>
+                    </app-header>
+
+                    <ul id="groupListPage" class="animated fadeIn">
+                        <paper-fab id="addGroup" icon="add" on-tap="_handleAddGroup"></paper-fab>
+
+                        <template id="groupList" is="dom-repeat" items="{{groups}}" as="item">
+                            <li class="group-entry" on-tap="_editGroup">
+                                <iron-icon class="icon group-icon" icon="social:people"></iron-icon>
+                                <span class="group" title="Group">{{item.group}}</span>
+                                <span class="description">{{item.description}}</span>
+                                <!--
+                                                                <paper-icon-button class="more" icon="expand-more"
+                                                                                   on-tap="editGroup"></paper-icon-button>
+                                -->
+                            </li>
+                        </template>
+                    </ul>
+                </app-header-layout>
+
+            </div>
+
+            <div id="userPage" class="editUser">
+                <paper-icon-button class="back" icon="close" on-click="_userBack"
+                                   autofocus></paper-icon-button>
+
+                <div class="details animated zoomIn">
+                    <h2>User</h2>
+                    <iron-form id="userForm" allow-redirect="false">
+                        <form action="" method="">
+                            <paper-input id="userInput" label="User Name*" value="{{selectedUser.user}}"
+                                         class="username" pattern="[@.A-Za-z0-9_-]+"
+                                         error-message="only the chars A-Z, a-z and numbers are allowed as username"
+                                         auto-validate auto-focus></paper-input>
+                            <paper-input label="Full Name" value="{{selectedUser.fullName}}"></paper-input>
+                            <paper-input label="Description" value="{{selectedUser.description}}"></paper-input>
+
+                            <match-passwords-validator id="match-passwords-validator"
+                                                       password="[[selectedUser.password]]"></match-passwords-validator>
+                            <paper-password-input label="Password"
+                                                  value="{{selectedUser.password}}"></paper-password-input>
+                            <paper-password-input id="confirm" label="Confirm" auto-validate
+                                                  validator="match-passwords-validator"
+                                                  error-message="Passwords need to match"></paper-password-input>
+
+                            <!--
+                                                                <paper-toggle-button class="accountActive" checked="{{selectedUser.disabled}}">
+                                                                    Account is disabled
+                                                                </paper-toggle-button>
+                            -->
+                            <paper-input label="umask" value="{{selectedUser.umask}}"></paper-input>
+
+                            <div class="member-heading">Member of groups</div>
+                            <paper-listbox id="memberOf" class="groupsOfUser" multi attr-for-selected="label">
+                                <template is="dom-repeat" items="{{groups}}" as="member">
+                                    <paper-item label="{{member.group}}">
+                                        {{member.group}}
+                                    </paper-item>
+                                </template>
+                            </paper-listbox>
+                            <paper-button id="save" class="save" on-tap="_handleSaveUser">save</paper-button>
+                            <paper-button id="delete" class="delete" on-tap="_handleDeleteUser">delete user</paper-button>
+                        </form>
+                    </iron-form>
+                </div>
+
+            </div>
+
+            <div id="groupPage" class="editGroup">
+                <paper-icon-button class="back" icon="close" on-click="_groupBack"
+                                   autofocus></paper-icon-button>
+
+                <div class="details animated zoomIn">
+                    <h2>Group</h2>
+                    <iron-form id="groupForm" allow-redirect="false">
+                        <form action="" method="">
+                            <paper-input label="Group Name*" value="{{selectedGroup.group}}" pattern="[@.A-Za-z0-9_-]+"
+                                         error-message="only the chars A-Z, a-z and numbers are allowed as group name"
+                                         auto-validate auto-focus></paper-input>
+                            <paper-input label="Description"
+                                         value="{{selectedGroup.description}}"></paper-input>
+
+                            <div class="list-heading">
+                                <span class="member-heading">Users in this group</span>
+                                <span class="isManager">is Manager</span>
+                            </div>
+
+                            <paper-listbox id="groupMembers" multi attr-for-selected="label" selectable="paper-item">
+                                <template is="dom-repeat" items="[[users]]">
+                                    <paper-item label="[[item.user]]">
+                                        <!--<paper-item-body>-->
+                                        <span class="member-user">[[item.user]]</span>
+                                        <!--<paper-checkbox checked="[[item.isManager]]"></paper-checkbox>-->
+
+                                        <!--</paper-item-body>-->
+                                    </paper-item>
+                                    <div class="checkWrapper">
+                                        <paper-checkbox checked="[[item.isManager]]"
+                                                        on-click="_toggleManager"></paper-checkbox>
+                                    </div>
+                                </template>
+                            </paper-listbox>
+                            <paper-button class="save" on-tap="_handleSaveGroup">save</paper-button>
+                            <paper-button class="delete" on-tap="_handleDeleteGroup">delete group</paper-button>
+                        </form>
+                    </iron-form>
+                </div>
+            </div>
+        </iron-pages>
+
+
+        <paper-toast id="messenger" class="messenger fit-bottom" text=""></paper-toast>
+        <paper-toast id="errorReporter" class="errorReporter" text="" duration="0">
+            <a href="#" on-tap="_closeToast">close</a>
+        </paper-toast>
+    </template>
+
+    <script>
+        /**
+         * `existdb-usermanager`
+         *
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class ExistdbUsermanager extends Polymer.Element {
+
+            static get is() {
+                return 'existdb-usermanager';
+            }
+
+            /**
+             * declared properties of this component
+             */
+            static get properties() {
+                return {
+                    selected: {
+                        type: Number,
+                        value: 0,
+                        observer: '_pageChanged'
+                    },
+                    users: {
+                        type: Array,
+                        notify: true,
+                        value: []
+                    },
+
+                    selectedUser: {
+                        type: Object,
+                        value: {
+                            user: 'foo',
+                            fullName: 'bar',
+                            password: '',
+                            description: '',
+                            umask: '',
+                            disabled: false,
+                            groups: [],
+                        }
+                    },
+                    selectedGroup: {
+                        type: Object,
+                        value: {
+                            group: '',
+                            description: '',
+                            members: [{
+                                member: '',
+                                isManager: false
+                            }]
+                        }
+                    },
+                    groups: {
+                        type: Array,
+                        notify: true,
+                        value: []
+                    },
+
+                    userUrl: {
+                        type: String,
+                        value: 'api/user/',
+                        readonly: true
+                    },
+                    groupUrl: {
+                        type: String,
+                        value: 'api/group/',
+                        readonly: true
+                    },
+                    mode: {
+                        type: String,
+                        value: 'edit'
+                    },
+                    user: {
+                        type: String,
+                        reflectToAttribute: true
+                    }
+
+                };
+            }
+
+
+            connectedCallback() {
+                super.connectedCallback();
+                console.log('Usermanager connectedCallback')
+
+//                this.$.loadUserList.url = this.importPath + 'api/user/';
+//                this.$.loadUserList.generateRequest();
+//                this.$.loadGroupList.url = this.importPath + 'api/group/';
+//                this.$.loadGroupList.generateRequest();
+
+            }
+
+            ready() {
+                super.ready();
+                console.log('Usermanager ready');
+                this.$.pages.select(0);
+                this.$.messenger.fitInto = this;
+                this.$.errorReporter.fitInto = this;
+
+            }
+
+
+            // ########################## private part ##########################
+            // ########################## private part ##########################
+            // ########################## private part ##########################
+
+            _handleSelection(e) {
+                console.log('_handleSelection: ', e.composedPath());
+
+                var pathes = e.composedPath();
+                var toggle;
+                pathes.forEach(function (item) {
+                    console.log("path: ", item);
+                    if (item.nodeName.toLowerCase() == 'paper-toggle-button') {
+                        toggle = item;
+                    }
+                });
+                console.log('toggle?: ', toggle);
+
+                if (toggle != undefined) {
+                    e.stopPropagation();
+                    e.preventDefault();
+//                    return false;
+
+                }
+
+
+            }
+
+
+            // >>>>>>>>>> PAGE SWITCHING LOGIC AND ANIMATIONS >>>>>>>>>>
+            // >>>>>>>>>> PAGE SWITCHING LOGIC AND ANIMATIONS >>>>>>>>>>
+            // >>>>>>>>>> PAGE SWITCHING LOGIC AND ANIMATIONS >>>>>>>>>>
+            _switchPage(page) {
+                if (page == 0) {
+                    this._resetUserForm();
+                }
+                this.$.pages.select(page);
+            }
+
+            _pageChanged(page) {
+//                console.log('_pageChanged: ', page);
+                if (page == 0) {
+                    this.$.loadUserList.url = this.importPath + 'api/user/';
+                    this.$.loadUserList.generateRequest();
+                    this.$.loadGroupList.url = this.importPath + 'api/group/';
+                    this.$.loadGroupList.generateRequest();
+                }
+            }
+
+            // <<<<<<<<<< PAGE SWITCHING LOGIC AND ANIMATIONS <<<<<<<<<<
+            // <<<<<<<<<< PAGE SWITCHING LOGIC AND ANIMATIONS <<<<<<<<<<
+            // <<<<<<<<<< PAGE SWITCHING LOGIC AND ANIMATIONS <<<<<<<<<<
+
+
+            // >>>>>>>>>> USER >>>>>>>>>>
+            // >>>>>>>>>> USER >>>>>>>>>>
+            // >>>>>>>>>> USER >>>>>>>>>>
+
+            /**
+             * handles userlist loaded from server.
+             */
+            _handleUsers() {
+                console.log('_handleUsers', this.$.loadUserList.lastResponse);
+                this.users = this.$.loadUserList.lastResponse;
+                this.$.userLayout.resetLayout();
+//                this.$.header.resetLayout();
+//                Polymer.AppLayout.scroll({ top: scrollTop, behavior: 'silent' });
+
+
+            }
+
+            /**
+             * handles userlist loading errors.
+             */
+            _handleUserListError(e) {
+                this._handleRequestError(this.$.loadUserList.lastError);
+            }
+
+            /**
+             * handler for 'add user' button (paper-fab)
+             */
+            _handleAddUser(e) {
+                console.log("add user: ", e);
+                console.log("dom repeat ", this.$.userList);
+                e.stopPropagation();
+                e.preventDefault();
+
+                this.push('users', {
+                    user: '',
+                    fullName: '',
+                    description: '',
+                    password: '',
+                    disabled: false,
+                    umask: '022',
+                    groups: []
+                });
+                var userCnt = this.users.length;
+
+                console.log('selected user: ', this.selectedUser);
+                this._resetUserForm();
+                this._selectUserGroups();
+                this._switchPage(2);
+            }
+
+
+            /**
+             * resets the user form.
+             */
+            _resetUserForm() {
+                //reset eventual pre-existing values
+                this.$.confirm.value = "";
+                this.selectedUser = this.users[this.users.length - 1];
+            }
+
+            /**
+             * editing a user entry. Triggered by user click on an entry in the list.
+             */
+            _editUser(e) {
+                // get current item from templated DOM Element
+                var item = this.$.userList.itemForElement(e.target);
+                console.log("selectedUser: ", item);
+                this.selectedUser = item;
+
+                console.log("selectedUser group: ", this.selectedUser.groups);
+
+                if (this.selectedUser.groups == undefined) {
+                    this.selectedUser.groups = [];
+                }
+
+                this._selectUserGroups(e.target);
+                this._switchPage(2);
+            }
+
+            /**
+             * handler for saving a user. Triggered by 'save' button on user form.
+             */
+            _handleSaveUser(e) {
+                var valid = this.$.userForm.validate();
+
+                if (valid) {
+                    console.log("saving... ", this.selectedUser);
+                    this.$.saveUser.body = JSON.stringify(this.selectedUser);
+                    console.log('body ', this.$.saveUser.body);
+
+                    this.$.saveUser.url = this.importPath + this.userUrl + this.selectedUser.user;
+                    this.$.saveUser.generateRequest();
+                }
+            }
+
+            /**
+             * handler called after user has been saved to the db.
+             */
+            _handleUserSaved() {
+                console.log('_handleUserSaved');
+                this.$.messenger.text = 'User ' + this.selectedUser.user + ' has been saved.';
+                this.$.messenger.open();
+                this._switchPage(0);
+            }
+
+            /**
+             * error-handler for user saving.
+             */
+            _handleSaveUserError(e) {
+                this._handleRequestError(this.$.saveUser.lastError);
+            }
+
+            /**
+             * handler for deleting a user. Triggered by 'delete' button on user form.
+             */
+            _handleDeleteUser(e) {
+                console.log("_handleDeleteUser ", this.selectedUser.user);
+                if (confirm('Really delete this user?')) {
+                    this.$.deleteUser.url = this.rootPath + this.userUrl + this.selectedUser.user;
+                    this.$.deleteUser.url = this.importPath + 'api/user/';
+                    this.$.deleteUser.generateRequest();
+                }
+            }
+
+            /**
+             * request handler called after user has been deleted.
+             */
+            _handleUserDeleted() {
+                console.log('_handleUserDeleted ', this.selectedUser.user);
+                this.$.messenger.text = "User " + this.selectedUser.user + " has been deleted";
+                this.$.messenger.open();
+                this._switchPage(0);
+            }
+
+            /**
+             * request handler for
+             */
+            _handleUserDeleteError() {
+                this._handleRequestError(this.$.deleteUser.lastError);
+            }
+
+            /**
+             * switches back to userlist when being on user form.
+             */
+            _userBack(e) {
+                this._switchPage(0);
+
+            }
+
+            /**
+             * switches back to grouplist when being on group form.
+             */
+            _groupBack(e) {
+                this._switchPage(1);
+            }
+
+            /**
+             * resets the group form. paper-listbox otherwise keeps its values and explicitly needs to be reset.
+             */
+            _resetGroupForm() {
+                //reset eventual pre-existing values
+                this.selectedGroup = this.groups[this.groups.length - 1];
+                this.$.groupMembers.selectedValues = [];
+            }
+
+            /**
+             * initializes the paper-listbox values for a users' groups.
+             */
+            _selectUserGroups() {
+                this.$.memberOf.selectedValues = this.selectedUser.groups;
+            }
+
+            /**
+             * handles userlist loaded from server.
+             */
+            _selectGroupMembers() {
+                console.log("_selectGroupMembers ", this.selectedGroup);
+                console.log("_selectGroupMembers ", this.selectedGroup.members);
+                var arr = [];
+
+                if (this.selectedGroup.members == undefined) return;
+
+                this.selectedGroup.members.forEach(function (item) {
+                    arr.push(item.member);
+                });
+                console.log("new array ", arr);
+                this.$.groupMembers.selectedValues = arr;
+            }
+
+
+            _editGroup(e) {
+                console.log("edit group ", e.model.get('item.group'));
+                console.log("edit group selected group ", this.selectedGroup);
+
+
+                var groupid = e.model.get('item.group');
+
+                // get current item from templated DOM Element
+                var item = this.$.groupList.itemForElement(e.target);
+                console.log("selectedGroup: ", item);
+                this.selectedGroup = item;
+
+                this._selectGroupMembers();
+                this._switchPage(3);
+            }
+
+
+            _handleGroups() {
+                this.groups = this.$.loadGroupList.lastResponse;
+                this.$.userLayout.resetLayout();
+
+            }
+
+            _handleGroupListError(e) {
+                this._handleRequestError(this.$.loadGroupList.lastError);
+            }
+
+            /**
+             * handler called by 'save' button
+             */
+            _handleAddGroup(e) {
+                console.log("add group: ", e);
+                console.log("dom repeat ", this.$.groupList);
+                e.stopPropagation();
+                e.preventDefault();
+
+                console.log("number of groups before: ", this.groups.length);
+
+                var foo = this.push('groups', {
+                    group: '',
+                    description: '',
+                    isManager: false
+                });
+                this.selectedGroup = this.groups[this.groups.length - 1];
+
+                console.log('selected group: ', this.selectedGroup);
+                this._resetGroupForm();
+                this._selectUserGroups();
+                this._switchPage(3);
+            }
+
+            /**
+             * handler calling server for saving a group.
+             */
+            _handleSaveGroup() {
+                console.log("_handleSaveGroup");
+                var valid = this.$.groupForm.validate();
+
+                if (valid) {
+                    console.log("saving selected values... ", this.$.groupMembers.selectedValues);
+
+                    var members = [];
+                    this.$.groupMembers.selectedValues.forEach(function (item) {
+                        members.push({member: item, isManager: false});
+                    });
+
+                    console.log("members: ", members);
+                    this.selectedGroup.members = members;
+
+                    console.log("saving... ", this.selectedGroup);
+                    this.$.saveGroup.body = JSON.stringify(this.selectedGroup);
+
+                    this.$.saveGroup.url = this.importPath + this.groupUrl + this.selectedGroup.group;
+                    this.$.saveGroup.generateRequest();
+                }
+            }
+
+            /**
+             * handler called after group has been saved on server.
+             */
+            _handleGroupSaved() {
+                console.log('_handleUserSaved');
+                this.$.messenger.text = 'Group ' + this.selectedGroup.group + ' has been saved.';
+                this.$.messenger.open();
+                this._switchPage(1);
+            }
+
+            /**
+             * error-handler for deletion of groups.
+             */
+            _handleSaveGroupError() {
+                this._handleRequestError(this.$.saveGroup.lastError);
+            }
+
+            _toggleManager(e, user) {
+                console.log('_toggleManager', e);
+                console.log('_toggleManager model', e.model.item);
+                console.log('_toggleManager composedPath', e.composedPath());
+
+
+                var pathes = e.composedPath();
+                var toggle;
+                pathes.forEach(function (item) {
+//                    console.log("path: ", item);
+                    if (item.nodeType == 1 && item.nodeName.toLowerCase() == 'paper-checkbox') {
+                        toggle = item;
+                    }
+                });
+
+
+                console.log('_toggleManager toggle ', toggle);
+//                console.log('_toggleManager toggle checked', toggle.hasAttribute('checked'));
+
+                console.log("current group ", this.selectedGroup);
+
+                /*
+                                if(toggle.pressed){
+                                    toggle.checked = false;
+                                } else {
+                                    toggle.checked = true;
+                                }
+                */
+
+
+//                e.target.checked = !e.target.checked;
+                e.stopPropagation();
+//                e.preventDefault();
+//                return false;
+            }
+
+            /**
+             * handler calling server for group deletion.
+             */
+            _handleDeleteGroup() {
+                console.log("_handleDeleteGroupr");
+                if (confirm('Really delete this group?')) {
+                    this.$.deleteGroup.url = this.importPath + this.groupUrl + this.selectedGroup.group;
+                    this.$.deleteGroup.generateRequest();
+                }
+
+            }
+
+            /**
+             * handler called after group has been deleted.
+             */
+            _handleGroupDeleted() {
+                this._switchPage(1);
+                this.$.messenger.text = "Group " + this.selectedGroup.group + " has been deleted";
+                this.$.messenger.open();
+            }
+
+            /**
+             * error-handler for group deletion.
+             */
+            _handleGroupDeletedError() {
+                this._handleRequestError(this.$.deleteGroup.lastError);
+            }
+
+
+            _closeToast(e) {
+                this.$.errorReporter.close();
+            }
+
+            /**
+             * generic ajax error handler.
+             *
+             * @param error - the error object provided by the iron-ajax element.
+             * @private
+             */
+            _handleRequestError(error) {
+                console.log("error during ajax call: ", error);
+
+                if (error.status == '403') {
+                    this.$.errorReporter.text = "You don't have sufficient priviledges to access UserManager";
+                } else if (error.status == '400') {
+                    this.$.errorReporter.text = 'Server responded: ' + error.statusText + ': ' + error.response;
+                } else {
+                    this.$.errorReporter.text = 'Server responded: ' + error.status + ' - ' + error.statusText;
+                }
+                this.$.errorReporter.open();
+            }
+
+
+        }
+
+        window.customElements.define(ExistdbUsermanager.is, ExistdbUsermanager);
+    </script>
+</dom-module>
+

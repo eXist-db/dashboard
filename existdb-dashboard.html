@@ -1,0 +1,344 @@
+<!--
+`existdb-dashboard`
+
+an application bundling all admin apps in one place.
+
+@demo demo/index.html
+-->
+
+<dom-module id="existdb-dashboard">
+    <template>
+        <style>
+            :host {
+                display: block;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                @apply(--paper-font-common-base);
+                color: var(--google-grey-900);
+                --app-drawer-scrim-background: rgba(0, 0, 0, 0.3);
+                --app-drawer-width: 256px;
+            }
+
+            paper-item {
+                --paper-item-focused: {
+                    background: white;
+                };
+                --paper-item-selected: {
+                    background: white;
+                };
+                --paper-item-focused-before: {
+                    background: white;
+                }
+            }
+
+            app-toolbar {
+                background: rgb(0, 136, 204);
+                width: 100%;
+                margin: 0;
+            }
+
+            app-drawer {
+                /*background: rgba(245, 245, 245, 0.5);*/
+                z-index: 100;
+                text-align: center;
+                color: black;
+                /*background: url('resources/images/x.svg') no-repeat;*/
+            }
+
+            .drawerbar {
+                width: 256px;
+                height: 128px;
+                display: table-cell;
+                vertical-align: middle;
+            }
+
+            app-drawer-layout:not([narrow]) [drawer-toggle] {
+                display: none;
+            }
+
+            #pages{
+                height: 100%;
+            }
+
+            .righttool {
+                margin-right: 20px;
+            }
+
+            app-drawer iron-icon {
+                /*color: rgb(0, 136, 204);*/
+                color: var(--paper-blue-500);
+                margin-right: 20px;
+
+            }
+            paper-item img{
+                /*margin-right: 20px;*/
+            }
+
+            .logo {
+                width: 134px;
+            }
+
+            a {
+                color: var(--paper-blue-900);
+            }
+
+            .subitem {
+                font-weight: 300;
+                font-size: larger;
+                letter-spacing: 4.5px;
+            }
+
+            h1 {
+                color: blue;
+            }
+
+            #versionDialog {
+                text-align: center;
+            }
+
+            #settings {
+                padding: 20px;
+            }
+
+            .item-img {
+                width: 36px;
+                height: 36px;
+                margin-right: 8px;
+            }
+            .currentUser{
+                padding:4px 0;
+                font-size:12px;
+            }
+            .currentUser [icon='social:person']{
+                margin:0;
+            }
+            existdb-version{
+                font-size: small;
+                display: block;
+                margin-top:-6px;
+                margin-bottom:6px;
+                width: 100%;
+            }
+        </style>
+
+
+        <app-location id="location" route="{{route}}" use-hash-as-path></app-location>
+        <app-route id="router"
+                   route="{{route}}"
+                   pattern="/:page"
+                   data="{{routeData}}"></app-route>
+
+<!--
+        <iron-ajax id="getCurrentUser"
+                   with-credentials
+                   method="get"
+                   handle-as="json"
+                   on-response="_handleCurrentUser"
+                   url="/exist/apps/dashboard/currentUser"></iron-ajax>
+-->
+
+        <app-drawer-layout id="drawerLayout" fullbleed>
+            <app-drawer id="drawer" slot="drawer">
+                <div class="drawerbar">
+                    <img class="logo" src="resources/images/existdb-web.svg">
+                    <existdb-version> </existdb-version>
+                    <div class="subitem">Dashboard</div>
+<!--
+                    <div class="currentUser">
+                        <iron-icon icon="social:person"></iron-icon>
+                        [[currentUser]]
+                    </div>
+-->
+                </div>
+
+                <paper-item id="launcherItem" on-click="_showLauncher" role="menuitem">
+                    <img class="item-img" src="resources/images/launcher.svg">
+                    <span class="menuitem">Launcher</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
+                <paper-item id="packageManagerItem" on-click="_showPackageManager" role="menuitem">
+                    <iron-icon icon="apps"></iron-icon>
+                    <span class="menuitem">Package Manager</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
+                <paper-item id="userManagerItem" on-click="_showUserManager" role="menuitem">
+                    <iron-icon icon="social:people"></iron-icon>
+                    <span class="menuitem">User Manager</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
+                <paper-item id="backupItem" on-click="_showBackup" role="menuitem">
+                    <!--<iron-icon icon="build"></iron-icon>-->
+                    <iron-icon icon="restore"></iron-icon>
+                    <span class="menuitem">Backup</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
+                <paper-item id="settingsItem" on-click="_showSettings" role="menuitem">
+                    <!--<iron-icon icon="build"></iron-icon>-->
+                    <iron-icon icon="settings"></iron-icon>
+                    <span class="menuitem">Settings</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
+                <paper-item id="logout" on-click="_logout" role="menuItem">
+                    <img class="item-img" src="resources/images/logout.svg">
+                    <span class="menuitem">Logout</span>
+                    <paper-ripple></paper-ripple>
+                </paper-item>
+            </app-drawer>
+            <iron-lazy-pages id="pages" attr-for-selected="name" selected="{{routeData.page}}">
+                <template is="dom-if" name="launcher" data-path="bower_components/existdb-launcher/dependencies.html" restamp>
+                    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard"]' show-branding="false">
+                        <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
+                    </existdb-launcher-app>
+                </template>
+                <template is="dom-if" name="packagemanager" data-path="bower_components/existdb-packagemanager/dependencies.html" restamp>
+                    <existdb-packagemanager logout="false">
+                        <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
+                    </existdb-packagemanager>
+                </template>
+                <template is="dom-if" name="usermanager" data-path="bower_components/existdb-usermanager/dependencies.html" restamp>
+                    <existdb-usermanager-app logout="false">
+                        <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
+                    </existdb-usermanager-app>
+                </template>
+
+                <template is="dom-if" name="backup" data-path="bower_components/existdb-backup/dependencies.html" restamp>
+                    <existdb-backup-app logout="false">
+                        <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
+                    </existdb-backup-app>
+                </template>
+
+                <template is="dom-if" name="settings" data-path="existdb-settings.html" restamp>
+                    <existdb-settings>
+                        <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
+                    </existdb-settings>
+                </template>
+            </iron-lazy-pages>
+
+
+            <!--</app-header-layout>-->
+        </app-drawer-layout>
+
+    </template>
+
+    <script>
+        class ExistdbDashboard extends Polymer.Element {
+            static get is() {
+                return 'existdb-dashboard';
+            }
+
+            static get properties() {
+                return {
+                    route: {
+                        type: Object
+                    },
+
+                    mainLabel: {
+                        type: String
+                    },
+                    userManagerLoaded: {
+                        type: Boolean,
+                        value: false
+                    },
+                    packageManagerLoaded: {
+                        type: Boolean,
+                        value: false
+                    },
+                    path:{
+                        type: String
+                    }
+                };
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                console.log("dashboard connected");
+//                this.$.getCurrentUser.generateRequest();
+//                this.$.getVersion.generateRequest();
+
+            }
+
+            ready() {
+                super.ready();
+//                console.log('dashboard ready route attr ', this.path);
+                this.$.location.addEventListener('path-changed', event => this.routeChanged(event));
+
+//                console.log('setting path if available: ', this.path.substring(1));
+
+                if (!this.route || !this.route.path) {
+                    this.route = {};
+                    if(this.path != ""){
+                        this.set('route.path',this.path.substring(1));
+                    }else{
+                        this.set('route.path', '/launcher');
+                    }
+                }
+
+                this.$.drawerLayout.resetLayout();
+            }
+
+            routeChanged(event) {
+//                console.log("route changed ", event);
+//                console.log("route changed ", this.route);
+
+                var s = this.route.path;
+
+//                console.log("route path changed event", event);
+//                console.log("route path changed ", this.route);
+
+                if (this.$.drawerLayout.narrow) {
+                    this.$.drawer.close();
+                }
+                this.$.drawerLayout.resetLayout();
+
+            }
+
+            _toggleDrawer() {
+                this.$.drawer.toggle();
+            }
+
+            _showLauncher(e) {
+//                console.log('show.... ', e);
+                this.$.pages.select('launcher');
+            }
+
+            _showPackageManager(e) {
+//                console.log('show _showPackageManager ', e);
+                this.$.pages.select('packagemanager');
+            }
+
+            _showUserManager(e) {
+                this.$.pages.select('usermanager');
+//                this.$.drawerLayout.resetLayout();
+            }
+
+            _showBackup(e) {
+                this.$.pages.select('backup');
+            }
+
+            _showSettings(e) {
+                this.$.pages.select('settings');
+            }
+
+            _toggleDrawer(e) {
+                this.$.drawer.close();
+            }
+
+            _logout(e){
+                this.route.path = "/#";
+                window.location.href="logout?logout=true";
+            }
+
+/*
+            _handleCurrentUser(){
+                console.log('_handleCurrentUser ', this.$.getCurrentUser.lastResponse);
+                this.currentUser = this.$.getCurrentUser.lastResponse;
+            }
+*/
+
+        }
+
+        window.customElements.define(ExistdbDashboard.is, ExistdbDashboard);
+    </script>
+</dom-module>

@@ -1,0 +1,61 @@
+<!--
+`repo-icon`
+element for displaying package metadata
+
+@demo demo/doc.html
+-->
+
+<dom-module id="repo-icon">
+    <template>
+        <style>
+            :host {
+                display:inline-block;
+                position: relative;
+            }
+            img{
+                display: inline-block;
+                width: 64px;
+            }
+        </style>
+        <img id="img" on-click="_openApp">
+        <slot></slot>
+    </template>
+
+    <script>
+        class RepoIcon extends Polymer.Element{
+
+            static get is() {
+                return 'repo-icon';
+            }
+
+            static get properties() {
+                return{
+                    src:{
+                        type:String,
+                        reflectToAttribute:true,
+                        notify:true
+                    }
+                };
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                this.$.img.src=this.src;
+            }
+
+
+
+/*
+            _openApp (e) {
+                e.stopPropagation();
+                this.parentNode._openApp(e);
+            }
+*/
+
+
+
+        }
+        window.customElements.define(RepoIcon.is, RepoIcon);
+
+    </script>
+</dom-module>

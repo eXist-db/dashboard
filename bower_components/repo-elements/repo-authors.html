@@ -1,0 +1,54 @@
+<!--
+`repo-authors`
+element for displaying package metadata
+
+@demo demo/doc.html
+-->
+
+<dom-module id="repo-authors">
+    <template>
+        <style include="repo-styles">
+            .content ::slotted(repo-author){
+                display:table-row;
+            }
+        </style>
+
+        <span class="label">Author(s)</span>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+
+    <script>
+        class RepoAuthors extends Polymer.Element{
+
+            static get is() {
+                return 'repo-authors';
+            }
+
+            static get properties() {
+                return{
+                    src:{
+                        type:String,
+                        reflectToAttribute:true,
+                        notify:true
+                    }
+                };
+            }
+
+
+
+/*
+            _openApp (e) {
+                e.stopPropagation();
+                this.parentNode._openApp(e);
+            }
+*/
+
+
+
+        }
+        window.customElements.define(RepoAuthors.is, RepoAuthors);
+
+    </script>
+</dom-module>

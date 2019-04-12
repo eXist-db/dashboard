@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://expath.org/ns/pkg" name="http://exist-db.org/apps/dashboard" abbrev="dashboard" version="2.0.0" spec="1.0">
     <title>Dashboard</title>
-    <dependency processor="http://exist-db.org" semver-min="5.0.0-RC7"/>
+<!--    <dependency processor="http://exist-db.org" semver-min="5.0.0-RC7"/>-->
     <dependency package="http://www.functx.com" semver-min="1.0"/>
-    <dependency package="http://exist-db.org/apps/existdb-packageservice" semver-min="1.3.0"/>
+    <dependency package="http://exist-db.org/apps/existdb-packageservice" semver-min="1.3.4"/>
 </package>

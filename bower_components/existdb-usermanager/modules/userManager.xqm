@@ -207,14 +207,14 @@ declare function usermanager:create-group($group-json as element(json)) as xs:st
     return
     
         (: TODO implement secman module functions instead :)
-        if(xmldb:create-group($group))then (
+        if(secman:create-group($group))then (
             secman:set-group-metadata($group, $usermanager:METADATA_DESCRIPTION_KEY, $description),
             
             for $member in $group-json/pair[@name eq "members"][@type eq "array"]/item
             let $user := $member/pair[@name eq "member"],
             $isManager := xs:boolean($member/pair[@name eq "isManager"])
             return
-                let $null := xmldb:add-user-to-group($user, $group)  (: TODO need to be able to set manager flag! :) (: TODO implement secman version instead :)
+                let $null := secman:add-group-member($user,$group)
                 return
                     ()            
                 ,

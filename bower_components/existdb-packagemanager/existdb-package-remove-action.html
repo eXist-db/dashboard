@@ -118,6 +118,11 @@ implements an interaction with the package repository
             _handleResponse (data) {
 //                console.log("response: ", data);
                 //todo: error handling for 200 responses - see install-action
+                var error = JSON.parse(this.$.removePackage.lastResponse).error;
+                if (error != undefined) {
+                    this.dispatchEvent(new CustomEvent('package-remove-error', {bubbles: true, composed: true, detail: {error: error}}));
+                }
+
                 this.dispatchEvent(new CustomEvent('package-removed', {bubbles: true, composed: true, detail: {abbrev: this.abbrev}}));
             }
 

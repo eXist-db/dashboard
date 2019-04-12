@@ -2,6 +2,8 @@ xquery version "3.0";
 
 module namespace login-helper="http://exist-db.org/apps/dashboard/login-helper";
 
+import module namespace sm="http://exist-db.org/xquery/securitymanager";
+
 (: Determine if the persistent login module is available :)
 declare function login-helper:get-login-method() as function(*) {
     let $tryImport :=
@@ -36,7 +38,7 @@ declare %private function login-helper:fallback-login($domain as xs:string, $max
             if ($user) then
                 let $isLoggedIn := xmldb:login("/db", $user, $password, true())
                 return
-                    if ($isLoggedIn and (not($asDba) or xmldb:is-admin-user($user))) then (
+                    if ($isLoggedIn and (not($asDba) or sm:is-dba($user))) then (
                         session:set-attribute("eXide.user", $user),
                         session:set-attribute("eXide.password", $password),
                         request:set-attribute($domain || ".user", $user),

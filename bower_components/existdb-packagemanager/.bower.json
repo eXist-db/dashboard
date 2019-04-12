@@ -55,12 +55,12 @@
   ],
   "private": true,
   "_cacheHeaders": {
-    "ETag": "\"61ad473deaf0984e9a722824225d7b67f62e6668\"",
+    "ETag": "\"1d9cac6774cd50583f25588b7594a27d27b06b62\"",
     "Content-Type": "application/zip",
-    "Content-Disposition": "attachment; filename=packagemanager-4.6.0.zip"
+    "Content-Disposition": "attachment; filename=packagemanager-4.6.2.zip"
   },
-  "_release": "e-tag:61ad473de",
-  "_source": "https://github.com/eXist-db/packagemanager/archive/v4.6.0.zip",
+  "_release": "e-tag:1d9cac677",
+  "_source": "https://github.com/eXist-db/packagemanager/archive/v4.6.2.zip",
   "_target": "*",
-  "_originalSource": "https://github.com/eXist-db/packagemanager/archive/v4.6.0.zip"
+  "_originalSource": "https://github.com/eXist-db/packagemanager/archive/v4.6.2.zip"
 }

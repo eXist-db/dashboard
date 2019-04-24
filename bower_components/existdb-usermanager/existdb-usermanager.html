@@ -134,7 +134,7 @@
             .isManager {
                 margin-top: 40px;
                 position: absolute;
-                right: 80px;
+                right: 40px;
                 display: inline-block;
             }
 
@@ -531,7 +531,7 @@
                                                                     Account is disabled
                                                                 </paper-toggle-button>
                             -->
-                            <paper-input label="umask" value="{{selectedUser.umask}}"></paper-input>
+                            <paper-input label="umask" value="{{selectedUser.umask}}" type="number" max="777"></paper-input>
 
                             <div class="member-heading">Member of groups</div>
                             <paper-listbox id="memberOf" class="groupsOfUser" multi attr-for-selected="label">
@@ -569,7 +569,7 @@
                             </div>
 
                             <paper-listbox id="groupMembers" multi attr-for-selected="label" selectable="paper-item">
-                                <template is="dom-repeat" items="[[users]]">
+                                <template id="gm" is="dom-repeat" items="[[users]]">
                                     <paper-item label="[[item.user]]">
                                         <!--<paper-item-body>-->
                                         <span class="member-user">[[item.user]]</span>
@@ -578,8 +578,8 @@
                                         <!--</paper-item-body>-->
                                     </paper-item>
                                     <div class="checkWrapper">
-                                        <paper-checkbox checked="[[item.isManager]]"
-                                                        on-click="_toggleManager"></paper-checkbox>
+                                        <paper-checkbox id="[[item.user]]" checked$="[[_isManager(item.user,selectedGroup)]]"
+                                                        ></paper-checkbox>
                                     </div>
                                 </template>
                             </paper-listbox>
@@ -650,7 +650,9 @@
                                 member: '',
                                 isManager: false
                             }]
-                        }
+                        },
+                        notify:true,
+                        observer: '_handleSelectedGroup'
                     },
                     groups: {
                         type: Array,
@@ -683,7 +685,7 @@
 
             connectedCallback() {
                 super.connectedCallback();
-                console.log('Usermanager connectedCallback')
+//                console.log('Usermanager connectedCallback')
 
 //                this.$.loadUserList.url = this.importPath + 'api/user/';
 //                this.$.loadUserList.generateRequest();
@@ -707,17 +709,17 @@
             // ########################## private part ##########################
 
             _handleSelection(e) {
-                console.log('_handleSelection: ', e.composedPath());
+//                console.log('_handleSelection: ', e.composedPath());
 
                 var pathes = e.composedPath();
                 var toggle;
                 pathes.forEach(function (item) {
-                    console.log("path: ", item);
+//                    console.log("path: ", item);
                     if (item.nodeName.toLowerCase() == 'paper-toggle-button') {
                         toggle = item;
                     }
                 });
-                console.log('toggle?: ', toggle);
+//                console.log('toggle?: ', toggle);
 
                 if (toggle != undefined) {
                     e.stopPropagation();
@@ -763,7 +765,7 @@
              * handles userlist loaded from server.
              */
             _handleUsers() {
-                console.log('_handleUsers', this.$.loadUserList.lastResponse);
+//                console.log('_handleUsers', this.$.loadUserList.lastResponse);
                 this.users = this.$.loadUserList.lastResponse;
                 this.$.userLayout.resetLayout();
 //                this.$.header.resetLayout();
@@ -873,8 +875,7 @@
             _handleDeleteUser(e) {
                 console.log("_handleDeleteUser ", this.selectedUser.user);
                 if (confirm('Really delete this user?')) {
-                    this.$.deleteUser.url = this.rootPath + this.userUrl + this.selectedUser.user;
-                    this.$.deleteUser.url = this.importPath + 'api/user/';
+                    this.$.deleteUser.url = this.importPath + this.userUrl + this.selectedUser.user;
                     this.$.deleteUser.generateRequest();
                 }
             }
@@ -931,8 +932,8 @@
              * handles userlist loaded from server.
              */
             _selectGroupMembers() {
-                console.log("_selectGroupMembers ", this.selectedGroup);
-                console.log("_selectGroupMembers ", this.selectedGroup.members);
+//                console.log("_selectGroupMembers ", this.selectedGroup);
+//                console.log("_selectGroupMembers ", this.selectedGroup.members);
                 var arr = [];
 
                 if (this.selectedGroup.members == undefined) return;
@@ -946,9 +947,8 @@
 
 
             _editGroup(e) {
-                console.log("edit group ", e.model.get('item.group'));
-                console.log("edit group selected group ", this.selectedGroup);
-
+//                console.log("edit group ", e.model.get('item.group'));
+//                console.log("edit group selected group ", this.selectedGroup);
 
                 var groupid = e.model.get('item.group');
 
@@ -958,12 +958,15 @@
                 this.selectedGroup = item;
 
                 this._selectGroupMembers();
+
                 this._switchPage(3);
+
             }
 
 
             _handleGroups() {
                 this.groups = this.$.loadGroupList.lastResponse;
+//                console.log('_hanldeGroups ', this.groups);
                 this.$.userLayout.resetLayout();
 
             }
@@ -976,8 +979,8 @@
              * handler called by 'save' button
              */
             _handleAddGroup(e) {
-                console.log("add group: ", e);
-                console.log("dom repeat ", this.$.groupList);
+//                console.log("add group: ", e);
+//                console.log("dom repeat ", this.$.groupList);
                 e.stopPropagation();
                 e.preventDefault();
 
@@ -1039,41 +1042,6 @@
                 this._handleRequestError(this.$.saveGroup.lastError);
             }
 
-            _toggleManager(e, user) {
-                console.log('_toggleManager', e);
-                console.log('_toggleManager model', e.model.item);
-                console.log('_toggleManager composedPath', e.composedPath());
-
-
-                var pathes = e.composedPath();
-                var toggle;
-                pathes.forEach(function (item) {
-//                    console.log("path: ", item);
-                    if (item.nodeType == 1 && item.nodeName.toLowerCase() == 'paper-checkbox') {
-                        toggle = item;
-                    }
-                });
-
-
-                console.log('_toggleManager toggle ', toggle);
-//                console.log('_toggleManager toggle checked', toggle.hasAttribute('checked'));
-
-                console.log("current group ", this.selectedGroup);
-
-                /*
-                                if(toggle.pressed){
-                                    toggle.checked = false;
-                                } else {
-                                    toggle.checked = true;
-                                }
-                */
-
-
-//                e.target.checked = !e.target.checked;
-                e.stopPropagation();
-//                e.preventDefault();
-//                return false;
-            }
 
             /**
              * handler calling server for group deletion.
@@ -1127,10 +1095,34 @@
                 this.$.errorReporter.open();
             }
 
+            _isManager(user, group){
+//                console.log('_isManager user', user);
+//                console.log('_isManager group', group);
+//                console.log('_isManager group members', group.members);
+                const members = group.members;
 
+                if(!members) return false;
+
+                let result = false;
+                members.forEach(function(item){
+                   if(item.member === user){
+
+                       if(item.isManager === true){
+//                           console.log('item isManager', item.isManager);
+                           result =  true;
+                       }
+                   }
+                });
+
+                return result;
+
+            }
+
+            _handleSelectedGroup(){
+//                console.log('_handleSelectedGroup');
+            }
         }
 
         window.customElements.define(ExistdbUsermanager.is, ExistdbUsermanager);
     </script>
 </dom-module>
-

@@ -32,11 +32,11 @@ declare %private function login-helper:fallback-login($domain as xs:string, $max
             error(xs:QName("login"), "Persistent login module not enabled in this version of eXist-db")
         else if ($logout) then
             session:invalidate()
-        else 
+        else
             if ($user) then
                 let $isLoggedIn := xmldb:login("/db", $user, $password, true())
                 return
-                    if ($isLoggedIn and (not($asDba) or xmldb:is-admin-user($user))) then (
+                    if ($isLoggedIn and (not($asDba) or sm:is-dba($user))) then (
                         session:set-attribute("eXide.user", $user),
                         session:set-attribute("eXide.password", $password),
                         request:set-attribute($domain || ".user", $user),

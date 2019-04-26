@@ -1,0 +1,61 @@
+<!--
+`existdb-local-packages`
+
+@demo local.html
+-->
+
+<dom-module id="existdb-local-packages">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+
+        <iron-ajax id="loadLocal"
+                   verbose with-credentials
+                   method="get" handle-as="text"
+                   on-response="handlePackages"
+                   url="/exist/apps/dashboard/apps/local"
+                   on-error="handlePackagesError" auto></iron-ajax>
+
+        <slot></slot>
+    </template>
+
+    <script>
+        class ExistdbLocalPackages extends Polymer.Element {
+
+            static get is() {
+                return 'existdb-local-packages';
+            }
+
+            static get properties() {
+                return {
+                };
+            }
+
+            constructor() {
+                console.log('ExistdbLocalPackages constructor')
+                super();
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                console.log('ExistdbLocalPackages connected')
+            }
+
+            handlePackages(){
+                this.innerHTML = this.$.loadLocal.lastResponse
+            }
+
+            handlePackagesError(){
+//                console.log('ExistdbPackageservice._handlePackagesError ', this.$.loadLocal.lastError)
+                console.log('ExistdbLocalPackages._handlePackagesError ')
+
+            }
+
+        }
+
+        window.customElements.define(ExistdbLocalPackages.is, ExistdbLocalPackages);
+    </script>
+</dom-module>

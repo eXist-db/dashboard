@@ -1,0 +1,36 @@
+<dom-module id="repo-available">
+    <template>
+        <style include="repo-styles">
+            :host{
+                display: table;
+            }
+            .content, .label{
+                color:var(--paper-orange-500);
+                font-weight: 500;
+                padding:4px 0;
+            }
+            .updateBadge{
+                background: var(--paper-orange-700);
+                color:var(--paper-orange-100);
+                padding:4px 6px;
+                text-align: center;
+                z-index:100;
+                margin-left:-104px;
+            }
+        </style>
+        <span class="updateBadge">updated</span>
+        <span class="label">Latest Version</span>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+    <script>
+        class RepoAvailable extends Polymer.Element {
+            static get is() {
+                return 'repo-available';
+            }
+        }
+
+        window.customElements.define(RepoAvailable.is, RepoAvailable);
+    </script>
+</dom-module>

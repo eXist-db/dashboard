@@ -1,0 +1,122 @@
+body{
+    width: 100%;
+    height: 100%;
+    margin:0;
+    padding:0;
+    border:none;
+}
+existdb-dashboard{
+    width: 100%;
+    margin:0 auto;
+}
+existdb-package-descriptor{
+    display: block;
+    margin:10px 0;
+    position: relative;
+    min-height: 150px;
+    font-family: Roboto;
+    padding: 6px;
+    background: white;
+}
+existdb-package-descriptor:focus{
+    outline: 1px solid rgb(0, 136, 204);
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
+    0 1px 18px 0 rgba(0, 0, 0, 0.12),
+    0 3px 5px -1px rgba(0, 0, 0, 0.4);
+}
+
+existdb-package-descriptor > *{
+    display: block;
+    margin-left:150px;
+}
+
+existdb-package-descriptor > existdb-app-icon{
+    margin-left: 0px;
+    position: absolute;
+    top: 10px;
+    left:10px;
+}
+existdb-package-descriptor > existdb-app-icon a:focus{
+    outline:none;
+}
+existdb-app-icon img{
+    max-width: 126px;
+}
+existdb-app-title{
+    font-size: 26px;
+    padding:6px 0;
+}
+
+/* grid styles */
+.grid existdb-local-packages{
+    display: flex;
+    flex-wrap:wrap;
+    justify-content: flex-start;
+}
+.grid existdb-package-descriptor{
+    /*background: transparent;*/
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 256px;
+    height:256px;
+    margin: 10px;
+    align-items: stretch;
+}
+
+
+.grid existdb-package-descriptor > existdb-app-icon{
+    display: inline-flex;
+    align-items:center;
+    position: relative;
+    top:inherit;
+    left: inherit;
+    max-width: 150px;
+    margin:0 auto;
+}
+
+.grid existdb-app-title{
+    font-size: 16px;
+    text-align: center;
+    margin: 4px 0;
+    color:rgba(22,22,22,0.9);
+    line-height:22px;
+    height:44px;
+    position: absolute;
+    width: 97%;
+    bottom:0;
+    text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);
+}
+.grid existdb-app-version{
+    display: none;
+}
+.grid exist-app-actions{
+    display: none;
+}
+
+.grid existdb-local-packages{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content: space-around;
+    flex-direction: row;
+}
+
+/*
+existdb-app-details{
+    display: none;
+}
+*/
+
+
+/*
+
+
+existdb-app-title {
+    display: inline-block;
+    vertical-align: top;
+}
+existdb-app-version{
+    display: inline-block;
+
+}
+*/

@@ -1,0 +1,22 @@
+<dom-module id="repo-change">
+    <template>
+        <style include="repo-styles">
+            ::slotted(ul){
+                padding:0 12px;
+            }
+        </style>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+    <script>
+        class RepoChange extends Polymer.Element {
+            static get is() {
+                return 'repo-change';
+            }
+
+        }
+
+        window.customElements.define(RepoChange.is, RepoChange);
+    </script>
+</dom-module>

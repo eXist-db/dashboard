@@ -1,0 +1,109 @@
+<dom-module id="repo-version">
+    <template>
+        <style include="repo-styles">
+            :host{
+                margin-bottom: 4px;
+            }
+            .label{
+                width: auto;
+                padding-right: 10px;
+            }
+            .older-version{
+                display: table-cell;
+                padding-right:10px;
+            }
+
+            slot{
+                padding-bottom: 10px;
+            }
+
+            paper-button{
+                font-size:10px;
+                border:thin solid var(--paper-grey-700);
+                display: table-cell;
+
+            }
+
+        </style>
+
+        <template is="dom-if" if="{{_hasAppParent()}}">
+            <span class="label">Version</span>
+            <span class="content">
+                <slot></slot>
+            </span>
+        </template>
+
+        <template is="dom-if" if="{{_hasOtherParent()}}">
+            <span class="older-version">Version [[version]]</span>
+            <paper-button id="install" on-click="_triggerInstall" raised>Install</paper-button>
+        </template>
+
+
+    </template>
+
+    <script>
+        class RepoVersion extends Polymer.Element {
+
+            static get is() {
+                return 'repo-version';
+            }
+
+            static get properties() {
+                return {
+                    url: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    abbrev: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    type: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    version: {
+                        type: String,
+                        reflectToAttribute: true
+                    }
+
+                };
+            }
+
+            constructor() {
+//                console.log('ExistdbVersion constructor')
+                super();
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+
+                if (this._hasOtherParent()) {
+                    this.dispatchEvent(new CustomEvent('attachedVersion', {bubbles: true, composed: true, detail: {}}));
+                }
+            }
+
+            _hasAppParent() {
+                return this.parentNode.nodeName.toLowerCase() == 'repo-app';
+            }
+
+            _hasOtherParent() {
+//              console.log('_hasOtherParent ',this.parentNode.nodeName.toLowerCase() == 'repo-other');
+                return this.parentNode.nodeName.toLowerCase() == 'repo-other';
+            }
+
+            _triggerInstall(e) {
+                console.log('_triggerInstall', this.version);
+                this.dispatchEvent(new CustomEvent('requestInstall', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {version: this.version}
+                }));
+
+            }
+
+
+        }
+        window.customElements.define(RepoVersion.is, RepoVersion);
+    </script>
+</dom-module>

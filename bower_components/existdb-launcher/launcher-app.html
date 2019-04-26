@@ -1,0 +1,123 @@
+<!--
+`repo-app`
+element for displaying package metadata
+
+@demo demo/doc.html
+-->
+
+<dom-module id="launcher-app">
+    <template>
+        <style>
+            :host {
+                display: table;
+                width:100%;
+                height:100%;
+                /*margin:10px;*/
+                /*border:thin solid red;*/
+                text-align: center;
+            }
+
+            ::slotted(repo-icon){
+                width: 100%;
+                height: 100%;
+                vertical-align: middle;
+                display: table-cell;
+                background: transparent;
+                text-align:center;
+
+            }
+            .wrapper{
+                width:100%;
+                height:100%;
+                display:table;
+            }
+        </style>
+
+            <paper-ripple></paper-ripple>
+            <div id="wrapper" class="wrapper">
+                <slot></slot>
+            </div>
+            <!--<slot name="icon"></slot>-->
+
+    </template>
+
+    <script>
+        class LauncherApp extends Polymer.Element {
+
+            static get is() {
+                return 'launcher-app';
+            }
+
+            static get properties() {
+                return {
+                    type: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    status: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    packageTitle: {
+                        type: String,
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+                    path: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    readonly:{
+                        type: String,
+                        reflectToAttribute:true
+                    }
+                };
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                this.setAttribute('tabindex','0');
+            }
+
+            ready () {
+                super.ready();
+                this.addEventListener('click',this._openApp);
+                this.addEventListener('keyup',this._handleEnter);
+            }
+
+            _handleTap (e) {
+//                console.log('handleTap ', e);
+                e.stopPropagation();
+                this._openApp();
+            }
+
+
+            _handleEnter(e) {
+                var originalTarget = e.composedPath()[0];
+//                console.log('_handleEnter originalTarget ', e);
+//                console.log('_handleEnter originalTarget ', e.composedPath()[0]);
+//                console.log('_handleEnter originalTarget ', originalTarget.nodeName);
+
+                if (originalTarget.nodeName == "LAUNCHER-APP" && e.keyCode == 13) {
+                    this._openApp(e);
+                }
+            }
+
+            _openApp(e){
+//                console.log('_openApp')
+//                console.log('_openApp type', this.type);
+//                console.log('_openApp status', this.status);
+                var isApp = this.type == 'application';
+                if(isApp && this.status == "installed"){
+                    var targetUrl = this.path;
+                    setTimeout(function(){
+                        window.open(targetUrl);
+                    },300);
+
+                }
+            }
+        }
+        window.customElements.define(LauncherApp.is, LauncherApp);
+
+    </script>
+</dom-module>

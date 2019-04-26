@@ -1,0 +1,19 @@
+<dom-module id="repo-name">
+    <template>
+        <style include="repo-styles">
+        </style>
+        <span class="label">Name</span>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+    <script>
+        class RepoName extends Polymer.Element {
+            static get is() {
+                return 'repo-name';
+            }
+        }
+
+        window.customElements.define(RepoName.is, RepoName);
+    </script>
+</dom-module>

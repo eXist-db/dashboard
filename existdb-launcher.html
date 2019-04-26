@@ -1,0 +1,84 @@
+<!--
+`existdb-launcher`
+a eXistdb launchpad 
+
+@demo demo/index.html
+-->
+
+<dom-module id="existdb-launcher">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width:100%;
+        height:100%;
+        margin:0;
+        padding:0;
+        @apply(--paper-font-common-base);
+        color:white;
+        --app-drawer-scrim-background:rgba(0,0,0,0.3);
+      }
+
+      app-toolbar{
+        background: rgb(0, 136, 204);
+        width:100%;
+        margin:0;
+      }
+      .righttool{
+        margin-right:50px;
+      }
+
+      .logoWrapper{
+        padding:2px;
+        margin-right: 4px;
+        font-size:22px;
+        font-weight:700;
+        color:white;
+      }
+      .logo{
+        width:92px;
+      }
+      a{
+          color:white;
+      }
+    </style>
+
+      <app-header-layout>
+        <app-header slot="header">
+          <app-toolbar>
+            <div class="logoWrapper">
+              eXistdb
+            </div>
+            <div main-title>Dashboard</div>
+              <div class="righttool"><a href="login">login</a></div>
+          </app-toolbar>
+        </app-header>
+
+        <h1>Launcher</h1>
+        <slot></slot>
+
+      </app-header-layout>
+
+  </template>
+
+  <script>
+    class ExistdbLauncher extends Polymer.Element {
+      static get is() { return 'existdb-launcher'; }
+
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'existdb-launcher'
+          }
+        };
+      }
+
+      _toggleDrawer(){
+          this.$.drawer.toggle();
+      }
+    }
+
+    window.customElements.define(ExistdbLauncher.is, ExistdbLauncher);
+  </script>
+</dom-module>

@@ -1,0 +1,57 @@
+[
+  {
+    "user": "SYSTEM",
+    "fullName": "SYSTEM",
+    "description": "System Internals",
+    "password": null,
+    "disabled": false,
+    "umask": "18",
+    "groups": [
+      "dba"
+    ]
+  },
+  {
+    "user": "admin",
+    "fullName": "admin",
+    "description": "System Administrator",
+    "password": null,
+    "disabled": false,
+    "umask": "18",
+    "groups": [
+      "dba"
+    ]
+  },
+  {
+    "user": "eXide",
+    "fullName": null,
+    "description": null,
+    "password": null,
+    "disabled": false,
+    "umask": "18",
+    "groups": [
+      "eXide"
+    ]
+  },
+  {
+    "user": "guest",
+    "fullName": "guest",
+    "description": "Anonymous User",
+    "password": null,
+    "disabled": false,
+    "umask": "18",
+    "groups": [
+      "guest"
+    ]
+  },
+  {
+    "user": "monex",
+    "fullName": null,
+    "description": null,
+    "password": null,
+    "disabled": false,
+    "umask": "18",
+    "groups": [
+      "monex"
+    ]
+  }
+]

@@ -1,0 +1,19 @@
+<dom-module id="repo-other">
+    <template>
+        <style include="repo-styles">
+        </style>
+        <span class="label">Other Versions</span>
+        <span class="content">
+            <slot></slot>
+        </span>
+    </template>
+    <script>
+        class RepoOther extends Polymer.Element {
+            static get is() {
+                return 'repo-other';
+            }
+        }
+
+        window.customElements.define(RepoOther.is, RepoOther);
+    </script>
+</dom-module>

@@ -1,0 +1,11 @@
+{
+  "group": "foogroup",
+  "description": "",
+  "isManager": false,
+  "members": [
+    {
+      "member": "foo",
+      "isManager": false
+    }
+  ]
+}

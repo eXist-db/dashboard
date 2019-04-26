@@ -1,45 +1,159 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="all" name="dashboard">
-    <property name="project.version" value="0.4.7"/>
-    <property name="project.app" value="dashboard"/>
-    <property name="dependency.shared.version" value="0.3.4"/>
+<project default="xar" name="app-template">
+    <xmlproperty file="expath-pkg.xml"/>
+    <!--<property name="app.name" value=""/>-->
+    <property name="project.version" value="${package(version)}"/>
+    <property name="project.app" value="${package(abbrev)}"/>
+    <property name="bundle.dir" value="build/production"/>
     <property name="build.dir" value="build"/>
-    <property name="webdriver.dir" value="dashboard-webdriver"/>
-    <property name="server.url" value="http://demo.exist-db.org/exist/apps/public-repo/public/"/>
-    <condition property="git.commit" value="${git.commit}" else="">
-        <isset property="git.commit"/>
-    </condition>
-    <target name="clean">
-        <delete dir="${build.dir}"/>
-        <delete file="expath-pkg.xml"/>
-    </target>
-    <target name="all" depends="xar"/>
-    <target name="rebuild" depends="clean,xar"/>
     <target name="xar">
         <mkdir dir="${build.dir}"/>
-        <copy file="expath-pkg.xml.tmpl" tofile="expath-pkg.xml" filtering="true" overwrite="true">
-            <filterset>
-                <filter token="project.version" value="${project.version}"/>
-                <filter token="dependency.shared.version" value="${dependency.shared.version}"/>
-            </filterset>
-        </copy>
-        <zip destfile="${build.dir}/${project.app}-${project.version}${git.commit}.xar">
-            <fileset dir=".">
-                <exclude name="${build.dir}/*"/>
-                <exclude name=".git*"/>
-                <exclude name="*.tmpl"/>
-                <exclude name="*.properties"/>
-                <exclude name="${webdriver.dir}/**"/>
-            </fileset>
-        </zip>
+        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="bower.json.ignores build.xml ${build.dir}/**, node_modules/**, doc/**, gulpfile.js, package.json"/>
     </target>
-    <target name="upload">
-        <input message="Enter password:" addproperty="server.pass" defaultvalue="">
-            <handler type="secure"/>
-        </input>
-        <property name="xar" value="${project.app}-${project.version}.xar"/>
-        <exec executable="curl">
-            <arg line="-T ${build.dir}/${xar} -u admin:${server.pass} ${server.url}/${xar}"/>
+
+
+    <!--
+    cleans a the Polymer build directories
+    -->
+    <target name="clean-polymer-build">
+        <delete dir="${build.dir}/unbundled"/>
+        <delete dir="${build.dir}/bundled"/>
+        <delete dir="${build.dir}/production"/>
+    </target>
+
+    <!--
+    produces a production version for Polymer apps. This will compress all imported web components into a single html.
+    This is highly advisable for final distributions as it boils down the package dramatically.
+
+    Note: in the context of a single component this target might be of minor importance but is put here for usage
+     in your own projects.
+    -->
+    <target name="polymer-build-production" depends="clean-polymer-build">
+        <exec executable="polymer">
+            <arg value="build"/>
         </exec>
+    </target>
+
+    <target name="polymer-build-production2" depends="clean-polymer-build">
+        <exec executable="polymer">
+            <arg value="build"/>
+            <!--<arg value="&#45;&#45;bundle"/>-->
+            <arg value="--sources"/>
+            <arg value="*-*.html"/>
+            <arg value="--entrypoint"/>
+            <arg value="index.html"/>
+            <arg value="rewriteUrlsInTemplate"/>
+            <arg value="true"/>
+            <arg value="--html-minify"/>
+
+            <!--<arg value="-v"/>-->
+        </exec>
+    </target>
+
+
+    <!--
+    creates a xar file with optimized Polymer components
+    -->
+    <target name="production-xar" depends="polymer-build-production">
+        <mkdir dir="${build.dir}"/>
+
+        <copy todir="${bundle.dir}">
+            <fileset dir="${basedir}">
+                <include name="modules/**" />
+                <include name="resources/**" />
+
+                <include name="*.xml" />
+                <include name="*.xql" />
+
+                <include name="*.html" />
+                <include name="icon.svg" />
+            </fileset>
+        </copy>
+
+        <!-- unfortunately haven't a better way yet. -->
+        <!-- ##### DO NOT INCLUDE HTML AS THIS HAS GONE THOUGH OPTIMIZER IN `polymer-build-production` TARGET-->
+        <copy todir="${bundle.dir}/bower_components/existdb-launcher">
+            <fileset dir="${basedir}/bower_components/existdb-launcher">
+                <include name="modules/**" />
+                <include name="resources/**" />
+                <include name="*.xml" />
+                <include name="*.xql" />
+                <include name="icon.svg" />
+            </fileset>
+        </copy>
+
+        <copy todir="${bundle.dir}/bower_components/existdb-packagemanager">
+            <fileset dir="${basedir}/bower_components/existdb-packagemanager">
+                <include name="modules/**" />
+                <include name="resources/**" />
+                <include name="*.xml" />
+                <include name="*.xql" />
+                <include name="icon.svg" />
+            </fileset>
+        </copy>
+
+        <copy todir="${bundle.dir}/bower_components/existdb-usermanager">
+            <fileset dir="${basedir}/bower_components/existdb-usermanager">
+                <include name="modules/**" />
+                <include name="resources/**" />
+                <include name="*.xml" />
+                <include name="*.xql" />
+                <include name="icon.svg" />
+            </fileset>
+        </copy>
+
+        <copy todir="${bundle.dir}/bower_components/existdb-backup">
+            <fileset dir="${basedir}/bower_components/existdb-backup">
+                <include name="modules/**" />
+                <include name="resources/**" />
+                <include name="*.xml" />
+                <include name="*.xql" />
+                <include name="icon.svg" />
+            </fileset>
+        </copy>
+
+        <copy todir="${bundle.dir}/bower_components/vaadin-progress-bar" overwrite="true">
+            <fileset dir="${basedir}/bower_components/vaadin-progress-bar">
+                <include name="modules/**" />
+                <include name="resources/**" />
+                <include name="src/**" />
+                <include name="theme/**" />
+                <include name="*.xml" />
+                <include name="*.xql" />
+                <include name="**/*.html" />
+                <include name="icon.svg" />
+            </fileset>
+        </copy>
+
+
+        <!--
+                <copy file="admin.xql" todir="${build.dir}/bundled"/>
+                <copy file="controller.xql" todir="${build.dir}/bundled"/>
+                <copy file="expath-pkg.xml" todir="${build.dir}/bundled"/>
+                <copy file="config.xml" todir="${build.dir}/bundled"/>
+                <copy file="index.html" todir="${build.dir}/bundled"/>
+                <copy file="repo.xml" todir="${build.dir}/bundled"/>
+                <copy file="icon.png" todir="${build.dir}/bundled"/>
+                <copydir src="${basedir}/modules" dest="${build.dir}/bundled/modules" />
+                <copydir src="${basedir}/resources" dest="${build.dir}/bundled/resources" />
+        -->
+
+        <zip basedir="${bundle.dir}" destfile="${build.dir}/${project.app}-${project.version}-prod.xar" excludes="demo"/>
+    </target>
+
+    <!--
+    This should be called once you have unpacked the template app to start your own application.
+    -->
+    <target name="init">
+        <input
+                message="Please enter new app name:"
+                addproperty="app.name"
+        />
+
+        <echo message="${app.name}"></echo>
+
+        <replace dir="${basedir}" includes="**/*.*" excludes="build.xml"
+                 token="app-template"
+                 value="${app.name}"/>
     </target>
 </project>

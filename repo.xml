@@ -1,64 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <meta xmlns="http://exist-db.org/xquery/repo">
-    <description>eXist-db Dashboard</description>
+    <description>Dashboard</description>
     <author>Joern Turner</author>
-    <author>Wolfgang Meier</author>
-    <website>https://github.com/eXist-db/dashboard</website>
-    <status>alpha</status>
+    <website/>
+    <status>beta</status>
     <license>GNU-LGPL</license>
     <copyright>true</copyright>
     <type>application</type>
     <target>dashboard</target>
-    <prepare>pre-install.xql</prepare>
+    <prepare></prepare>
     <finish/>
-    <note>If you are updating the dashboard, you may need to bypass the browser's cache (and cookies). On most browsers, hold Ctrl (IE) or Shift (Firefox, Safari, Chrome) and click the reload button.</note>
     <changelog>
-        <change xmlns="" version="0.3.0">
-            <h3>Package Manager:</h3>
-            <ul>
-                <li>Display change log for updated packages</li>
-                <li>Show size of installable package</li>
-                <li>Small improvements to backup plugin</li>
-            </ul>
-        </change>
-        <change xmlns="" version="0.3.1">
-            <ul>
-                <li>Fixed too dark background on IE</li>
-            </ul>
-        </change>
-        <change xmlns="" version="0.3.1">
-            <ul>
-                <li>Fixed xhr issues in dashboard-1.7.js</li>
-            </ul>
-        </change>
-        <change xmlns="" version="0.3.3">
-            <ul>
-                <li>Fixed and Enabled the UserManager plugin</li>
-            </ul>
-        </change>
-        <change xmlns="" version="0.3.5">
-            <ul>
-                <li>Small fixes</li>
-            </ul>
-        </change>
-        <change xmlns="" version="0.3.6">
-            <ul>
-                <li>Allow an XQuery to be killed from scheduler plugin</li>
-                <li>Package manager: move packages for which updates are available to the top of the package list.</li>
-            </ul>
-        </change>
-        <change xmlns="" version="0.3.8">
-            <ul>
-                <li>Read/Write/Execute and SetUID, SetGID and Sticky bits can be set/unset from Collection Browser</li>
-                <li>Display ACL ACEs Collection Browser</li>
-            </ul>
-        </change>
-        <change xmlns="" version="0.4.1">
-            <ul>
-                <li>Release for eXist-db 2.2</li>
-                <li>Removal of link to old web admin</li>
+        <change version="2.0.0">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>First release of Dashboard v2.0.0 - <a href="https://github.com/eXist-db/existdb-dashboard/issues/15">#15</a></li>
             </ul>
         </change>
     </changelog>
-    <deployed>2013-07-06T19:48:05.794+02:00</deployed>
 </meta>

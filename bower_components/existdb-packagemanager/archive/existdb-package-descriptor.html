@@ -1,0 +1,184 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-styles/color.html">
+<link rel="import" href="../existdb-package-remove-action.html">
+<link rel="import" href="../existdb-package-install-action.html">
+
+
+<!--
+`existdb-package-descriptor`
+element for displaying package metadata
+
+@demo demo/doc.html
+-->
+
+<dom-module id="existdb-package-descriptor">
+    <template>
+        <style>
+            :host {
+                display: block;
+                padding: 10px;
+                position: relative;
+
+                --paper-icon-button: {
+                    color: var(--paper-blue-300);
+                }
+            }
+
+            .wrapper {
+                display: flex;
+                flex-wrap:wrap;
+            }
+
+            .wrapper ::content > div {
+                padding: 10px;
+            }
+
+            ::content .packageIconArea {
+                min-width: 100px;
+            }
+
+            ::content .shortTitle h3 {
+                margin: 12px 0 0 0;
+                padding-top: 0;
+            }
+
+            ::content .shortTitle p {
+                margin: 0;
+            }
+
+            ::content .wrapper table.hidden {
+                display:none !important;
+            }
+            ::content .wrapper table {
+                display: table;
+                width: 100%;
+            }
+            ::content .wrapper table th {
+                width: 122px;
+                text-align: right;
+                font-weight:300;
+                padding-right: 5px;
+            }
+            ::content .wrapper table td ul{
+                padding-bottom:0;
+            }
+
+            paper-icon-button {
+                min-height: 24px;
+                min-width: 24px;
+            }
+
+            #info{
+                position: absolute;
+                top:10px;
+                right:10px;
+            }
+
+            ::content .appFunctions{
+                position: absolute;
+                top:0px;
+                right:32px;
+            }
+            .type{
+                position: absolute;
+                font-size:11px;
+                padding: 3px;
+                color:var(--paper-blue-700);
+                left:130px;
+                top:6px;
+            }
+
+            .application{
+                color:var(--paper-blue-700);
+            }
+            .library{
+                color:var(--paper-light-green-700);
+            }
+        </style>
+        <div class="wrapper">
+            <div class$="[[type]] type">[[type]]</div>
+            <content></content>
+            <paper-icon-button id="info" icon="info"></paper-icon-button>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'existdb-package-descriptor',
+
+            properties: {
+
+                type: {
+                    type: String,
+                },
+                status: {
+                    type: String,
+                },
+                installed: {
+                    type: String
+                },
+                available: {
+                    type: String
+                }
+//                reflectToAttribute: true
+            },
+
+            listeners: {
+                'info.tap': 'handleInfo',
+//                'delete.tap': 'handleDelete'
+            },
+
+            handleInfo: function (e) {
+                e.stopPropagation()
+                e.preventDefault()
+               var detail = this.querySelector('table');
+               console.log(detail)
+                if(detail.hasAttribute("class")){
+                   detail.removeAttribute("class")
+                }else{
+                    detail.setAttribute("class","hidden")
+                }
+
+            },
+
+            attached: function () {
+                this.listen(this, 'tap', '_handleTap')
+                this.listen(this, 'keyup', '_handleEnter')
+                this.querySelector("a[target='_blank']").addEventListener("click", function (e) {
+                    e.preventDefault()
+                })
+            },
+
+
+            handleDelete: function (e) {
+                
+            },
+
+            _handleTap: function (e) {
+                this._openApp()
+            },
+
+            _handleEnter: function (e) {
+                console.log("key ", e)
+                if (e.keyCode == 13) {
+                    this._openApp()
+                }
+            },
+
+            _openApp: function () {
+                if(this.status == 'installed' && this.type== 'application'){
+                    var targetUrl = this.querySelector("a[target='_blank']").href
+                    window.open(targetUrl)
+                }
+            },
+
+            _isInstalled: function () {
+                return this.status=='installed'
+            }
+
+        });
+    </script>
+</dom-module>

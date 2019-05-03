@@ -1,3 +1,5 @@
-xquery version "3.1";
+xquery version "1.0";
 
-xmldb:get-current-user()
+import module namespace sm = "http://exist-db.org/xquery/securitymanager";
+
+sm:id()/sm:id/sm:real/sm:username/string(.)

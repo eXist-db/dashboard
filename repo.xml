@@ -11,6 +11,11 @@
     <prepare></prepare>
     <finish/>
     <changelog>
+        <change version="2.0.2">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>Fixed: Switched from deprecated xmldb:get-current-user function to sm:id</li>
+            </ul>
+        </change>
         <change version="2.0.1">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>Fixed: Update embedded package manager to work with eXist 5.0.0</li>

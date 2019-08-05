@@ -226,10 +226,13 @@ declare function local:get-group($group as xs:string) as element() {
         )
 };
 
+(:
 let $log := util:log("info", "exist path: " || $exist:path)
 let $log := util:log("info", "request URI: " || request:get-uri())
 let $log := util:log("info", "resource: " || $exist:resource)
 return
+:)
+
 if ($exist:path eq '') then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <redirect url="{request:get-uri()}/"/>

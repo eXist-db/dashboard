@@ -52,10 +52,11 @@ else if ($exist:path = "/admin") then (
     let $user := request:get-attribute("org.exist.login.user")
 
     let $route := request:get-parameter("route","")
+    (:
     let $log := util:log("info", "path " || $exist:path)
     let $log := util:log("info", "route " || $route)
-
-    (:let $log := util:log("info", "login matched " || $exist:controller):)
+    let $log := util:log("info", "login matched " || $exist:controller)
+    :)
 
     return
     if($user and sm:is-dba($user)) then(

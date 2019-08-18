@@ -1,3 +1,3 @@
 xquery version "3.1";
 
-string-join(("eXist-db", system:get-version(), system:get-revision(), system:get-build()), " ")
+string-join((system:get-product-name(), system:get-version(), system:get-revision(), system:get-build()), " ")

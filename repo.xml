@@ -11,6 +11,16 @@
     <prepare></prepare>
     <finish/>
     <changelog>
+        <change version="2.0.4">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>Fixed: Small improvements - <a href="https://github.com/eXist-db/dashboard/pull/96">#96</a></li>
+            </ul>
+        </change>
+        <change version="2.0.3">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>Fixed: Login to dashboard fails if not in "dba" group - <a href="https://github.com/eXist-db/dashboard/issues/90">#90</a></li>
+            </ul>
+        </change>
         <change version="2.0.2">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>Fixed: Switched from deprecated xmldb:get-current-user function to sm:id</li>

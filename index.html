@@ -4,11 +4,21 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"/>
     <title>existdb-dashboard</title>
     <link rel="stylesheet" href="resources/styles.css"/>
+    <style type="text/css">
+        existdb-login {
+            --existdb-login-theme: {
+                text-decoration: none;
+                color: black;
+            };
+        }
+    </style>
     <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
     <link rel="import" href="dependencies.html"/>
     <link rel="import" href="bower_components/existdb-launcher/dependencies.html"/>
 </head>
 <body unresolved="unresolved">
-    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard"]' show-login="true"> </existdb-launcher-app>
+    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard"]'>
+        <existdb-login login-label="Login" logout-label="Logout" group="dba" login-url="admin#" logout-url="index.html"></existdb-login>
+    </existdb-launcher-app>
 </body>
 </html>

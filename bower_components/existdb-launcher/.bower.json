@@ -10,9 +10,13 @@
     "iron-icons": "PolymerElements/iron-icons#^2.0.0",
     "paper-toast": "PolymerElements/paper-toast#^2.0.0",
     "paper-ripple": "PolymerElements/paper-ripple#^2.0.0",
+    "paper-dialog": "PolymerElements/paper-dialog#^2.1.1",
+    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^2.2.1",
     "bower": "*",
     "install": "^1.0.4",
-    "repo-elements": "https://github.com/eXist-db/repo-elements/archive/master.zip"
+    "repo-elements": "https://github.com/eXist-db/repo-elements/archive/master.zip",
+    "paper-input": "PolymerElements/paper-input#^2.2.3",
+    "paper-button": "PolymerElements/paper-button#^2.1.1"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
@@ -37,14 +41,14 @@
   ],
   "private": true,
   "homepage": "https://github.com/eXist-db/launcher",
-  "version": "1.2.1",
-  "_release": "1.2.1",
+  "version": "1.2.2",
+  "_release": "1.2.2",
   "_resolution": {
     "type": "version",
-    "tag": "v1.2.1",
-    "commit": "d5c11be1be8bb1fce06dc5ce6847670ad4f15932"
+    "tag": "v1.2.2",
+    "commit": "a927bfd7ae2e0ed9afb514033eb17442c8c88936"
   },
   "_source": "https://github.com/eXist-db/launcher.git",
-  "_target": "^1.2.1",
+  "_target": "^1.2.2",
   "_originalSource": "https://github.com/eXist-db/launcher.git"
 }

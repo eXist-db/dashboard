@@ -18,6 +18,11 @@ an application bundling all admin apps in one place.
                 @apply(--paper-font-common-base);
                 color: var(--google-grey-900);
                 --app-drawer-scrim-background: rgba(0, 0, 0, 0.3);
+
+                --existdb-login-theme: {
+                    text-decoration: none;
+                    color: black;
+                };
             }
 
             paper-item {
@@ -181,7 +186,9 @@ an application bundling all admin apps in one place.
                 </paper-item>
                 <paper-item id="logout" on-click="_logout" role="menuItem">
                     <img class="item-img" src="resources/images/logout.svg">
-                    <span class="menuitem">Logout</span>
+                    <existdb-login class="menuitem" login-label="Login" logout-label="Logout" group="dba"
+                        login-url="admin#" logout-url="index.html"
+                        logout-icon="" login-icon=""></existdb-login>
                     <paper-ripple></paper-ripple>
                 </paper-item>
             </app-drawer>
@@ -326,7 +333,7 @@ an application bundling all admin apps in one place.
 
             _logout(e){
                 this.route.path = "/#";
-                window.location.href="logout?logout=true";
+                window.location.href="index.html?logout=true";
             }
 
 /*

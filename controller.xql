@@ -31,22 +31,30 @@ else if ($exist:path = "/") then(
         <redirect url="index.html"/>
     </dispatch>
 )
-else if($exist:path = "/login") then
-    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <redirect url="login.html">
-            <cache-control cache="no"/>
-            <set-header name="Cache-Control" value="no-cache"/>
-        </redirect>
-    </dispatch>
-else if($exist:path = "/logout") then(
-    login:set-user("org.exist.login", (), false()),
-    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <redirect url="index.html?logout=true">
-            <cache-control cache="no"/>
-            <set-header name="Cache-Control" value="no-cache"/>
-        </redirect>
-    </dispatch>
-)
+(:
+ : Login a user via AJAX. Just returns a 401 if login fails.
+ :)
+else if ($exist:resource eq 'login') then
+    let $loggedIn := login:set-user("org.exist.login", (), false())
+    let $user := request:get-attribute("org.exist.login.user")
+    return (
+        util:declare-option("exist:serialize", "method=json"),
+        try {
+            <status xmlns:json="http://www.json.org">
+                <user>{$user}</user>
+                {
+                    if ($user) then (
+                        <groups json:array="true">{sm:get-user-groups($user)}</groups>,
+                        <dba>{sm:is-dba($user)}</dba>
+                    ) else
+                        ()
+                }
+            </status>
+        } catch * {
+            response:set-status-code(401),
+            <status>{$err:description}</status>
+        }
+    )
 else if ($exist:path = "/admin") then (
     login:set-user("org.exist.login", (), true()),
     let $user := request:get-attribute("org.exist.login.user")
@@ -96,6 +104,3 @@ else
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <cache-control cache="yes"/>
     </dispatch>
-
-
-

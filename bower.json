@@ -16,7 +16,7 @@
     "paper-item": "PolymerElements/paper-item#^2.0.0",
     "app-route": "PolymerElements/app-route#^2.0.0",
     "paper-ripple": "PolymerElements/paper-ripple#^2.0.0",
-    "existdb-launcher": "https://github.com/eXist-db/launcher.git#^1.2.1",
+    "existdb-launcher": "https://github.com/eXist-db/launcher.git#^1.2.2",
     "existdb-usermanager": "https://github.com/eXist-db/usermanager.git#^v0.16.5",
     "existdb-backup": "https://github.com/eXist-db/existdb-backup.git#^1.1.0",
     "repo-elements": "https://github.com/eXist-db/repo-elements/archive/master.zip",

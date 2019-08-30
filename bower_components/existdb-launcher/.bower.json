@@ -46,7 +46,7 @@
   "_resolution": {
     "type": "version",
     "tag": "v1.2.2",
-    "commit": "a927bfd7ae2e0ed9afb514033eb17442c8c88936"
+    "commit": "780d30183d78736cac060622cc18a8fd50ad8351"
   },
   "_source": "https://github.com/eXist-db/launcher.git",
   "_target": "^1.2.2",

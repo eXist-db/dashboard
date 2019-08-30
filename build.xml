@@ -138,7 +138,7 @@
                 <copydir src="${basedir}/resources" dest="${build.dir}/bundled/resources" />
         -->
 
-        <zip basedir="${bundle.dir}" destfile="${build.dir}/${project.app}-${project.version}-prod.xar" excludes="demo"/>
+        <zip basedir="${bundle.dir}" destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="demo"/>
     </target>
 
     <!--

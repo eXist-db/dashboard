@@ -24,7 +24,8 @@
     "paper-card": "PolymerElements/paper-card#^2.0.0",
     "paper-tabs": "PolymerElements/paper-tabs#^2.0.0",
     "existdb-packagemanager": "https://github.com/eXist-db/packagemanager/archive/v4.6.2.zip",
-    "vaadin-usage-statistics": "vaadin/vaadin-usage-statistics#optout"
+    "vaadin-usage-statistics": "vaadin/vaadin-usage-statistics#optout",
+    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^2.2.1"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

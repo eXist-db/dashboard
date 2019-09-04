@@ -1,12 +1,4 @@
-notifications:
-  email: false
-  slack: exist-db:IXzUdqA0n11cnxaDz43ZQgdX
-
-language: node_js
-
-node_js:
-  - "node"
-  - "10"
+language: java
 
 dist: xenial
 # temporary see https://github.com/cypress-io/cypress/issues/4069
@@ -14,6 +6,10 @@ addons:
   apt:
     packages:
     - libgconf-2-4
+
+jdk:
+  - openjdk8
+
 env:
   - img=existdb/existdb:latest
   - img=existdb/existdb:release
@@ -29,15 +25,24 @@ cache:
 before_install:
   - docker pull $img
   - docker create  --name exist-ci -p 8080:8080 $img
-  - docker start exist-ci
+
 
 install:
   - npm ci
+  - npm install -g polymer-cli bower
+  - bower install
+  - ant production-xar
 
 before_script:
+  - docker cp build/dashboard-*.xar exist-ci:exist/autodeploy
+  - docker start exist-ci
   # exist needs time
   - sleep 30
   - docker ps
 
 script:
   - npm run cypress -- --record
+
+notifications:
+  email: false
+  slack: exist-db:IXzUdqA0n11cnxaDz43ZQgdX

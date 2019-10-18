@@ -4,21 +4,29 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"/>
     <title>existdb-dashboard</title>
     <link rel="stylesheet" href="resources/styles.css"/>
+    <script src="assets/@webcomponents/webcomponentsjs/webcomponents-loader.js"> </script>
+    <script type="module">
+        import './src/existdb-launcher-app.js';
+        import './src/existdb-login.js';
+        import './assets/@polymer/paper-styles/color.js';
+    </script>
     <style type="text/css">
-        existdb-login {
-            --existdb-login-theme: {
-                text-decoration: none;
-                color: black;
-            };
+        body{
+            --existdb-font-family:'Roboto', 'Noto', sans-serif;
+            --existdb-header-bg-color:var(--paper-amber-500);
+            --existdb-header-color:white;
+            --existdb-content-bg: var(--paper-amber-50);
         }
+
     </style>
-    <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-    <link rel="import" href="dependencies.html"/>
-    <link rel="import" href="bower_components/existdb-launcher/dependencies.html"/>
+
 </head>
 <body unresolved="unresolved">
-    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard"]'>
-        <existdb-login login-label="Login" logout-label="Logout" group="dba" login-url="admin#" logout-url="index.html"></existdb-login>
+<!--    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard"]'>-->
+
+
+    <existdb-launcher-app>
+        <existdb-login loginLabel="Sign In" logoutLabel="Logout" group="dba" loginUrl="admin#" logoutUrl="index.html"></existdb-login>
     </existdb-launcher-app>
 </body>
 </html>

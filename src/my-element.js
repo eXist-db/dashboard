@@ -1,5 +1,5 @@
 // Import the LitElement base class and html helper function
-import { LitElement, html } from 'lit-element';
+import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 
 // Extend the LitElement base class
 class MyElement extends LitElement {

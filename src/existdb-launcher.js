@@ -1,6 +1,9 @@
 // Import the LitElement base class and html helper function
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 import '../assets/@polymer/iron-ajax/iron-ajax.js';
+import {settings} from './settings.js';
+import './repo-app.js';
+import './launcher-app.js';
 
 // Extend the LitElement base class
 class ExistdbLauncher extends LitElement {
@@ -76,6 +79,13 @@ class ExistdbLauncher extends LitElement {
                 type: String
             }
         };
+    }
+
+    constructor(){
+        super();
+
+        this.ignores = settings.ignores;
+        console.log('loaded ignores from settings: ', this.ignores);
     }
 
     /**

@@ -75,7 +75,7 @@ class ExistdbLauncher extends LitElement {
             ignores:{
                 type: Array
             },
-            path:{
+            appPackageURL:{
                 type: String
             }
         };
@@ -85,7 +85,8 @@ class ExistdbLauncher extends LitElement {
         super();
 
         this.ignores = settings.ignores;
-        console.log('loaded ignores from settings: ', this.ignores);
+        this.appPackagePath = settings.appPackagePath;
+        this.appPackageURL = new URL(settings.appPackagePath, document.baseURI).href;
     }
 
     /**
@@ -103,7 +104,7 @@ class ExistdbLauncher extends LitElement {
                        method="get"
                        handle-as="text"
                        @response="${this._displayApplications}"
-                       url="${this.path}"
+                       url="${this.appPackageURL}"
                        on-error="_handleError">
             </iron-ajax>
     
@@ -118,14 +119,7 @@ class ExistdbLauncher extends LitElement {
 
     connectedCallback() {
         super.connectedCallback();
-               console.log('ExistdbLauncher connected');
-//                console.log('ExistdbLauncher connected rootPath ', this.rootPath);
-               console.log('ExistdbLauncher connected path ', this.path);
-//                console.log('ExistdbLauncher connected importPath ', this.importPath);
-//                this.basePath = this.rootPath.substring(0,this.rootPath.indexOf(this.path));
-               console.log("ExistdbLauncher ajax: ",this.querySelector('#apps'));
-
-
+       console.log('ExistdbLauncher connected ', this);
     }
 
     firstUpdated(changedProperties) {

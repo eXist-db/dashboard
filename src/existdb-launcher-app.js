@@ -88,33 +88,23 @@ class ExistdbLauncherApp extends LitElement {
                         <slot></slot>
                     </app-toolbar>
                 </app-header>
-                <existdb-launcher path="http://localhost:8080/exist/apps/packageservice/packages/apps"></existdb-launcher>
+                <existdb-launcher></existdb-launcher>
             </app-header-layout>
         `;
     }
 
     static get properties() {
         return {
-            path:{
-                type: String,
-                reflect: true
-            },
-            baseUrl: {
-                type:String,
-                reflect:true
-            }
         };
     }
 
     constructor(){
         super();
-        // this.ignores = ["packagemanager","packageservice","launcher","usermanager","dashboard"];
     }
 
     connectedCallback() {
         super.connectedCallback();
         console.log('ExistdbLauncherApp connected ', this);
-        this.baseUrl = this.importPath;
         // this.querySelector('#outer').resetLayout();
     }
 

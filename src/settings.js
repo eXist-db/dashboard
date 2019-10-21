@@ -1,5 +1,12 @@
 export const settings = {
-    ignores:["packagemanager","packageservice","launcher","usermanager","dashboard"],
+    /**
+     * list of packages to be ignored in existdb-launcher when displaying apps
+     */
+    ignoredPackages:["packagemanager","packageservice","launcher","usermanager","dashboard"],
+    /**
+     * relative path to packageservice for loading of apps. Value is relative to
+     * dashboard's base URI (usually '/exist/apps/dashboard/'
+     */
     appPackagePath:"../packageservice/packages/apps",
 
 }

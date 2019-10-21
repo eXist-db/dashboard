@@ -3,7 +3,9 @@ import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 import '../assets/@polymer/iron-ajax/iron-ajax.js';
 import {settings} from './settings.js';
 import './repo-app.js';
+import './repo-icon.js';
 import './launcher-app.js';
+import './existdb-branding.js';
 
 // Extend the LitElement base class
 class ExistdbLauncher extends LitElement {
@@ -72,9 +74,15 @@ class ExistdbLauncher extends LitElement {
 
     static get properties() {
         return {
+            /**
+             * list of packagenames to be excluded from display. Loaded from settings.js
+             */
             ignores:{
                 type: Array
             },
+            /**
+             * resolved absolute URL for loading app packages from packageservice app
+             */
             appPackageURL:{
                 type: String
             }
@@ -84,7 +92,7 @@ class ExistdbLauncher extends LitElement {
     constructor(){
         super();
 
-        this.ignores = settings.ignores;
+        this.ignores = settings.ignoredPackages;
         this.appPackagePath = settings.appPackagePath;
         this.appPackageURL = new URL(settings.appPackagePath, document.baseURI).href;
     }
@@ -107,8 +115,6 @@ class ExistdbLauncher extends LitElement {
                        url="${this.appPackageURL}"
                        on-error="_handleError">
             </iron-ajax>
-    
-    
     
             <div id="apps" class="apps" launcher type="launcher">
                 <div id="logo"></div>
@@ -140,13 +146,11 @@ class ExistdbLauncher extends LitElement {
 
         var apps = this.shadowRoot.querySelectorAll('repo-app');
 //                console.log("apps: ", apps);
-//                console.log("ignores: ", this.ignores);
 
         // filtering out ignored apps
         for (var i=0; i < apps.length; i++) {
             var abbrev = apps[i].attributes.abbrev.value;
 //                    console.log('current ', abbrev);
-//                    console.log('ignores ', this.ignores);
 
             if(this.ignores != undefined && this.ignores.indexOf(abbrev) != -1){
 //                        console.log('ignoring ', abbrev);

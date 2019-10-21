@@ -9,6 +9,7 @@ import '../assets/@polymer/paper-button/paper-button.js';
 import '../assets/@polymer/paper-input/paper-input.js';
 
 // Extend the LitElement base class
+//todo: how to handle invalid logins? Currently i get back an 200 even if the user does not exists
 class ExistdbLogin extends LitElement {
     static get styles(){
         return css`
@@ -44,6 +45,7 @@ class ExistdbLogin extends LitElement {
 
             #message {
                 color: var(--paper-red-800);
+                min-height:20px;
             }        
         `;
     }
@@ -169,6 +171,9 @@ class ExistdbLogin extends LitElement {
                         <paper-input name="password" label="Password" type="password" .value="${this.password}"></paper-input>
                         <input id="logout" type="hidden" name="logout"></input>
                     </form>
+                    <p id="message">
+                        ${this._invalid?html`Wrong username or password`: html``}
+                    </p>
                     <template is="dom-if" if="${this._invalid}">
                         <p id="message">Wrong password or invalid user
                             <template is="dom-if" if="${this.group}">(must be member of group ${this.group})</template>

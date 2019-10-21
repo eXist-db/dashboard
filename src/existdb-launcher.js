@@ -7,7 +7,12 @@ import './repo-icon.js';
 import './launcher-app.js';
 import './existdb-branding.js';
 
-// Extend the LitElement base class
+/**
+ * loads and displays a list of locally installed eXist-db apps.
+ *
+ * Supports a list of ignored apps to be hidden from display (e.g. Launcher itself shall not be displayed
+ * by Launcher). List of ignored apps can be configured in settings.js
+ */
 class ExistdbLauncher extends LitElement {
 
     static get styles(){

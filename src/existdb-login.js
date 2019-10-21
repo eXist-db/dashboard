@@ -1,5 +1,6 @@
 // Import the LitElement base class and html helper function
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
+import '../assets/@polymer/iron-ajax/iron-ajax.js';
 import '../assets/@polymer/iron-icons/iron-icons.js';
 import '../assets/@polymer/iron-icon/iron-icon.js';
 import '../assets/@polymer/paper-styles/color.js';
@@ -57,7 +58,7 @@ class ExistdbLogin extends LitElement {
              * The currently logged in user.
              */
             user: {
-                type: String
+                type: 'value'
             },
             /**
              * If set, only users being members of the specified group are
@@ -160,8 +161,12 @@ class ExistdbLogin extends LitElement {
             <paper-dialog id="loginDialog">
                 <h2>${this.loginLabel}</h2>
                     <form action="login">
-                        <paper-input name="user" label="User" value="${this.user}" autofocus></paper-input>
-                        <paper-input name="password" label="Password" type="password" value="${this.password}"></paper-input>
+                        <paper-input name="user"
+                                     label="User"
+                                     .value="${this.user}"
+                                     @input="${this._handleUser}"
+                                     autofocus></paper-input>
+                        <paper-input name="password" label="Password" type="password" .value="${this.password}"></paper-input>
                         <input id="logout" type="hidden" name="logout"></input>
                     </form>
                     <template is="dom-if" if="${this._invalid}">
@@ -210,6 +215,12 @@ class ExistdbLogin extends LitElement {
         login.generateRequest();
     }
 
+    _handleUser(e){
+        this.user = e.target.value;
+    }
+    _handlePass(e){
+        this.password = e.target.value;
+    }
 
     _show(ev) {
         ev.preventDefault();

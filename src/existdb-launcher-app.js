@@ -7,7 +7,10 @@ import '../assets/@polymer/paper-styles/color.js';
 import './existdb-launcher.js';
 import './settings.js';
 
-// Extend the LitElement base class
+/**
+ * Basic layout component for Launcher
+ *
+ */
 class ExistdbLauncherApp extends LitElement {
 
     static get styles(){

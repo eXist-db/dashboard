@@ -160,7 +160,7 @@ class ExistdbLogin extends LitElement {
             <paper-dialog id="loginDialog">
                 <h2>${this.loginLabel}</h2>
                     <form action="login">
-                        <paper-input name="user" label="User" value="${this.user}"></paper-input>
+                        <paper-input name="user" label="User" value="${this.user}" autofocus></paper-input>
                         <paper-input name="password" label="Password" type="password" value="${this.password}"></paper-input>
                         <input id="logout" type="hidden" name="logout"></input>
                     </form>
@@ -196,8 +196,10 @@ class ExistdbLogin extends LitElement {
         window.addEventListener('focus', () => {
             if (!this._hasFocus) {
                 this._hasFocus = true;
-                this.shadowRoot.getElementById('checkLogin').body = null;
-                this.shadowRoot.getElementById('checkLogin').generateRequest();
+                const checkLogin = this.shadowRoot.getElementById('checkLogin');
+                // checkLogin.url = document.baseURI + 'login';
+                checkLogin.body = null;
+                checkLogin.generateRequest();
             }
         });
     }

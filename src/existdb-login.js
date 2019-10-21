@@ -168,7 +168,7 @@ class ExistdbLogin extends LitElement {
                                      .value="${this.user}"
                                      @input="${this._handleUser}"
                                      autofocus></paper-input>
-                        <paper-input name="password" label="Password" type="password" .value="${this.password}"></paper-input>
+                        <paper-input id="pass" name="password" label="Password" type="password" .value="${this.password}"></paper-input>
                         <input id="logout" type="hidden" name="logout"></input>
                     </form>
                     <p id="message">
@@ -235,6 +235,12 @@ class ExistdbLogin extends LitElement {
             };
             this.shadowRoot.getElementById('checkLogin').generateRequest();
         } else {
+            //reset username and pass (dialog might have been open before
+            this.user = "";
+            this.password = "";
+            //need to explicitly reset control here.
+            this.shadowRoot.getElementById('pass').value="";
+            this._invalid = false;
             this.shadowRoot.getElementById('loginDialog').open();
         }
     }

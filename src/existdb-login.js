@@ -143,7 +143,7 @@ class ExistdbLogin extends LitElement {
             return html`
                     <a href="#" @click="${this._show}" title="${this.loginLabel}">
                         <iron-icon icon="${this.loginIcon}"></iron-icon>
-                        <span class="label">${this.loginLabel} ${this.user}</span>
+                        <span class="label">${this.loginLabel}</span>
                     </a>
                 `;
         }

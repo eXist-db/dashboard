@@ -180,7 +180,7 @@ class ExistdbLogin extends LitElement {
                         </p>
                     </template>
                 <div class="buttons">
-                    <paper-button autofocus @click="${this._confirmLogin}">Login</paper-button>
+                    <paper-button id="btn" autofocus @click="${this._confirmLogin}">Login</paper-button>
                 </div>
             </paper-dialog>
     
@@ -212,12 +212,14 @@ class ExistdbLogin extends LitElement {
                 checkLogin.generateRequest();
             }
         });
+
     }
 
     firstUpdated(changedProperties) {
         const login = this.shadowRoot.getElementById('checkLogin');
         login.body = null;
         login.generateRequest();
+        this.shadowRoot.getElementById('loginDialog').addEventListener('keypress', (e) => this._submit(e) )
     }
 
     _handleUser(e){
@@ -225,6 +227,13 @@ class ExistdbLogin extends LitElement {
     }
     _handlePass(e){
         this.password = e.target.value;
+    }
+
+    _submit(e){
+        const keycode = (e.keyCode ? e.keyCode : e.which);
+        if(keycode == '13'){
+            this.shadowRoot.getElementById('btn').click();
+        }
     }
 
     _show(ev) {

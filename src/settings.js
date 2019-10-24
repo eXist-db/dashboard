@@ -9,4 +9,6 @@ export const settings = {
      */
     appPackagePath:"../packageservice/packages/apps",
 
+    loginUrl:"login"
+
 }

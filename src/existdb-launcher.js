@@ -98,7 +98,6 @@ class ExistdbLauncher extends LitElement {
         super();
 
         this.ignores = settings.ignoredPackages;
-        this.appPackagePath = settings.appPackagePath;
         this.appPackageURL = new URL(settings.appPackagePath, document.baseURI).href;
     }
 

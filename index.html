@@ -5,21 +5,36 @@
     <title>existdb-dashboard</title>
     <base href="/exist/apps/dashboard3/"/>
 
-    <link rel="stylesheet" href="resources/styles.css"/>
     <script src="assets/@webcomponents/webcomponentsjs/webcomponents-loader.js"> </script>
     <script type="module">
-        import './src/existdb-launcher-app.js';
+        import './src/existdb-dashboard.js';
         import './src/existdb-login.js';
         import './assets/@polymer/paper-styles/color.js';
+        import './assets/@polymer/iron-icons/iron-icons.js';
+        import './assets/@polymer/iron-icon/iron-icon.js';
+
     </script>
+
+    <link rel="stylesheet" href="resources/styles.css"/>
+
     <style type="text/css">
         body{
             --existdb-font-family:'Roboto', 'Noto', sans-serif;
             --existdb-header-bg-color:var(--paper-amber-500);
             --existdb-header-color:white;
             --existdb-content-bg: var(--paper-amber-50);
-        }
 
+            font-family: var(--existdb-font-family);
+        }
+        existdb-login{
+            display: inline-block;
+            padding-right:20px;
+
+
+        }
+        .appContent{
+            width: 100%;
+        }
     </style>
 
 </head>
@@ -27,8 +42,15 @@
 <!--    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard"]'>-->
 
 
+<!--
     <existdb-launcher-app>
         <existdb-login loginLabel="Sign In" logoutLabel="Logout" group="dba" loginUrl="admin#" logoutUrl="index.html"></existdb-login>
     </existdb-launcher-app>
+-->
+    <existdb-dashboard>
+        <existdb-login slot="login" loginLabel="Sign In" logoutLabel="Logout" group="dba" logoutUrl="index.html"></existdb-login>
+
+        <div>foobar</div>
+    </existdb-dashboard>
 </body>
 </html>

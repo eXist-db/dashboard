@@ -80,7 +80,7 @@ else if ($exist:path = "/admin") then (
 
 
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-            <forward url="admin.xql?route={$route}">
+            <forward url="index.html?route={$route}">
                 <cache-control cache="no"/>
                 <set-header name="Cache-Control" value="no-cache"/>
             </forward>

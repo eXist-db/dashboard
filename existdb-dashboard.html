@@ -134,27 +134,12 @@ an application bundling all admin apps in one place.
                    pattern="/:page"
                    data="{{routeData}}"></app-route>
 
-<!--
-        <iron-ajax id="getCurrentUser"
-                   with-credentials
-                   method="get"
-                   handle-as="json"
-                   on-response="_handleCurrentUser"
-                   url="/exist/apps/dashboard/currentUser"></iron-ajax>
--->
-
         <app-drawer-layout id="drawerLayout" fullbleed>
             <app-drawer id="drawer" slot="drawer">
                 <div class="drawerbar">
                     <img class="logo" src="resources/images/existdb-web.svg">
                     <existdb-version> </existdb-version>
                     <div class="subitem">Dashboard</div>
-<!--
-                    <div class="currentUser">
-                        <iron-icon icon="social:person"></iron-icon>
-                        [[currentUser]]
-                    </div>
--->
                 </div>
 
                 <paper-item id="launcherItem" on-click="_showLauncher" role="menuitem">

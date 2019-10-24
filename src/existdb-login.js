@@ -113,6 +113,9 @@ class ExistdbLogin extends LitElement {
             },
             _hasFocus: {
                 type: Boolean
+            },
+            loginPath:{
+                type: String
             }
         };
     }
@@ -129,6 +132,7 @@ class ExistdbLogin extends LitElement {
         this._hasFocus = true;
         this.user="";
         this.password = "";
+        this.loginPath = document.baseURI + settings.loginUrl;
     }
 
     get loginLink(){
@@ -276,6 +280,14 @@ class ExistdbLogin extends LitElement {
                 window.location = this.loginUrl;
             }
             this.shadowRoot.getElementById('loginDialog').close();
+            this.dispatchEvent(new CustomEvent(
+                'logged-in',
+                {
+                    composed: true,
+                    bubbles: true,
+                    detail: {'user': this.user}
+                }));
+
         } else {
             this.loggedIn = false;
             this.password = "";

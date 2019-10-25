@@ -69,6 +69,7 @@ gulp.task('deploy', ['deploy:other', 'deploy:components'])
 gulp.task('watch', function () {
     gulp.watch(otherPaths, ['deploy:other'])
     gulp.watch('*.html', ['deploy:components'])
+    gulp.watch('*.js', ['deploy:components'])
 })
 
 gulp.task('default', ['watch'])

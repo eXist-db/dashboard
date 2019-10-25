@@ -6,13 +6,14 @@
     <base href="/exist/apps/dashboard3/"/>
 
     <script src="assets/@webcomponents/webcomponentsjs/webcomponents-loader.js"> </script>
+    <script src="assets/animejs/lib/anime.min.js"> </script>
+
     <script type="module">
         import './src/existdb-dashboard.js';
         import './src/existdb-login.js';
         import './assets/@polymer/paper-styles/color.js';
         import './assets/@polymer/iron-icons/iron-icons.js';
         import './assets/@polymer/iron-icon/iron-icon.js';
-
     </script>
 
     <link rel="stylesheet" href="resources/styles.css"/>
@@ -21,36 +22,46 @@
         body{
             --existdb-font-family:'Roboto', 'Noto', sans-serif;
             --existdb-header-bg-color:var(--paper-amber-500);
+            --existdb-header-bg-darker:var(--paper-amber-700);
+            --existdb-header-bg-lighter:var(--paper-grey-100);
             --existdb-header-color:white;
             --existdb-content-bg: var(--paper-amber-50);
 
             font-family: var(--existdb-font-family);
-        }
-        existdb-login{
+
+        existdb-login.login{
             display: inline-block;
-            padding-right:20px;
-
-
+            /*padding-right:30px;*/
+            width: 120px;
+            margin-right:30px;
+            background: blue;
         }
         .appContent{
             width: 100%;
         }
+
+        main > .leaving {
+            animation: 1s fadeOut ease-in-out;
+        }
+        main > .entering {
+            animation: 1s fadeIn linear;
+        }
+        @keyframes fadeOut {
+            from {opacity: 1;}
+            to {opacity: 0;}
+        }
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
     </style>
 
 </head>
 <body unresolved="unresolved">
-<!--    <existdb-launcher-app ignores='["packagemanager","packageservice","launcher","usermanager","dashboard"]'>-->
-
-
-<!--
-    <existdb-launcher-app>
-        <existdb-login loginLabel="Sign In" logoutLabel="Logout" group="dba" loginUrl="admin#" logoutUrl="index.html"></existdb-login>
-    </existdb-launcher-app>
--->
     <existdb-dashboard>
-        <existdb-login slot="login" loginLabel="Sign In" logoutLabel="Logout" group="dba" logoutUrl="index.html"></existdb-login>
-
-        <div>foobar</div>
+        <existdb-login class="login" slot="login" loginLabel="Sign In" logoutLabel="Sign out" group="dba"></existdb-login>
+        <main></main>
     </existdb-dashboard>
 </body>
 </html>

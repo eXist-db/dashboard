@@ -14,7 +14,7 @@ class ExistdbLogin extends LitElement {
     static get styles(){
         return css`
             :host {
-                display: block;
+                display: inline-block;
             }
 
             paper-dialog {
@@ -140,7 +140,7 @@ class ExistdbLogin extends LitElement {
             return html`
                     <a href="#" @click="${this._show}" title="${this.user}">
                         <iron-icon icon="${this.logoutIcon}"></iron-icon>
-                        <span class="label">${this.logoutLabel} ${this.user}</span>
+                        <span class="label">${this.logoutLabel}</span>
                     </a>
                 `;
         }else{
@@ -178,11 +178,6 @@ class ExistdbLogin extends LitElement {
                     <p id="message">
                         ${this._invalid?html`Wrong username or password`: html``}
                     </p>
-                    <template is="dom-if" if="${this._invalid}">
-                        <p id="message">Wrong password or invalid user
-                            <template is="dom-if" if="${this.group}">(must be member of group ${this.group})</template>
-                        </p>
-                    </template>
                 <div class="buttons">
                     <paper-button id="btn" autofocus @click="${this._confirmLogin}">Login</paper-button>
                 </div>
@@ -285,7 +280,11 @@ class ExistdbLogin extends LitElement {
                 {
                     composed: true,
                     bubbles: true,
-                    detail: {'user': this.user}
+                    detail: {
+                        'user': this.user,
+                        'groups': this.groups,
+                        'views':resp.views
+                    }
                 }));
 
         } else {
@@ -299,6 +298,14 @@ class ExistdbLogin extends LitElement {
                 console.log('redirecting to %s', this.logoutUrl);
                 window.location = this.logoutUrl;
             }
+            this.dispatchEvent(new CustomEvent(
+                'logged-out',
+                {
+                    composed: true,
+                    bubbles: true,
+                    detail: {}
+                }));
+
         }
     }
 

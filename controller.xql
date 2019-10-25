@@ -28,9 +28,35 @@ if ($exist:path eq '') then
     </dispatch>
 else if ($exist:path = "/") then(
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <redirect url="index.html"/>
+        <forward url="index.html"/>
     </dispatch>
 )
+else if ($exist:path = "/launcher") then(
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <forward url="index.html"/>
+    </dispatch>
+)
+else if ($exist:path = "/packagemanager") then(
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <forward url="index.html"/>
+    </dispatch>
+)
+else if ($exist:path = "/usermanager") then(
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <forward url="index.html"/>
+    </dispatch>
+)
+else if ($exist:path = "/backup") then(
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <forward url="index.html"/>
+    </dispatch>
+)
+else if ($exist:path = "/settings") then(
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <forward url="index.html"/>
+    </dispatch>
+)
+
 (:
  : Login a user via AJAX. Just returns a 401 if login fails.
  :)
@@ -45,6 +71,12 @@ else if ($exist:resource eq 'login') then
                 {
                     if ($user) then (
                         <groups json:array="true">{sm:get-user-groups($user)}</groups>,
+                        <views>
+                            <json:value>packagemanager</json:value>
+                            <json:value>usermanager</json:value>
+                            <json:value>backup</json:value>
+                            <json:value>settings</json:value>
+                        </views>,
                         <dba>{sm:is-dba($user)}</dba>
                     ) else
                         ()

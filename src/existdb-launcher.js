@@ -90,6 +90,9 @@ class ExistdbLauncher extends LitElement {
              */
             appPackageURL:{
                 type: String
+            },
+            branding:{
+                type:Object
             }
         };
     }
@@ -99,6 +102,13 @@ class ExistdbLauncher extends LitElement {
 
         this.ignores = settings.ignoredPackages;
         this.appPackageURL = new URL(settings.appPackagePath, document.baseURI).href;
+        // this.appList = {};
+    }
+
+    get listApps(){
+        return html`
+            ${this.appList}
+        `;
     }
 
     /**
@@ -112,6 +122,7 @@ class ExistdbLauncher extends LitElement {
          *
          */
         return html`
+
             <iron-ajax id="loadApplications"
                        method="get"
                        handle-as="text"
@@ -119,6 +130,7 @@ class ExistdbLauncher extends LitElement {
                        url="${this.appPackageURL}"
                        on-error="_handleError">
             </iron-ajax>
+            
     
             <div id="apps" class="apps" launcher type="launcher">
                 <div id="logo"></div>
@@ -127,25 +139,44 @@ class ExistdbLauncher extends LitElement {
         `;
     }
 
+
+
     connectedCallback() {
         super.connectedCallback();
        console.log('ExistdbLauncher connected ', this);
+
     }
 
     firstUpdated(changedProperties) {
         this.shadowRoot.getElementById('loadApplications').generateRequest();
         this.focus();
+        this.dispatchEvent(new CustomEvent(
+            'set-title',
+            {
+                composed: true,
+                bubbles: true,
+                detail: {'view': 'Launcher'}
+            }));
+
+    }
+
+    hideBranding(){
+        if(this.branding){
+            this.branding.hidden = true;
+        }
     }
 
     _displayApplications(e){
         console.log('_displayApplications ', e);
         this.shadowRoot.getElementById('apps').innerHTML = this.shadowRoot.getElementById('loadApplications').lastResponse;
 
+
         // show branding unless we're embedded in dashboard
-        if(!this._isEmbedded()){
-            var branding = document.createElement('existdb-branding');
+
+        if(!this._isLoggedIn()){
+            this.branding = document.createElement('existdb-branding');
             var packageRoot = this.shadowRoot.getElementById('apps').querySelector('repo-packages');
-            packageRoot.insertBefore(branding, packageRoot.querySelector('repo-app'));
+            packageRoot.insertBefore(this.branding, packageRoot.querySelector('repo-app'));
         }
 
         var apps = this.shadowRoot.querySelectorAll('repo-app');
@@ -161,11 +192,42 @@ class ExistdbLauncher extends LitElement {
                 apps[i].style.display='none';
             }
         }
+
+        // const brand = this.shadowRoot.querySelector('existdb-branding');
+        // console.log('branding ', brand);
+
+        const t1 = anime.timeline({
+            easing:'linear',
+            duration:400
+        });
+
+        t1.add({
+            targets: this.branding,
+            translateX:[-400,0],
+            opacity:[0.3,1],
+            duration:400,
+            easing:'easeInQuad'
+        });
+        t1.add({
+            targets: apps,
+            opacity: [0,1],
+            delay: anime.stagger(20),
+            duration:200,
+            easing: 'easeInExpo',
+            complete:function(anim){
+                // brand.animate()
+            }
+        },'-=200');
+
+
     }
 
-    _isEmbedded(){
-        return document.querySelector('existdb-dashboard') != null;
+
+    _isLoggedIn(){
+        return document.querySelector('existdb-dashboard').loggedIn;
     }
+
+
 
 
 }

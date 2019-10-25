@@ -7,6 +7,7 @@ import '../assets/@polymer/app-layout/app-toolbar/app-toolbar.js';
 import '../assets/@polymer/iron-icons/iron-icons.js';
 import '../assets/@polymer/iron-icon/iron-icon.js';
 import '../assets/@polymer/paper-card/paper-card.js';
+import './existdb-version.js';
 
 // Extend the LitElement base class
 class ExistdbSettings extends LitElement {
@@ -31,7 +32,6 @@ class ExistdbSettings extends LitElement {
             bottom: 0px;
             left: 0px;
             /*height: calc(100% - 200px);*/
-            background-color: ghostwhite;
             overflow: hidden;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
           }
@@ -95,6 +95,10 @@ class ExistdbSettings extends LitElement {
             }
     
           }
+          
+          existdb-version{
+            font-weight:700;
+          }
         `;
     }
 
@@ -128,7 +132,8 @@ class ExistdbSettings extends LitElement {
                 <paper-card heading="Server Version">
                   <div class="card-content">
                     You are running
-                    <div class="highlight">[[versionString]]</div>
+<!--                    <div class="highlight">[[versionString]]</div>-->
+                    <existdb-version></existdb-version>
                   </div>
                 </paper-card>
         
@@ -144,6 +149,27 @@ class ExistdbSettings extends LitElement {
             </app-header-layout>        
         `;
     }
+
+    firstUpdated(changedProperties) {
+        this.dispatchEvent(new CustomEvent(
+            'set-title',
+            {
+                composed: true,
+                bubbles: true,
+                detail: {'view': 'Settings'}
+            }));
+
+        const cards = this.shadowRoot.querySelectorAll('paper-card');
+        anime({
+            targets:cards,
+            opacity:[0.3,1],
+            scale: [0.9,1],
+            duration:800,
+            delay:anime.stagger(200)
+        });
+
+    }
+
 
 
 }

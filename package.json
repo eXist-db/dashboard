@@ -31,6 +31,7 @@
     "@polymer/paper-card": "^3.0.1",
     "@polymer/paper-dialog": "^3.0.1",
     "@polymer/paper-drawer-panel": "^3.0.2",
+    "@polymer/paper-icon-button": "^3.0.2",
     "@polymer/paper-input": "^3.0.2",
     "@polymer/paper-item": "^3.0.1",
     "@polymer/paper-ripple": "^3.0.1",

@@ -13,6 +13,7 @@ import '../assets/@polymer/paper-styles/typography.js';
 import '../assets/@polymer/paper-item/paper-item.js';
 import '../assets/@polymer/paper-ripple/paper-ripple.js';
 import {Router} from '../assets/@vaadin/router/dist/vaadin-router.js';
+import '../assets/@polymer/paper-icon-button/paper-icon-button.js';
 
 import './existdb-login.js';
 import './existdb-launcher.js';
@@ -37,7 +38,7 @@ class ExistdbDashboard extends LitElement {
                 padding: 0;
                 font-family: var(--existdb-font-family);
 
-                color: var(--google-grey-900);
+                color: var(--existdb-text-color);
                 --app-drawer-scrim-background: rgba(0, 0, 0, 0.3);
 
                 --existdb-login-theme: {
@@ -46,6 +47,11 @@ class ExistdbDashboard extends LitElement {
                 };
                 
                 --app-drawer-width:250px;
+                
+                --app-drawer-content-container:{
+                    background:green;
+                };
+
             }
 
             paper-item {
@@ -67,17 +73,28 @@ class ExistdbDashboard extends LitElement {
             }
 
             app-drawer {
-                /*background: rgba(245, 245, 245, 0.5);*/
                 z-index: 100;
                 text-align: center;
                 color: black;
-                /*background: url('resources/images/x.svg') no-repeat;*/
+                background: white;
+                
+            }
+            app-drawer .wrapper{
+                width:100%;
+                height:100%;
+                background:var(--existdb-drawer-bg);
+                color:var(--existdb-drawer-color);
+            }
+
+            app-drawer a{
+                text-decoration:none;
+                color:inherit;
             }
             
             .nav{
                 height:100%;
-                background:linear-gradient(180deg, rgba(245,245,245,1) 0%, rgba(245,245,245,1) 11%, rgba(255,255,255,1) 33%);
-
+                // background:linear-gradient(180deg, rgba(245,245,245,1) 0%, rgba(245,245,245,1) 11%, rgba(255,255,255,1) 33%);
+                background:transparent;
             }
 
             .drawerbar {
@@ -85,9 +102,13 @@ class ExistdbDashboard extends LitElement {
                 height: 128px;
                 display: table-cell;
                 vertical-align: middle;
-                background:var(--existdb-header-bg-lighter);
             }
 
+            
+            paper-icon-button[drawer-toggle]{
+                color:var(--existdb-header-color);
+            }
+            
             app-drawer-layout:not([narrow]) [drawer-toggle] {
                 display: none;
             }
@@ -100,11 +121,7 @@ class ExistdbDashboard extends LitElement {
             [main-title]{
                 color:var(--existdb-header-color);
             }
-            [main-title] .icon{
-                color:blue;
-                fill:blue;
-            }
-            
+          
             
             app-drawer-layout ::slotted(#contentContainer){
                 background:var(--paper-grey-200);
@@ -139,6 +156,7 @@ class ExistdbDashboard extends LitElement {
 
             .user{
                 font-size:16px;
+                margin-top:-6px;
             }
             .subitem {
                 font-weight: 300;
@@ -218,7 +236,8 @@ class ExistdbDashboard extends LitElement {
         const drawer = html` 
             ${this.loggedIn ?
                 html`
-                <app-drawer id="drawer" slot="drawer">
+                <app-drawer id="drawer" slot="drawer" @click="${this._navigate}">
+                    <div class="wrapper">
                     <div class="drawerbar">
                         <img class="logo" src="resources/images/existdb-web.svg">
                         <existdb-version> </existdb-version>
@@ -266,6 +285,7 @@ class ExistdbDashboard extends LitElement {
                         </paper-item>
                     </a>
                     </div>
+                    </div>
                 </app-drawer>`
                 : ''
             }
@@ -279,6 +299,7 @@ class ExistdbDashboard extends LitElement {
                 <app-header-layout>
                     <app-header id="header" slot="header">
                     <app-toolbar>
+                        <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                         <div main-title>${this.currentView}</div>
                         <slot name="login"></slot>
                     </app-toolbar>
@@ -417,6 +438,14 @@ class ExistdbDashboard extends LitElement {
         console.log('settitle');
 
         this.currentView = e.detail.view;
+    }
+
+    _navigate(e){
+        const layout = this.shadowRoot.getElementById('layout');
+        const drawer = this.shadowRoot.getElementById('drawer');
+        if(layout.narrow){
+            drawer.close();
+        }
     }
 
 

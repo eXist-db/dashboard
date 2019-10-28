@@ -1,0 +1,17 @@
+body{
+    --existdb-font-family: 'Roboto', 'Noto', sans-serif;
+
+    --existdb-text-color: var(--paper-grey-900);
+
+    --existdb-header-bg-color: var(--paper-grey-500);
+    --existdb-header-color: white;
+
+    --existdb-content-bg: ghostwhite;
+    --existdb-content-color: var(--paper-grey-900);
+
+    --existdb-drawer-bg: var(--paper-grey-700);
+    --existdb-drawer-color:var(--paper-grey-100);
+
+    font-family: var(--existdb-font-family);
+
+}

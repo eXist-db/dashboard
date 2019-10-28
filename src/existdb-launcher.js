@@ -20,7 +20,9 @@ class ExistdbLauncher extends LitElement {
             :host {
                 display: block;
                 position:relative;
-                background:transparent;
+                background:var(--existdb-content-bg);
+                color:var(--existdb-content-color);
+                height:100%
             }
 
             [launcher] repo-packages{

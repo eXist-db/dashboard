@@ -20,9 +20,10 @@ class ExistdbSettings extends LitElement {
             height:100%;
             margin:0;
             /*padding:0;*/
-            @apply(--paper-font-common-base);
             color:white;
             padding:30px;
+            background:var(--existdb-content-bg);            
+            
           }
     
           app-header-layout {

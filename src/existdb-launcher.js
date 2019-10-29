@@ -1,5 +1,6 @@
 // Import the LitElement base class and html helper function
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
+import {ExistdbDashboardBase} from './existdb-dashboard-base.js'
 import '../assets/@polymer/iron-ajax/iron-ajax.js';
 import {settings} from './settings.js';
 import './repo-app.js';
@@ -13,7 +14,8 @@ import './existdb-branding.js';
  * Supports a list of ignored apps to be hidden from display (e.g. Launcher itself shall not be displayed
  * by Launcher). List of ignored apps can be configured in settings.js
  */
-class ExistdbLauncher extends LitElement {
+// class ExistdbLauncher extends LitElement {
+class ExistdbLauncher extends ExistdbDashboardBase {
 
     static get styles(){
         return css`
@@ -102,6 +104,7 @@ class ExistdbLauncher extends LitElement {
     constructor(){
         super();
 
+        this.viewName='Launcher';
         this.ignores = settings.ignoredPackages;
         this.appPackageURL = new URL(settings.appPackagePath, document.baseURI).href;
         // this.appList = {};
@@ -150,16 +153,9 @@ class ExistdbLauncher extends LitElement {
     }
 
     firstUpdated(changedProperties) {
+        super.firstUpdated(changedProperties);
         this.shadowRoot.getElementById('loadApplications').generateRequest();
         this.focus();
-        this.dispatchEvent(new CustomEvent(
-            'set-title',
-            {
-                composed: true,
-                bubbles: true,
-                detail: {'view': 'Launcher'}
-            }));
-
     }
 
     hideBranding(){
@@ -207,19 +203,19 @@ class ExistdbLauncher extends LitElement {
             targets: this.branding,
             translateX:[-400,0],
             opacity:[0.3,1],
-            duration:400,
+            duration:200,
             easing:'easeInQuad'
         });
         t1.add({
             targets: apps,
             opacity: [0,1],
-            delay: anime.stagger(20),
+            delay: anime.stagger(10),
             duration:200,
             easing: 'easeInExpo',
             complete:function(anim){
                 // brand.animate()
             }
-        },'-=200');
+        },'-=100');
 
 
     }

@@ -1,6 +1,8 @@
 // Import the LitElement base class and html helper function
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 import '../assets/@polymer/iron-icons/iron-icons.js';
+import '../assets/@polymer/iron-icons/iron-icons.js';
+import '../assets/@polymer/iron-iconset-svg/iron-iconset-svg.js';
 import '../assets/@polymer/iron-icon/iron-icon.js';
 import '../assets/@polymer/iron-icons/social-icons.js';
 import '../assets/@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
@@ -206,7 +208,9 @@ class ExistdbDashboard extends LitElement {
             }
             
             
-            
+            iron-icon{
+                --iron-icon-fill-color:var(--existdb-icon-color);
+            }
 
 
         `;
@@ -232,10 +236,24 @@ class ExistdbDashboard extends LitElement {
         this.loggedIn = false;
     }
 
+
     render(){
         const drawer = html` 
             ${this.loggedIn ?
                 html`
+
+                <iron-iconset-svg name="inline" size="20">
+                    <svg>
+                        <defs>
+                            <g id="launcher">
+                              <path d="m 2.81,14.12 c 1.6359258,-2.123142 2.8900094,-2.84186 5.36,-3.33 3.22,-4.38 9.38,-6.57 11.61,-6.57 0,2.23 -2.19,8.39 -6.57,11.61 -0.104496,2.591397 -1.585449,3.615449 -3.33,5.36 L 9.17,17.66 c -1.41,0 -1.41,0 -2.12,-0.71 C 6.34,16.24 6.34,16.24 6.34,14.83 L 2.81,14.12 M 4.22,15.54 5.46,15.71 3,18.16 v -1.42 l 1.22,-1.2 m 4.07,3 0.17,1.24 L 7.26,21 H 5.84 l 2.45,-2.46" />
+                              <g id="layer1" style="display:inline">
+                                <ellipse style="fill:#ffffff;fill-opacity:1;stroke-width:0.88836658" id="path4977" cx="14.048673" cy="9.7224817" rx="1.9767697" ry="1.9229802"/>
+                              </g>           
+                            </g>             
+                        </defs>
+                    </svg>
+                </iron-iconset-svg>
                 <app-drawer id="drawer" slot="drawer" @click="${this._navigate}">
                     <div class="wrapper">
                     <div class="drawerbar">
@@ -249,7 +267,8 @@ class ExistdbDashboard extends LitElement {
                     <div class="nav">
                     <a href="./" tabindex="-1">
                         <paper-item id="launcher" on-click="_showLauncher" role="menuitem">
-                            <img class="item-img" src="resources/images/launcher.svg"> 
+<!--                            <img class="item-img" src="resources/images/launcher.svg"> -->
+                            <iron-icon icon="inline:launcher"></iron-icon>
 
                             
                             <span class="menuitem">Launcher</span>

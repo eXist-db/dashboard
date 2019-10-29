@@ -32,7 +32,7 @@ class ExistdbVersion extends LitElement {
                    method="get"
                    handle-as="text"
                    @response="${this._handleVersion}"
-                   auto></iron-ajax>
+                   ></iron-ajax>
         <span title="${this.fullVersion}">${this.shortVersion}</span>
         `;
     }
@@ -40,7 +40,9 @@ class ExistdbVersion extends LitElement {
     firstUpdated(changedProperties) {
         const ajax = this.shadowRoot.getElementById('getVersion');
         ajax.url = document.baseURI + 'modules/getVersion.xql';
-        // ajax.generateRequest();
+        if(!this.fullVersion){
+            ajax.generateRequest();
+        }
     }
 
 

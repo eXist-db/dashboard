@@ -99,11 +99,13 @@ class ExistdbDashboard extends LitElement {
                 background:transparent;
             }
 
-            .drawerbar {
+            .brand {
                 width: 256px;
                 height: 128px;
                 display: table-cell;
                 vertical-align: middle;
+                background:var(--existdb-brand-bg);
+                color:var(--existdb-brand-color);
             }
 
             
@@ -125,36 +127,32 @@ class ExistdbDashboard extends LitElement {
             }
           
             
+/*
             app-drawer-layout ::slotted(#contentContainer){
                 background:var(--paper-grey-200);
             }
+*/
 
 
+/*
             #pages{
                 height: 100%;
             }
+*/
 
             .righttool {
                 margin-right: 20px;
-            }
-
-            app-drawer iron-icon {
-                /*color: rgb(0, 136, 204);*/
-                color: var(--paper-blue-500);
-                margin-right: 20px;
-
-            }
-            paper-item img{
-                /*margin-right: 20px;*/
             }
 
             .logo {
                 width: 134px;
             }
 
+/*
             a {
                 color: var(--paper-blue-900);
             }
+*/
 
             .user{
                 font-size:16px;
@@ -171,9 +169,11 @@ class ExistdbDashboard extends LitElement {
                 color: blue;
             }
 
+/*
             #versionDialog {
                 text-align: center;
             }
+*/
 
 /*
             #settings {
@@ -181,6 +181,7 @@ class ExistdbDashboard extends LitElement {
             }
 */
 
+/*
             .item-img {
                 width: 36px;
                 height: 36px;
@@ -189,6 +190,8 @@ class ExistdbDashboard extends LitElement {
                 fill:red;
                 stroke:red;
             }
+*/
+/*
             .currentUser{
                 padding:4px 0;
                 font-size:12px;
@@ -196,6 +199,7 @@ class ExistdbDashboard extends LitElement {
             .currentUser [icon='social:person']{
                 margin:0;
             }
+*/
             existdb-version{
                 font-size: small;
                 display: block;
@@ -209,7 +213,9 @@ class ExistdbDashboard extends LitElement {
             
             
             iron-icon{
-                --iron-icon-fill-color:var(--existdb-icon-color);
+                --iron-icon-fill-color:var(--existdb-drawer-icon-color);
+                margin-right: 20px;
+
             }
 
 
@@ -256,7 +262,7 @@ class ExistdbDashboard extends LitElement {
                 </iron-iconset-svg>
                 <app-drawer id="drawer" slot="drawer" @click="${this._navigate}">
                     <div class="wrapper">
-                    <div class="drawerbar">
+                    <div class="brand">
                         <img class="logo" src="resources/images/existdb-web.svg">
                         <existdb-version> </existdb-version>
                         <div class="user">User: ${this.user}</div>
@@ -316,7 +322,7 @@ class ExistdbDashboard extends LitElement {
            <app-drawer-layout id="layout" fullbleed>
                 ${drawer}
                 <app-header-layout>
-                    <app-header id="header" slot="header">
+                    <app-header id="header" slot="header" sticky>
                     <app-toolbar>
                         <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                         <div main-title>${this.currentView}</div>

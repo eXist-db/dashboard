@@ -1,18 +1,20 @@
 // Import the LitElement base class and html helper function
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
+import {ExistdbDashboardBase} from './existdb-dashboard-base.js'
+
 import '../assets/@polymer/iron-ajax/iron-ajax.js';
-import '../assets/@polymer/app-layout/app-header-layout/app-header-layout.js';
-import '../assets/@polymer/app-layout/app-header/app-header.js';
-import '../assets/@polymer/app-layout/app-toolbar/app-toolbar.js';
 import '../assets/@polymer/iron-icons/iron-icons.js';
 import '../assets/@polymer/iron-icon/iron-icon.js';
 import '../assets/@polymer/paper-card/paper-card.js';
 import './existdb-version.js';
+import './existdb-theme-switcher.js';
+
+import {resolveUrl} from "./util.js";
 
 // Extend the LitElement base class
-class ExistdbSettings extends LitElement {
+class ExistdbSettings extends ExistdbDashboardBase {
 
-    static get styles(){
+    static get styles() {
         return css`
           :host {
             display: block;
@@ -25,27 +27,7 @@ class ExistdbSettings extends LitElement {
             background:var(--existdb-content-bg);            
             
           }
-    
-          app-header-layout {
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            bottom: 0px;
-            left: 0px;
-            /*height: calc(100% - 200px);*/
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-          }
-    
-    
-          app-header {
-            /*background: rgb(0, 136, 204);*/
-            background: var(--paper-blue-500);
-            padding: 0px;
-            color: white;
-            height: 60px;
-          }
-    
+       
           h1{
             color:var(--paper-grey-900);
           }
@@ -55,6 +37,8 @@ class ExistdbSettings extends LitElement {
             min-width: 320px;
             padding: 20px;
             margin:50px auto;
+            width: 100%;
+            display: block;
           }
           .hint{
             color:var(--paper-grey-900);
@@ -64,26 +48,15 @@ class ExistdbSettings extends LitElement {
           .content{
             display: block;
           }
-          paper-card{
-            width: 100%;
-            display: block;
-    
-          }
           .card-content{
             color:var(--paper-grey-900);
           }
-          .highlight{
-            color:var(--paper-blue-500);
+          .highlight, .highlight a {
+            color:var(--existdb-text-emphasize-color);
             font-size: 18px;
-            padding: 10px;
+            padding: 10px 0;
           }
     
-          [icon="settings"]{
-            --iron-icon-fill-color:white;
-            margin-right:10px;
-            --iron-icon-width: 30px;
-            --iron-icon-height: 30px;
-          }
           @media only screen and (max-width: 768px) {
             [main-title]{
               font-size:18px;
@@ -103,75 +76,84 @@ class ExistdbSettings extends LitElement {
         `;
     }
 
-    render(){
+    constructor() {
+        super();
+
+        this.viewName = 'Settings';
+    }
+
+
+    render() {
         return html`
             <iron-ajax id="getPublicUrl"
                        verbose with-credentials
                        method="get" handle-as="text"
-                       on-response="_handleUrl"
+                       @response="${this._handleRepoUrl}"
+                       url="../packageservice/packages/public-url/"
                        auto></iron-ajax>
         
-            <iron-ajax id="getVersion"
-                       with-credentials
-                       method="get"
-                       handle-as="text"
-                       on-response="_handleVersion"
-                       auto></iron-ajax>
-        
-        
-            <app-header-layout id="outer" fullbleed>
-              <app-header slot="header" fixed>
-                <app-toolbar>
-                  <iron-icon icon="settings" class="x"></iron-icon>
-                  <slot name="toggleIcon"></slot>
-        
-                  <div main-title>Settings</div>
-                </app-toolbar>
-              </app-header>
-        
-              <div class="content">
-                <paper-card heading="Server Version">
-                  <div class="card-content">
-                    You are running
-<!--                    <div class="highlight">[[versionString]]</div>-->
-                    <existdb-version></existdb-version>
-                  </div>
-                </paper-card>
-        
-                <paper-card heading="General Settings">
-                  <div class="card-content">
-                    <!--<paper-input id="publicUrl" label="Public Repository URL" aria-readonly="true" readOnly></paper-input>-->
-                    Public Repository URL
-                    <div class="highlight" id="publicUrl"></div>
-                    <span class="hint">URL from which publicly available eXist-db apps and libraries are loaded.</span>
-                  </div>
-                </paper-card>
+             
+          <div class="content">
+            <paper-card heading="Server Version">
+              <div class="card-content">
+                <div class="highlight"> You are running <existdb-version></existdb-version></div>
               </div>
-            </app-header-layout>        
+            </paper-card>
+    
+            <paper-card heading="Public Repository URL">
+              <div class="card-content">
+                <!--<paper-input id="publicUrl" label="Public Repository URL" aria-readonly="true" readOnly></paper-input>-->
+<!--                Public Repository URL-->
+                <div class="highlight" id="publicUrl"><a href="${this.publicRepoUrl}" target="_blank">${this.publicRepoUrl}</a></div>
+                <span class="hint">URL from which publicly available eXist-db apps and libraries are loaded.</span>
+              </div>
+            </paper-card>
+            
+            <paper-card heading="Theme">
+                <div class="card-content">
+                    <existdb-theme-switcher></existdb-theme-switcher>
+                </div>
+            </paper-card>
+          </div>
         `;
     }
 
-    firstUpdated(changedProperties) {
-        this.dispatchEvent(new CustomEvent(
-            'set-title',
-            {
-                composed: true,
-                bubbles: true,
-                detail: {'view': 'Settings'}
-            }));
-
-        const cards = this.shadowRoot.querySelectorAll('paper-card');
-        anime({
-            targets:cards,
-            opacity:[0.3,1],
-            scale: [0.9,1],
-            duration:800,
-            delay:anime.stagger(200)
-        });
-
+    static get properties() {
+        return {
+            /**
+             * URL of the public eXist-db repo which hosts public apps and libs
+             */
+            publicRepoUrl:{
+                type: String
+            }
+        };
     }
 
 
+    firstUpdated(changedProperties) {
+        super.firstUpdated(changedProperties);
+        const cards = this.shadowRoot.querySelectorAll('paper-card');
+        anime({
+            targets: cards,
+            opacity: [0.3, 1],
+            scale: [0.9, 1],
+            duration: 800,
+            delay: anime.stagger(200)
+        });
+
+
+        this.ajax = this.shadowRoot.getElementById('getPublicUrl');
+        const url = resolveUrl(this.ajax.url);
+        this.ajax.url = url;
+        this.ajax.generateRequest();
+
+    }
+
+    _handleRepoUrl(){
+        this.publicRepoUrl = this.ajax.lastResponse;
+    }
+
 
 }
+
 customElements.define('existdb-settings', ExistdbSettings);

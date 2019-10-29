@@ -6,11 +6,13 @@
     <base href="/exist/apps/dashboard3/"/>
 
     <script src="assets/@webcomponents/webcomponentsjs/webcomponents-loader.js"> </script>
+    <script src="assets/web-animations-js/web-animations.min.js"> </script>
     <script src="assets/animejs/lib/anime.min.js"> </script>
 
     <script type="module">
         import './src/existdb-dashboard.js';
         import './src/existdb-login.js';
+        import './src/existdb-theme-switcher.js';
         import './assets/@polymer/paper-styles/color.js';
         import './assets/@polymer/iron-icons/iron-icons.js';
         import './assets/@polymer/iron-icon/iron-icon.js';
@@ -18,24 +20,22 @@
 
     <link rel="stylesheet" href="resources/styles.css"/>
     <link rel="stylesheet" href="resources/default-theme.css" title="default"/>
+    <link rel="alternate stylesheet" href="resources/light-theme.css" title="light"/>
     <link rel="alternate stylesheet" href="resources/amber-theme.css" title="amber"/>
     <link rel="alternate stylesheet" href="resources/blue-theme.css" title="blue"/>
     <link rel="alternate stylesheet" href="resources/dark-theme.css" title="dark"/>
+    <link rel="alternate stylesheet" href="resources/pink-theme.css" title="pink"/>
+    <link rel="alternate stylesheet" href="resources/indigo-theme.css" title="indigo"/>
+    <link rel="alternate stylesheet" href="resources/light-blue-theme.css" title="lightblue"/>
+    <link rel="alternate stylesheet" href="resources/cyan-theme.css" title="cyan"/>
+    <link rel="alternate stylesheet" href="resources/teal-theme.css" title="teal"/>
+    <link rel="alternate stylesheet" href="resources/blue-grey-theme.css" title="bluegrey"/>
+    <link rel="alternate stylesheet" href="resources/orange-theme.css" title="orange"/>
+    <link rel="alternate stylesheet" href="resources/green-theme.css" title="greeen"/>
 
     <style type="text/css">
 
         body{
-            --existdb-highlight-color:var(--paper-amber-900);
-            --existdb-content-color:white;
-            --existdb-icon-color:var(--paper-amber-900);
-
-            --existdb-header-bg-color: var(--paper-amber-700);
-            --existdb-secondary-bg-color:var(--paper-amber-500);
-            --existdb-light-bg:var(--paper-amber-300);
-            --existdb-light-contrast:var(--paper-amber-900);
-
-            --existdb-header-color: white;
-
         }
         existdb-login.login{
             display: inline-block;
@@ -72,5 +72,7 @@
         <existdb-login class="login" slot="login" loginLabel="Sign In" logoutLabel="Sign out" group="dba"></existdb-login>
         <main></main>
     </existdb-dashboard>
+    <existdb-theme-switcher style="display: none;"></existdb-theme-switcher>
+
 </body>
 </html>

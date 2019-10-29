@@ -1,17 +1,28 @@
 body{
     --existdb-font-family: 'Roboto', 'Noto', sans-serif;
+    font-family: var(--existdb-font-family);
 
-    --existdb-text-color: var(--paper-grey-900);
+    --existdb-text-color: white;
 
-    --existdb-header-bg-color: var(--paper-grey-500);
-    --existdb-header-color: white;
+    --existdb-drawer-bg: var(--paper-grey-900);
+    --existdb-drawer-color:var(--paper-grey-100);
+    --existdb-drawer-icon-color:var(--paper-grey-100);
 
-    --existdb-content-bg: ghostwhite;
+    --existdb-brand-bg:var(--paper-grey-300);
+    --existdb-brand-color:var(--paper-grey-900);
+
+    --existdb-header-bg-color: var(--paper-grey-900);
+    --existdb-header-color: var(--existdb-grey-100);
+
+    --existdb-content-bg: var(--paper-grey-700);
     --existdb-content-color: var(--paper-grey-900);
 
-    --existdb-drawer-bg: var(--paper-grey-700);
-    --existdb-drawer-color:var(--paper-grey-100);
+    --existdb-text-emphasize-color:var(--paper-grey-900);
 
-    font-family: var(--existdb-font-family);
+    --existdb-subheader-bg-color:var(--paper-grey-500);
+    --existdb-subheader-color:var(--paper-grey-100);
+
+    --existdb-control-bg:var(--paper-grey-500);
+    --existdb-control-color:white;
 
 }

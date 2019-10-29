@@ -6,7 +6,7 @@ body{
     --existdb-header-bg-color: var(--paper-amber-700);
     --existdb-header-color: white;
 
-    --existdb-secondary-bg-color:var(--paper-amber-500);
+    --existdb-subheader-bg-color:var(--paper-amber-500);
 
     --existdb-content-bg: var(--paper-amber-100);
     --existdb-content-color: var(--paper-grey-900);

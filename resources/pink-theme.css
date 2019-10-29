@@ -6,23 +6,23 @@ body{
 
     --existdb-drawer-bg: white;
     --existdb-drawer-color:var(--paper-grey-900);
-    --existdb-drawer-icon-color:var(--paper-blue-500);
+    --existdb-drawer-icon-color:var(--paper-pink-500);
 
-    --existdb-brand-bg:white;
+    --existdb-brand-bg:var(--paper-pink-100);
     --existdb-brand-color:var(--paper-grey-900);
 
-    --existdb-header-bg-color: var(--paper-blue-500);
+    --existdb-header-bg-color: var(--paper-pink-500);
     --existdb-header-color: white;
 
     --existdb-content-bg: var(--paper-grey-50);
     --existdb-content-color: var(--paper-grey-900);
 
-    --existdb-text-emphasize-color:var(--paper-blue-900);
+    --existdb-text-emphasize-color:var(--paper-pink-900);
 
-    --existdb-subheader-bg-color:var(--paper-blue-300);
+    --existdb-subheader-bg-color:var(--paper-pink-300);
     --existdb-subheader-color:white;
 
-    --existdb-control-bg:var(--paper-blue-500);
+    --existdb-control-bg:var(--paper-pink-500);
     --existdb-control-color:white;
 
 

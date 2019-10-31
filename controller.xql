@@ -14,6 +14,22 @@ declare variable $exist:controller external;
 declare variable $exist:prefix external;
 declare variable $exist:root external;
 
+let $permissions :=
+    <auth>
+       <group name="dba">
+           <permission>packagemanager</permission>
+           <permission>usermanager</permission>
+           <permission>backup</permission>
+           <permission>settings</permission>
+       </group>
+       <group name="packagemanager">
+           <permission>packagemanager</permission>
+           <permission>/package/install</permission>
+       </group>
+   </auth>
+
+
+return
 (:
 let $log := util:log("info", "path " || $exist:path)
 let $log := util:log("info", "resource " || $exist:resource)
@@ -35,6 +51,37 @@ else if ($exist:path = "/launcher") then(
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <forward url="index.html"/>
     </dispatch>
+)
+else if (ends-with($exist:path,"existdb-packagemanager.js")) then(
+    let $authRoute := 'packagemanager'
+    let $loggedIn := login:set-user("org.exist.login", (), false())
+    let $user := request:get-attribute("org.exist.login.user")
+    return
+    if($user)then(
+        let $groups := sm:get-user-groups($user)
+        let $log := util:log('info','authRoute:' || $authRoute)
+        let $log := util:log('info','groups:' || $groups)
+
+        let $authorized :=  exists($permissions//group[@name=$groups]/permission[.=$authRoute])
+        let $log := util:log('info','authorizued:' || $authorized)
+        return
+
+            if($authorized) then(
+                <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                    <cache-control cache="no"/>
+                    <set-header name="Cache-Control" value="no-cache"/>
+                </dispatch>
+            )else(
+                response:set-status-code(403),
+                <status>not authorized</status>
+            )
+
+    )else(
+        response:set-status-code(403),
+        <status>not logged in</status>
+    )
+
+
 )
 else if ($exist:path = "/packagemanager") then(
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

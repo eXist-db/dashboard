@@ -246,8 +246,7 @@ class ExistdbDashboard extends LitElement {
     render(){
         const drawer = html` 
             ${this.loggedIn ?
-                html`
-
+                html`    
                 <iron-iconset-svg name="inline" size="20">
                     <svg>
                         <defs>
@@ -266,17 +265,12 @@ class ExistdbDashboard extends LitElement {
                         <img class="logo" src="resources/images/existdb-web.svg">
                         <existdb-version> </existdb-version>
                         <div class="user">User: ${this.user}</div>
-                        
-                        
                         <div class="subitem">Dashboard</div>
                     </div>
                     <div class="nav">
                     <a href="./" tabindex="-1">
                         <paper-item id="launcher" on-click="_showLauncher" role="menuitem">
-<!--                            <img class="item-img" src="resources/images/launcher.svg"> -->
-                            <iron-icon icon="inline:launcher"></iron-icon>
-
-                            
+                            <iron-icon icon="inline:launcher"></iron-icon>                           
                             <span class="menuitem">Launcher</span>
                             <paper-ripple></paper-ripple>
                         </paper-item>
@@ -322,7 +316,7 @@ class ExistdbDashboard extends LitElement {
            <app-drawer-layout id="layout" fullbleed>
                 ${drawer}
                 <app-header-layout>
-                    <app-header id="header" slot="header" sticky>
+                    <app-header id="header" slot="header" fixed>
                     <app-toolbar>
                         <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                         <div main-title>${this.currentView}</div>
@@ -359,35 +353,28 @@ class ExistdbDashboard extends LitElement {
 
     }
 
+
     initRouter(){
         console.log('initRouter');
         // const router = new Router(this.shadowRoot.querySelector('main'));
         const router = new Router(document.querySelector('main'));
 
-/*
-        router.setRoutes([
-            {
-                path:'index.html',
-                animate:true,
-                children:[
-                    {
-                        path: '',
-                        component: 'existdb-launcher'
-                    },
-                    {
-                        path: 'index.html/:settings',
-                        component: 'existdb-settings'
-                    }
-                ]
-            }
-        ]);
-*/
-
         const loadSettings = (context, commands) => {
             return import('./existdb-settings.js');
         };
         const loadPackagemanager = (context, commands) => {
-            return import('./existdb-packagemanager.js');
+            this._lazyImport('existdb-packagemanager');
+
+/*
+            const module = './existdb-packagemanager.js';
+            import(module)
+                .then((module) => {
+                    return commands.component('existdb-packagemanager');
+                })
+                .catch((err) => {
+                    console.log('error while fetching packagemanager', err);
+                });
+*/
         };
         const loadUsermanager = (context, commands) => {
             return import('./existdb-usermanager.js');
@@ -428,6 +415,16 @@ class ExistdbDashboard extends LitElement {
         ]);
     }
 
+    _lazyImport(componentName){
+        const module = './' + componentName + '.js';
+        import(module)
+        .then((module) => {
+            return commands.component(componentName);
+        })
+        .catch((err) => {
+            console.log('error while fetching ' + componentName, err);
+        });
+    }
 
 
     _handleLogin(e){
@@ -451,7 +448,7 @@ class ExistdbDashboard extends LitElement {
             this.loggedIn = false;
             this.shadowRoot.getElementById('layout').resetLayout();
             this.shadowRoot.getElementById('layout').notifyResize();
-            this.render();
+            // this.render();
             // window.location.reload(false);
             //todo: not nice but problem with refreshing DOM when drawer is deleted still persists - need a better way but
             //at least this is safe

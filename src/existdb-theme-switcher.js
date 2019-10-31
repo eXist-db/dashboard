@@ -5,7 +5,28 @@ import '../assets/@polymer/paper-listbox/paper-listbox.js';
 import '../assets/@polymer/paper-item/paper-item.js';
 
 
-// Extend the LitElement base class
+/**
+ * Component to switch CSS stylesheets for theming purposes.
+ *
+ * Stylesheet use standard <link> elements that MUST have a 'title' attribute.
+ *
+ * If no stylesheet has been selected before this is used as the default stylesheet.
+ *
+ * Example:
+ *    <code><link rel="stylesheet" href="resources/default-theme.css" title="default"/></code>
+ *
+ *
+ *  Alternate stylesheets use rel="alternate stylesheet" and a 'title' for identification.
+ *
+ *  Example:
+ *    <code><link rel="alternate stylesheet" href="resources/blue-theme.css" title="blue-theme"/></code>
+ *
+ * The component displays a list box of all <link> elements that have a 'title' and lets users select from them.
+ *
+ * When a selection has been made the selected stylesheets' title will be saved to a cookie named 'existdbTheme' by
+ * default. Whenever the component is loaded it will check for the cookie and activate the appropriate theme.
+ *
+ */
 class ExistdbThemeSwitcher extends LitElement {
 
     static get styles() {
@@ -25,7 +46,7 @@ class ExistdbThemeSwitcher extends LitElement {
     static get properties() {
         return {
             /**
-             * URL of the public eXist-db repo which hosts public apps and libs
+             * list of themes
              */
             themes:{
                 type: Array
@@ -52,7 +73,6 @@ class ExistdbThemeSwitcher extends LitElement {
 
 
     firstUpdated(changedProperties) {
-
     }
 
     _loadThemes(){
@@ -60,7 +80,6 @@ class ExistdbThemeSwitcher extends LitElement {
         const allThemes = [];
         for (var i = 0; i < el.length; i++ ) {
             if (el[i].getAttribute("rel").indexOf("style") != -1 && el[i].getAttribute("title")) {
-                console.log('theme ', el[i]);
                 allThemes.push(el[i]);
             }
         }
@@ -96,8 +115,6 @@ class ExistdbThemeSwitcher extends LitElement {
     }
 
      _setStyle(e) {
-        console.log('setstyle ',e);
-
         const s = e.target.attributes['name'].textContent;
         if (s != this.currentTheme) {
             this._switchStyle(s);

@@ -1,3 +1,15 @@
 <settings>
     <!-- this is reserved for later-->
+    <auth>
+        <group name="dba">
+            <permission>packagemanager</permission>
+            <permission>usermanager</permission>
+            <permission>backup</permission>
+            <permission>settings</permission>
+        </group>
+        <group name="packagemanager">
+            <permission>packagemanager</permission>
+            <permission>/package/install</permission>
+        </group>
+    </auth>
 </settings>

@@ -19,7 +19,6 @@ import '../assets/@polymer/paper-icon-button/paper-icon-button.js';
 
 import './existdb-login.js';
 import './existdb-launcher.js';
-// import './existdb-settings.js';
 
 /*
 import { connect } from '../assets/pwa-helpers/connect-mixin.js';
@@ -233,6 +232,9 @@ class ExistdbDashboard extends LitElement {
             },
             currentView:{
                 type: String
+            },
+            permissions:{
+                type:Array
             }
         };
     }
@@ -240,6 +242,7 @@ class ExistdbDashboard extends LitElement {
     constructor(){
         super();
         this.loggedIn = false;
+        this.permissions = [];
     }
 
 
@@ -261,49 +264,72 @@ class ExistdbDashboard extends LitElement {
                 </iron-iconset-svg>
                 <app-drawer id="drawer" slot="drawer" @click="${this._navigate}">
                     <div class="wrapper">
-                    <div class="brand">
-                        <img class="logo" src="resources/images/existdb-web.svg">
-                        <existdb-version> </existdb-version>
-                        <div class="user">User: ${this.user}</div>
-                        <div class="subitem">Dashboard</div>
-                    </div>
-                    <div class="nav">
-                    <a href="./" tabindex="-1">
-                        <paper-item id="launcher" on-click="_showLauncher" role="menuitem">
-                            <iron-icon icon="inline:launcher"></iron-icon>                           
-                            <span class="menuitem">Launcher</span>
-                            <paper-ripple></paper-ripple>
-                        </paper-item>
-                    </a>
-                    <a href="./packagemanager" tabindex="-1">
-                        <paper-item id="packagemanager" on-click="_showPackageManager" role="menuitem">
-                            <iron-icon icon="apps"></iron-icon>
-                            <span class="menuitem">Package Manager</span>
-                            <paper-ripple></paper-ripple>
-                        </paper-item>
-                    </a>
-                    <a href="./usermanager" tabindex="-1">
-                        <paper-item id="usermanager" on-click="_showUserManager" role="menuitem">
-                            <iron-icon icon="social:people"></iron-icon>
-                            <span class="menuitem">User Manager</span>
-                            <paper-ripple></paper-ripple>
-                        </paper-item>
-                    </a>
-                    <a href="./backup" tabindex="-1">
-                        <paper-item id="backup" on-click="_showBackup" role="menuitem">
-                            <iron-icon icon="restore"></iron-icon>
-                            <span class="menuitem">Backup</span>
-                            <paper-ripple></paper-ripple>
-                        </paper-item>
-                    </a>
-                    <a href="./settings" tabindex="-1">
-                        <paper-item id="settings" on-click="_showSettings" role="menuitem">
-                            <iron-icon icon="settings"></iron-icon>
-                            <span class="menuitem">Settings</span>
-                            <paper-ripple></paper-ripple>
-                        </paper-item>
-                    </a>
-                    </div>
+                        <div class="brand">
+                            <img class="logo" src="resources/images/existdb-web.svg">
+                            <existdb-version> </existdb-version>
+                            <div class="user">User: ${this.user}</div>
+                            <div class="subitem">Dashboard</div>
+                        </div>
+                        <div class="nav">
+                        
+                        <a href="./" tabindex="-1">
+                            <paper-item id="launcher" role="menuitem">
+                                <iron-icon icon="inline:launcher"></iron-icon>                           
+                                <span class="menuitem">Launcher</span>
+                                <paper-ripple></paper-ripple>
+                            </paper-item>
+                        </a>
+                        
+                        ${this.permissions.includes('packagemanager') ?
+                            html`
+                            <a href="./packagemanager" tabindex="-1">
+                                <paper-item id="packagemanager" role="menuitem">
+                                    <iron-icon icon="apps"></iron-icon>
+                                    <span class="menuitem">Package Manager</span>
+                                    <paper-ripple></paper-ripple>
+                                </paper-item>
+                            </a>
+                            `:''
+                        }
+                        
+                        ${this.permissions.includes('usermanager') ?
+                            html`
+                            <a href="./usermanager" tabindex="-1">
+                                <paper-item id="usermanager" role="menuitem">
+                                    <iron-icon icon="social:people"></iron-icon>
+                                    <span class="menuitem">User Manager</span>
+                                    <paper-ripple></paper-ripple>
+                                </paper-item>
+                            </a>
+                            `:''
+                        }
+    
+                        ${this.permissions.includes('backup') ?
+                            html`
+                            <a href="./backup" tabindex="-1">
+                                <paper-item id="backup" role="menuitem">
+                                    <iron-icon icon="restore"></iron-icon>
+                                    <span class="menuitem">Backup</span>
+                                    <paper-ripple></paper-ripple>
+                                </paper-item>
+                            </a>
+                            `:''
+                        }
+                        
+                        ${this.permissions.includes('settings') ?
+                            html`
+                                <a href="./settings" tabindex="-1">
+                                    <paper-item id="settings" role="menuitem">
+                                        <iron-icon icon="settings"></iron-icon>
+                                        <span class="menuitem">Settings</span>
+                                        <paper-ripple></paper-ripple>
+                                    </paper-item>
+                                </a>
+                            `:''
+                        }
+                        
+                        
+                        </div>
                     </div>
                 </app-drawer>`
                 : ''
@@ -356,32 +382,24 @@ class ExistdbDashboard extends LitElement {
 
     initRouter(){
         console.log('initRouter');
-        // const router = new Router(this.shadowRoot.querySelector('main'));
         const router = new Router(document.querySelector('main'));
 
-        const loadSettings = (context, commands) => {
-            return import('./existdb-settings.js');
-        };
         const loadPackagemanager = (context, commands) => {
-            this._lazyImport('existdb-packagemanager');
-
-/*
-            const module = './existdb-packagemanager.js';
-            import(module)
-                .then((module) => {
-                    return commands.component('existdb-packagemanager');
-                })
-                .catch((err) => {
-                    console.log('error while fetching packagemanager', err);
-                });
-*/
+            // this._lazyImport('existdb-packagemanager');
+            return import('./existdb-packagemanager.js');
         };
         const loadUsermanager = (context, commands) => {
+            // this._lazyImport('existdb-usermanager');
             return import('./existdb-usermanager.js');
         };
         const loadBackup = (context, commands) => {
+            // this._lazyImport('existdb-backup');
             return import('./existdb-backup.js');
         };
+        const loadSettings = (context, commands) => {
+            return import('./existdb-settings.js');
+        };
+
         router.setRoutes([
             {
                 path:'/',
@@ -431,28 +449,24 @@ class ExistdbDashboard extends LitElement {
         console.log('user logged in ',e.detail);
         this.user = e.detail.user;
 
-        console.log('user view ',e.detail.views[0]);
-
-        this.loggedIn = true;
-        // this.render();
-
-        const launcher = this.querySelector('existdb-launcher');
-        if(launcher){
-            launcher.hideBranding();
+        if(e.detail.permissions){
+            this.loggedIn = true;
+            this.permissions = e.detail.permissions;
+            const launcher = this.querySelector('existdb-launcher');
+            if(launcher){
+                launcher.hideBranding();
+            }
         }
+        this.render();
+
     }
 
     _handleLogout(e){
         console.log('user logged out');
         if(this.loggedIn === true){
             this.loggedIn = false;
-            this.shadowRoot.getElementById('layout').resetLayout();
-            this.shadowRoot.getElementById('layout').notifyResize();
-            // this.render();
-            // window.location.reload(false);
-            //todo: not nice but problem with refreshing DOM when drawer is deleted still persists - need a better way but
-            //at least this is safe
-            window.location.href='./';
+            this.permissions = [];
+            window.location.href='./'; //force reload of page
         }
     }
 

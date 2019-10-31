@@ -558,7 +558,7 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
     }
 
     firstUpdated(changedProperties) {
-        super.firstUpdated(changedProperties);
+        // super.firstUpdated(changedProperties);
 
 
     }

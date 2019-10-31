@@ -9,7 +9,15 @@
         </group>
         <group name="packagemanager">
             <permission>packagemanager</permission>
-            <permission>/package/install</permission>
+        </group>
+        <group name="usermanager">
+            <permission>usermanager</permission>
+        </group>
+        <group name="backup">
+            <permission>backup</permission>
+        </group>
+        <group name="settings">
+            <permission>settings</permission>
         </group>
     </auth>
 </settings>

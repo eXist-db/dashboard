@@ -283,7 +283,7 @@ class ExistdbLogin extends LitElement {
                     detail: {
                         'user': this.user,
                         'groups': this.groups,
-                        'views':resp.views
+                        'permissions':resp.permissions
                     }
                 }));
 

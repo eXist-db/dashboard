@@ -72,6 +72,11 @@ class ExistdbDashboard extends LitElement {
                 width: 100%;
                 margin: 0;
             }
+            
+            app-drawer-layout{
+                width:100%;
+                height:100%;
+            }
 
             app-drawer {
                 z-index: 100;
@@ -216,8 +221,6 @@ class ExistdbDashboard extends LitElement {
                 margin-right: 20px;
 
             }
-
-
         `;
     }
 
@@ -341,7 +344,7 @@ class ExistdbDashboard extends LitElement {
            
            <app-drawer-layout id="layout" fullbleed>
                 ${drawer}
-                <app-header-layout>
+                <app-header-layout fullbleed>
                     <app-header id="header" slot="header" fixed>
                     <app-toolbar>
                         <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>

@@ -1,6 +1,43 @@
-# eXist-db Admin Dashboard
+# eXist-db Dashboard
 
-Admin Dashboard is a replacement of the older [Dashboard](https://github.com/eXist-db/dashboard) and will replace it from eXist-db 5.0.0 onwards.
+Dashboard is the central application for the administration of eXist-db. 
+
+It is implemented as an eXist-db xar application and uses Web Components for
+the UI. 
+
+Mostly Dashboard provides a 
+
+
+
+## what's new in 3.0
+
+### Role-based View
+
+What a given user sees in Dashboard can be configured based upon the users roles (groups).
+
+E.g. an admin sees all dashboard components  
+
+## Dev Requirements
+
+* NodeJS v8.11.3 or higher
+* npm 5.6.0 or higher
+* Java and Apache Ant for building the xar
+
+## Preparations
+
+* checkout or fork your copy from https://github.com/eXist-db/dashboard
+
+In the root directory run
+```
+npm install
+```
+
+This will install all dependencies into your local node_modules directory. 
+
+This should also create a folder 'assets' in your root directory that contains
+the js modules used by dashboard. The assets are created by a script
+called 'empathy'. This will spit out a few warning which can savely
+be ignored.
 
 ## Building for development
 
@@ -17,19 +54,6 @@ To create a minified package execute:
 
 ```ant production-xar```
 
-### A note on client-side dependencies
-
-Admin Dashboard is made of [Web Components](https://webcomponents.org) using [bower](https://bower.io/) for handling 
-client-side dependency management. bower builds upon the nodejs stack and therefore require a nodejs installation to work.
- 
-Usually when using dependency tools the dependent modules are loaded dynamically from remote repositories. This has certainly 
-advantages but also introduce the danger of undetected deep version changes and other problems when sources become unavailable for 
-some reason. A discussion on this topic can be found [here](https://addyosmani.com/blog/checking-in-front-end-dependencies/). Furthermore
-it requires the installation of npm and bower.
-
-As nodejs (npm) is not available or common to everyone the dependencies are therefore kept in the repo which eases building the app.
-
-
 ## What it does
 
 Admin Dashboard provides a common UI for adminitration tools in a responsive sidebar layout. The layout uses the 
@@ -39,6 +63,7 @@ Currently it contains:
 * Launcher (not strictly an admin tool but here for convenience)
 * PackageManager
 * UserManager
+* BackManager
 * Settings
 
 More modules can be plugged later on.

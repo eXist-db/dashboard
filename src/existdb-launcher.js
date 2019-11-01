@@ -7,6 +7,7 @@ import './repo-app.js';
 import './repo-icon.js';
 import './launcher-app.js';
 import './existdb-branding.js';
+import './launch-button.js';
 
 /**
  * loads and displays a list of locally installed eXist-db apps.
@@ -24,24 +25,29 @@ class ExistdbLauncher extends ExistdbDashboardBase {
                 position:relative;
                 background:var(--existdb-content-bg);
                 color:var(--existdb-content-color);
-                height:100%
+                height:100%;
+                width:100%;
             }
-
-            [launcher] repo-packages{
+            .apps{
                 display:flex;
                 flex-direction: row;
                 flex-wrap: wrap;
                 align-items: center;
+                height:100%;
             }
-
-            [launcher] repo-app{
+            repo-packages{
+                height:100%;
+            }
+            launch-button{
                 width:150px;
                 height:150px;
                 position:relative;
                 cursor: pointer;
                 margin:10px;
+                float:left;
+                display:table-cell;
             }
-            [launcher] repo-title{
+            repo-title{
                 font-size:12px;
                 display:block;
                 position: absolute;
@@ -54,29 +60,58 @@ class ExistdbLauncher extends ExistdbDashboardBase {
                 text-shadow: -2px 2px 2px rgba(108,98,98,0.3);
                 color:var(--paper-grey-900);
             }
-            [launcher] repo-icon{
+            repo-icon{
                 width: 100%;
                 height: 100%;
                 vertical-align: middle;
                 display: table-cell;
                 background: transparent;
             }
-
-            [launcher] repo-name,
-            [launcher] repo-version,
-            [launcher] repo-type,
-            [launcher] repo-authors,
-            [launcher] repo-abbrev,
-            [launcher] repo-description,
-            [launcher] repo-website,
-            [launcher] repo-url,
-            [launcher] repo-license {
-                display:none;
+            #logo, repo-packages{
+                display:inline-block;
+                float:left;
             }
 
             [hidden]{
                 display: none;
             }
+        `;
+    }
+
+    /**
+     * Implement `render` to define a template for your element.
+     *
+     * You must provide an implementation of `render` for any element
+     * that uses LitElement as a base class.
+     */
+    render() {
+        /**
+         *
+         */
+        return html`
+
+            <iron-ajax id="loadApplications"
+                       method="get"
+                       handle-as="json"
+                       @response="${this._display}"
+                       url="${this.appPackageURL}"
+                       on-error="_handleError">
+            </iron-ajax>
+            
+            <div id="apps" class="apps">
+                <repo-packages id="packages">
+                    <div id="logo"></div>
+                 ${this.packages.map((item) => 
+                    html`
+                        <launch-button  path="${item.path}"
+                                        type="${item.type}" 
+                                        status="${item.status}" 
+                                        icon="${item.icon}"
+                                        abbrev="${item.abbrev}"
+                                        tabindex="-1"></launch-button>
+                    `)}
+                 </repo-packages>
+            </div>
         `;
     }
 
@@ -97,6 +132,9 @@ class ExistdbLauncher extends ExistdbDashboardBase {
             },
             branding:{
                 type:Object
+            },
+            packages:{
+                type:Array
             }
         };
     }
@@ -108,39 +146,12 @@ class ExistdbLauncher extends ExistdbDashboardBase {
         this.ignores = settings.ignoredPackages;
         this.appPackageURL = new URL(settings.appPackagePath, document.baseURI).href;
         // this.appList = {};
+        this.packages = [];
     }
 
     get listApps(){
         return html`
             ${this.appList}
-        `;
-    }
-
-    /**
-     * Implement `render` to define a template for your element.
-     *
-     * You must provide an implementation of `render` for any element
-     * that uses LitElement as a base class.
-     */
-    render() {
-        /**
-         *
-         */
-        return html`
-
-            <iron-ajax id="loadApplications"
-                       method="get"
-                       handle-as="text"
-                       @response="${this._displayApplications}"
-                       url="${this.appPackageURL}"
-                       on-error="_handleError">
-            </iron-ajax>
-            
-    
-            <div id="apps" class="apps" launcher type="launcher">
-                <div id="logo"></div>
-                <slot id="slot"></slot>
-            </div>
         `;
     }
 
@@ -163,6 +174,55 @@ class ExistdbLauncher extends ExistdbDashboardBase {
             this.branding.hidden = true;
         }
     }
+    async _animate(){
+        console.log('animate');
+        var apps = this.shadowRoot.querySelectorAll('launch-button');
+        // show branding unless we're embedded in dashboard
+
+        if(!this._isLoggedIn()){
+            this.branding = document.createElement('existdb-branding');
+            var packageRoot = this.shadowRoot.getElementById('logo');
+            packageRoot.appendChild(this.branding);
+        }
+
+        console.log('apps ', apps);
+        const t1 = anime.timeline({
+            easing:'linear',
+            duration:400
+        });
+
+        t1.add({
+            targets: this.branding,
+            translateX:[-400,0],
+            opacity:[0.3,1],
+            duration:200,
+            easing:'easeInQuad'
+        });
+        t1.add({
+            targets: apps,
+            opacity: [0,1],
+            scale:[0.1,1],
+            delay: anime.stagger(10),
+            duration:200,
+            easing: 'easeInQuad',
+            complete:function(anim){
+                // brand.animate()
+            }
+        },'-=100');
+
+    }
+
+    async _display(e){
+        console.log('_display');
+
+        this.packages = this.shadowRoot.getElementById('loadApplications').lastResponse;
+        // this.shadowRoot.getElementById('list').items = this.packages;
+        console.log('packages from server: ', this.packages);
+
+        this.updateComplete.then(() => { this._animate() });
+        // await Promise.all(this.updateComplete, this._animate());
+
+    }
 
     _displayApplications(e){
         console.log('_displayApplications ', e);
@@ -170,7 +230,6 @@ class ExistdbLauncher extends ExistdbDashboardBase {
 
 
         // show branding unless we're embedded in dashboard
-
         if(!this._isLoggedIn()){
             this.branding = document.createElement('existdb-branding');
             var packageRoot = this.shadowRoot.getElementById('apps').querySelector('repo-packages');

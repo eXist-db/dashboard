@@ -7,7 +7,7 @@ export const settings = {
      * relative path to packageservice for loading of apps. Value is relative to
      * dashboard's base URI (usually '/exist/apps/dashboard/'
      */
-    appPackagePath:"../packageservice/packages/apps",
+    appPackagePath:"../packageservice/packages/apps/json",
 
     loginUrl:"login"
 

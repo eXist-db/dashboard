@@ -14,6 +14,8 @@ body{
     --existdb-drawer-bg: var(--paper-amber-700);
     --existdb-drawer-color:white;
 
+    --existdb-highlight-color:var(--paper-grey-900);
+
     font-family: var(--existdb-font-family);
 
 }

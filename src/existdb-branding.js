@@ -70,17 +70,9 @@ class ExistdbBranding extends LitElement {
     }
 
     animate(){
-        console.log('animating...');
-
         const bubbles = this.shadowRoot.querySelectorAll('.bubble');
-        console.log('pathes ', bubbles);
-
         const letters = this.shadowRoot.querySelectorAll('.letter');
-
         const first = this.shadowRoot.getElementById('e');
-
-        console.log('first ', first);
-
         const t1 = anime.timeline({
             easing:'easeInExpo',
             duration:400

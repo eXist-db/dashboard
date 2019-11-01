@@ -384,7 +384,6 @@ class ExistdbDashboard extends LitElement {
 
 
     initRouter(){
-        console.log('initRouter');
         const router = new Router(document.querySelector('main'));
 
         const loadPackagemanager = (context, commands) => {
@@ -449,9 +448,7 @@ class ExistdbDashboard extends LitElement {
 
 
     _handleLogin(e){
-        console.log('user logged in ',e.detail);
         this.user = e.detail.user;
-
         if(e.detail.permissions){
             this.loggedIn = true;
             this.permissions = e.detail.permissions;
@@ -465,7 +462,6 @@ class ExistdbDashboard extends LitElement {
     }
 
     _handleLogout(e){
-        console.log('user logged out');
         if(this.loggedIn === true){
             this.loggedIn = false;
             this.permissions = [];
@@ -474,8 +470,6 @@ class ExistdbDashboard extends LitElement {
     }
 
     _setTitle(e){
-        console.log('settitle');
-
         this.currentView = e.detail.view;
     }
 

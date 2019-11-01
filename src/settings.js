@@ -8,6 +8,8 @@ export const settings = {
      * dashboard's base URI (usually '/exist/apps/dashboard/'
      */
     appPackagePath:"../packageservice/packages/apps/json",
+    localPackagePath:"../packageservice/packages/local/json",
+    remotePackagePath:"../packageservice/packages/remote/json",
 
     loginUrl:"login"
 

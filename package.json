@@ -23,7 +23,7 @@
     "gulp": "^3.9.1",
     "gulp-exist": "^1.4.1",
     "gulp-less": "^3.1.0",
-    "gulp-watch": "^4.3.6",
+    "gulp-watch": "^5.0.1",
     "jquery": "^3.4.1",
     "less-plugin-autoprefix": "^1.5.1",
     "less-plugin-clean-css": "^1.5.1",

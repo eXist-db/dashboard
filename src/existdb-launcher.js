@@ -2,9 +2,6 @@
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 import {ExistdbDashboardBase} from './existdb-dashboard-base.js'
 import {settings} from './settings.js';
-import './repo-app.js';
-import './repo-icon.js';
-import './launcher-app.js';
 import './existdb-branding.js';
 import './launch-button.js';
 import './existdb-packageloader.js';
@@ -166,28 +163,28 @@ class ExistdbLauncher extends ExistdbDashboardBase {
 
         console.log('apps ', apps);
         const t1 = anime.timeline({
-            easing:'linear',
-            duration:400
+            easing:'easeInOutCirc',
+            duration:300
         });
 
         t1.add({
             targets: this.branding,
-            translateX:[-400,0],
-            opacity:[0.3,1],
-            duration:200,
-            easing:'easeInQuad'
+            // translateX:[-400,0],
+            opacity:[0.5,1],
+            duration:200
         });
         t1.add({
             targets: apps,
             opacity: [0,1],
-            scale:[0.1,1],
+            // translateX:[-500,0],
+            // translateY:[-500,0],
+            scale:[0,1],
             delay: anime.stagger(10),
             duration:200,
-            easing: 'easeInQuad',
             complete:function(anim){
                 // brand.animate()
             }
-        },'-=100');
+        },'-=200');
 
     }
 

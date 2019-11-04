@@ -26,7 +26,7 @@ import '../assets/@polymer/paper-toast/paper-toast.js';
 import '../assets/@polymer/paper-icon-button/paper-icon-button.js';
 import '../assets/@polymer/paper-fab/paper-fab.js';
 
-import './existdb-packages.js';
+import './existdb-packagelist.js';
 
 
 // Extend the LitElement base class
@@ -53,19 +53,6 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
                     background: var(--existdb-control-bg);
 
                 };
-/*
-                --paper-input-container:{
-                    font-size:18px;
-                    margin-top:-18px;
-                    padding:0;
-                };
-*/
-
-/*
-                --paper-input-container-underline:{
-                    border:none;
-                };
-*/
                 
             }
 
@@ -76,7 +63,6 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
                 right: 0px;
                 bottom: 0px;
                 left: 0px;
-                /*height: calc(100% - 200px);*/
                 background-color: #eee;
                 overflow: hidden;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -91,50 +77,27 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
                 height:64px;
             }
 
-
-            paper-tabs{
-                background: var(--existdb-subheader-bg-color);
-                
-                --paper-tabs-selection-bar-color:var(--existdb-header-bg-color);
-                
-                --paper-tabs-selection-bar:{
-                    border:10px solid green;
-                };
-
-                height:64px;
-                font-size:20px;
-
-                
-
-                --paper-tab-content:{
-                    color:green;
-                    font-size:22px;
-                };
-
-            }
-            paper-tab{
-                position: relative;
-                --paper-tab-ink:var(--existdb-header-bg-color);
-            }
-
-
             #pages{
+                margin-top:-63px;
+            }
+            #pages, existdb-packagelist, iron-list{
                 display: block;
-                margin-top:56px;
+                width:100%;
+                height:100vh;
             }
             #pages > div{
                 width: 100%;
                 height:100%;
             }
 
+            
+
             [icon="apps"],[icon="search"],[icon="more-vert"]{
                 --iron-icon-fill-color:white;
                 --iron-icon-stroke-color:white;
-                /*width: 60px;*/
             }
             [icon="chevron-left"]{
                 --iron-icon-fill-color:var(--paper-blue-100);
-                /*--iron-icon-stroke-color:var(--paper-blue-900);*/
                 --paper-icon-button:{
                     width: 64px;
                     height:52px;
@@ -152,7 +115,6 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
                 width:100%;
                 border:none;
                 outline:none;
-                /*width: 260px;*/
                 font-size:16px;
                 background: var(--existdb-control-bg);
                 color:var(--existdb-control-color);
@@ -169,7 +131,6 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
                 color:var(--existdb-control-color);
             }
             ::selection{
-                /*background: var(--paper-blue-700);*/
                 color:var(--existdb-control-bg);
             }
 
@@ -186,8 +147,6 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
             app-toolbar {
                 z-index: 10;
                 background: var(--existdb-subheader-bg-color);
-                /*background: rgb(0, 136, 204);*/
-                /*background: rgb(0, 136, 204);*/
                 color:white;
             }
 
@@ -263,8 +222,8 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
 
             paper-fab {
                 position: fixed;
-                right: 20px;
-                bottom: 20px;
+                right: 50px;
+                bottom: 50px;
                 z-index: 100;
                 --paper-fab-background: var(--paper-pink-500);
                 --iron-icon-fill-color: var(--paper-grey-50);
@@ -313,19 +272,6 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
 
             }
 
-            .repo-toolbar {
-                position: fixed;
-                height: 64px;
-                width: 100%;
-            }
-
-            .repo-toolbar {
-                box-shadow: -1px 6px 6px -3px rgba(0, 0, 0, 0.4);
-            }
-
-            #remoteService {
-                padding-top: 65px;
-            }
             paper-listbox{
                 z-index:10;
             }
@@ -348,9 +294,6 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
                 color:white;
                 font-weight: 300;
             }
-            existdb-packages{
-                margin-top:2px;
-            }
 
             [hidden]{
                 display: none;
@@ -358,10 +301,6 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
 
             .counter{
                 font-size:smaller;
-            }
-
-            #localService{
-                margin-top:9px;
             }
 
             paper-input-container{
@@ -391,62 +330,13 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
             paper-fab{
                 position:fixed;
                 bottom:50px;
-                right:50px;
+                right:100px;
             }
         `;
     }
 
     render() {
         return html`
-/*
-        <iron-a11y-keys id="a11y2" target="${this.target}" keys="esc"
-                        @keys-pressed="${this._handleESC}"></iron-a11y-keys>
-
-        <iron-a11y-keys id="a11y3" target="${this.target}" keys="right"
-                        @keys-pressed="${this._switchToAvailable}"></iron-a11y-keys>
-
-        <iron-a11y-keys id="a11y4" target="${this.target}" keys="left"
-                        @keys-pressed="${this._switchToInstalled}"></iron-a11y-keys>
-
-        <iron-a11y-keys id="a11y5" target="${this.target}" keys="ctrl+f"
-                        @keys-pressed="${this._handleFilterShortcut}"></iron-a11y-keys>
-
-        <iron-a11y-keys id="a11y7" target="${this.target}" keys="ctrl+u"
-                        @keys-pressed="${this._showUpload}"></iron-a11y-keys>
-*/
-
-
-        <paper-card id="shortcuts" heading="shortcuts" hidden>
-            <div class="card-content">
-                <div class="card-actions">
-                    <table>
-                        <tr>
-                            <td>ESC</td>
-                            <td>reset filter</td>
-                        </tr>
-                        <tr>
-                            <td>Crtl + f</td>
-                            <td>filter packages</td>
-                        </tr>
-                        <tr>
-                            <td>Crtl + u</td>
-                            <td>upload</td>
-                        </tr>
-                        <tr>
-                            <td>right</td>
-                            <td>show available packages</td>
-                        </tr>
-                        <tr>
-                            <td>left</td>
-                            <td>show installed packages</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div class="card-actions">
-                <paper-button id="closeCard" @click="${this._showHideShortcuts}">close</paper-button>
-            </div>
-        </paper-card>
 
         <app-header-layout id="layout" fullbleed>
             <app-header slot="header" class="app-header" fixed>
@@ -475,17 +365,15 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
                 </app-toolbar>
             </app-header>
 
+
             <iron-pages id="pages" nolibs="true" selected="${this.selected}">
     
                 <div id="localPage">
-                        <existdb-packages id="localService"
-                                          service="../packageservice/packages/apps" autoLoad></existdb-packages>
+                    <existdb-packagelist id="localService" type="apps" autoLoad></existdb-packagelist>
                 </div>
     
                 <div id="repoPage">
-                    <existdb-packages id="remoteService"
-                                      service="../packageservice/packages/remote"></existdb-packages>
-                    </div>
+                    <existdb-packagelist id="remoteService" type="remote"></existdb-packagelist>
                 </div>
     
             </iron-pages>
@@ -493,14 +381,6 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
         <paper-fab icon="cloud-download"></paper-fab>
 
 
-        <paper-toast id="toast" text="" class="fit-bottom" duration="5000"></paper-toast>
-        <paper-toast id="toastError" text="" duration="-1" class="fit-bottom">
-            <paper-icon-button icon="clear" @click="${this._hideToast}"></paper-icon-button>
-        </paper-toast>
-        <paper-toast id="updates" text="Updates available" duration="15000" class="fit-bottom" always-on-top>
-            <paper-button @click="${this._goToAvailable}">install...</paper-button>
-            <paper-icon-button icon="clear" @click="${this._hideUpdatesToast}"></paper-icon-button>
-        </paper-toast>        
         `;
     }
 
@@ -519,8 +399,7 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
                 reflect: true,
             },
             selected: {
-                observer: '_handlePageChange',
-                value: 0
+                type: Number
             },
             target: {
                 type: Object
@@ -555,10 +434,11 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
     constructor(){
         super();
         this.viewName = 'Packagemanager';
+        this.selected = 0;
     }
 
     firstUpdated(changedProperties) {
-        // super.firstUpdated(changedProperties);
+        super.firstUpdated(changedProperties);
 
 
     }

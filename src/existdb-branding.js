@@ -74,8 +74,8 @@ class ExistdbBranding extends LitElement {
         const letters = this.shadowRoot.querySelectorAll('.letter');
         const first = this.shadowRoot.getElementById('e');
         const t1 = anime.timeline({
-            easing:'easeInExpo',
-            duration:400
+            easing:'easeInOutQuad',
+            duration:300
         });
 
 /*
@@ -88,17 +88,18 @@ class ExistdbBranding extends LitElement {
 */
 
         t1.add({
-            targets: bubbles,
-            opacity:[0.3,1],
-            duration:300,
-            delay: anime.stagger(30)
-        });
-
-        t1.add({
             targets: letters,
             opacity:[0.7,1],
-            duration:300
-        },'-=300');
+            duration:150,
+            delay:anime.stagger(15)
+        });
+        t1.add({
+            targets: bubbles,
+            opacity:[0.3,1],
+            duration:150,
+            delay: anime.stagger(15)
+        });
+
 
 /*
         t1.add({

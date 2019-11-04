@@ -10,6 +10,8 @@ export const settings = {
     appPackagePath:"../packageservice/packages/apps/json",
     localPackagePath:"../packageservice/packages/local/json",
     remotePackagePath:"../packageservice/packages/remote/json",
+    packageInstallPath:"../packageservice/packages/action",
+    packageRemovePath:"../packageservice/packages/action",
 
     loginUrl:"login"
 

@@ -1,33 +1,32 @@
 // Import the LitElement base class and html helper function
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 import '../assets/@polymer/paper-spinner/paper-spinner.js';
-import '../assets/@polymer/iron-ajax/iron-ajax.js';
 
-import('./repo-app.js');
+import('./existdb-packageloader.js');
+import('./existdb-package.js');
 
 // Extend the LitElement base class
-class ExistdbPackages extends LitElement {
+class ExistdbPackagelist extends LitElement {
 
     static get styles(){
         return css`
-            body{
-                margin:0;
-                padding:0;
-            }
             :host {
                 position: relative;
                 background: whitesmoke;
-                margin:0;
-                padding:0;
                 height: 100%;
                 width: 100%;
+                overflow:auto;
 
                 --paper-icon-button: {
                     color: var(--paper-blue-300);
                 };
 
             }
-
+            
+            .wrapper{
+                width:100%;
+                overflow:auto;
+            }
             #localItemList{
                 /*width:100%;*/
                 /*display: block;*/
@@ -86,20 +85,31 @@ class ExistdbPackages extends LitElement {
 
     render(){
         return html`
-        <iron-ajax id="loadPackages"
-                   verbose with-credentials
-                   method="get" handle-as="text"
-                   @response="${this._handlePackages}"
-                   @error="${this._handleLocalError}"></iron-ajax>
 
-
-        <div class="spin-wrapper" id="spinner">
-            <paper-spinner id="spinner" active></paper-spinner>
-        </div>
-
-        <div id="localItemList" class="items" type="packagemanager">
-
-        </div>        
+        <existdb-packageloader  id="loader"
+                                scope="${this.type}"
+                                @response="${this._handleList}"></existdb-packageloader>
+                                
+        <div class="wrapper">
+                 ${this.packages.map((item) =>
+                    html`
+                        <existdb-package    abbrev="${item.abbrev}"
+                                            authors="${item.authors}"
+                                            available="${item.available}"
+                                            description="${item.description}"
+                                            icon="${item.icon}"
+                                            installed="${item.installed}"
+                                            name="${name}"
+                                            path="${item.path}"
+                                            readonly="${item.readonly}"
+                                            status="${item.status}"
+                                            title="${item.title}"
+                                            type="${item.type}"
+                                            url="${item.url}"
+                                            version="${item.version}"
+                                            website="${item.website}"></existdb-package>
+                    `)}
+         </div>
         `;
     }
 
@@ -109,17 +119,18 @@ class ExistdbPackages extends LitElement {
                 type:String,
                 reflect:true
             },
-            service:{
-                type: String,
-                reflect:true
-            },
             autoLoad:{
                 type:Boolean
             },
             count:{
                 type:Number,
-                reflect:true,
-                observer:'_handleCount'
+                reflect:true
+            },
+            type:{
+                type: String
+            },
+            packages:{
+                type:Array
             }
         };
     }
@@ -129,24 +140,22 @@ class ExistdbPackages extends LitElement {
         super();
         this.autoLoad = false;
         this.count = 0;
-
-
+        this.packages = [];
     }
 
     firstUpdated(changedProperties) {
-        super.firstUpdated(changedProperties);
+        // super.firstUpdated(changedProperties);
 
-        const resolved = this._resolveService();
-        console.log('resolved service url: ', resolved);
-
+        console.log('firstUpdated ', this);
 
         this.spinner = this.shadowRoot.getElementById('spinner');
-        this.loader = this.shadowRoot.getElementById('loadPackages');
+        this.loader = this.shadowRoot.getElementById('loader');
 
         if(this.autoLoad){
             this.loadPackages();
         }
 
+/*
         window.addEventListener('package-removed', function(e){
             this.loadPackages();
         }.bind(this));
@@ -156,6 +165,7 @@ class ExistdbPackages extends LitElement {
             this.loadPackages();
         }.bind(this));
 
+*/
         /*
         window.addEventListener('package-remove-error', function (e) {
             this._toastError(e.detail.error.error.message)
@@ -173,14 +183,10 @@ class ExistdbPackages extends LitElement {
 
     }
 
-    _resolveService(){
-        return new URL(this.service, document.baseURI).href;
-    }
 
     loadPackages(){
         // this.$.spinner.hidden=false;
-        this._toggleSpinner();
-        this.loader.url = this._resolveService();
+        // this._toggleSpinner();
         this.loader.generateRequest();
     }
 
@@ -189,6 +195,43 @@ class ExistdbPackages extends LitElement {
         return this.packages;
     }
 
+    async _handleList(e){
+        console.log('handleList ',e);
+        this.packages = this.loader.lastResponse;
+
+        console.log('handleList items ', this.packages);
+
+        this.updateComplete.then(() => { this._animate() });
+
+    }
+
+    async _animate(){
+        var apps = this.shadowRoot.querySelectorAll('existdb-package');
+
+        console.log('apps ', apps);
+/*
+        anime({
+            targets: this.shadowRoot.querySelector('.wrapper'),
+            opacity: [0.7,1],
+            translateY:[-1000,0],
+            // scale:[0.1,1],
+            // delay: anime.stagger(30),
+            duration:400,
+            easing: 'easeInOutQuad'
+        });
+*/
+        anime({
+            targets: apps,
+            opacity: [0,1],
+            translateY:[-100,0],
+            scaleY:[0.5,1],
+            delay: anime.stagger(30),
+            duration:300,
+            easing: 'easeInOutCirc'
+        });
+
+
+    }
 
     _handlePackages (data) {
 //                console.log('existdb-packages._handlePackages');
@@ -199,7 +242,7 @@ class ExistdbPackages extends LitElement {
 
 
 //                console.log('repo-packages ', this.shadowRoot.querySelector('repo-packages'));
-        this.packages = this.querySelectorAll('repo-app')
+        this.packages = this.querySelectorAll('existdb-package')
         this.count = this.packages.length;
 
         this.dispatchEvent(new CustomEvent('packages-loaded', {bubbles: true, composed: true, detail: {type:this.id}}));
@@ -225,4 +268,4 @@ class ExistdbPackages extends LitElement {
 
 
 }
-customElements.define('existdb-packages', ExistdbPackages);
+customElements.define('existdb-packagelist', ExistdbPackagelist);

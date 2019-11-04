@@ -98,6 +98,14 @@ class ExistdbPackageloader extends LitElement {
 
     _handleError(e){
         console.error(e);
+        this.dispatchEvent(new CustomEvent(
+            'response-error',
+            {
+                composed: true,
+                bubbles: true,
+                detail: {'detail':e.detail}
+            }));
+
     }
 
 

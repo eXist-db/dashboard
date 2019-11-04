@@ -135,10 +135,11 @@ class ExistdbSettings extends ExistdbDashboardBase {
         const cards = this.shadowRoot.querySelectorAll('paper-card');
         anime({
             targets: cards,
-            opacity: [0.3, 1],
-            scale: [0.9, 1],
-            duration: 800,
-            delay: anime.stagger(200)
+            opacity: [0, 1],
+            scale: [0.5, 1],
+            duration: 300,
+            delay: anime.stagger(30),
+            easing:'easeInOutCirc'
         });
 
 

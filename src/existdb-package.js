@@ -1,8 +1,11 @@
 // Import the LitElement base class and html helper function
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
+import '../assets/@polymer/paper-ripple/paper-ripple.js';
+
+import './existdb-packageinstall.js';
 
 // todo
-class PackagemanagerApp extends LitElement {
+class ExistdbPackage extends LitElement {
 
     static get styles(){
         return css`
@@ -11,7 +14,8 @@ class PackagemanagerApp extends LitElement {
                 padding: 30px;
                 position: relative;
                 background: white;
-                margin-bottom:2px;
+                margin:4px;
+                
 
                 --paper-icon-button: {
                     color: var(--paper-blue-700);
@@ -25,6 +29,32 @@ class PackagemanagerApp extends LitElement {
                 0 3px 14px 2px rgba(0, 0, 0, 0.12),
                 0 5px 5px -3px rgba(0, 0, 0, 0.4);
             }
+            
+            .wrapper{
+                display: grid;
+                grid-template-columns:128px auto;
+            }
+            
+            .icon{
+                width:64px;
+                grid-column: 1 / 2;
+            }
+            .info{
+                grid-column: 2 / 3;
+            }
+            
+            .info .type{
+                text-transform:uppercase;
+            }
+            .info .title{
+                font-size:22px;
+                font-weight:500;
+                padding:10px 0;
+            }
+            .info .version:before{
+                content:'Version ';
+            }
+            
             #progress{
                 position: absolute;
                 top:0;
@@ -33,9 +63,6 @@ class PackagemanagerApp extends LitElement {
                 display: block;
             }
 
-            :host ::slotted(*){
-                @apply(--paper-font-common-base);
-            }
 
             paper-icon-button {
                 min-height: 36px;
@@ -64,74 +91,8 @@ class PackagemanagerApp extends LitElement {
                 top:0;
                 padding:10px;
             }
-            /* styles for metadata elements */
-            .wrapper ::slotted(repo-icon){
-                width:64px;
-                display: inline-block;
-                position: absolute;
-                top:30px;
-                left:30px;
-            }
-
-            .wrapper{
-                display: flex;
-                flex-direction: column ;
-                padding-left:100px;
-            }
-
-            /* hiding meta information for a package by default */
-            .wrapper ::slotted(repo-name),
-            .wrapper ::slotted(repo-description),
-            .wrapper ::slotted(repo-authors),
-            .wrapper ::slotted(repo-abbrev),
-            .wrapper ::slotted(repo-license),
-            .wrapper ::slotted(repo-website),
-            .wrapper ::slotted(repo-url),
-            .wrapper ::slotted(repo-requires),
-            .wrapper ::slotted(repo-changelog),
-            .wrapper ::slotted(repo-other),
-            .wrapper ::slotted(repo-note)
-            {
-                display:none;
-            }
-
-            /* 'application' or 'library' label */
-            .wrapper ::slotted(repo-type){
-                display:block;
-                color:var(--paper-blue--700);
-                font-size:14px;
-                text-transform:uppercase;
-            }
-            :host[type='library'] .wrapper ::slotted(repo-type){
-                color:var(--paper-green-700);
-            }
-
-            .wrapper ::slotted(repo-title){
-                font-size:22px;
-                font-weight:500;
-                margin:10px 0;
-                display: inline-block;
-                @apply(--paper-font-common-base);
-            }
 
 
-            .wrapper[show-all] ::slotted(repo-name),
-            .wrapper[show-all] ::slotted(repo-description),
-            .wrapper[show-all] ::slotted(repo-authors),
-            .wrapper[show-all] ::slotted(repo-abbrev),
-            .wrapper[show-all] ::slotted(repo-license),
-            .wrapper[show-all] ::slotted(repo-website),
-            .wrapper[show-all] ::slotted(repo-url),
-            .wrapper[show-all] ::slotted(repo-requires),
-            .wrapper[show-all] ::slotted(repo-changelog),
-            .wrapper[show-all] ::slotted(repo-change),
-            .wrapper[show-all] ::slotted(repo-other),
-            .wrapper[show-all] ::slotted(repo-note)
-            {
-
-                display:var(--app-details);
-                margin-bottom: 6px;
-            }
 
             [hidden]{
                 display: none;
@@ -151,8 +112,23 @@ class PackagemanagerApp extends LitElement {
 
         <paper-ripple></paper-ripple>
         <div id="wrapper" class="wrapper" url="${this.url}">
-            <slot id="slot"></slot>
-            <div class="actions">
+            
+            <img class="icon grid-item" src="${this.icon}">
+            
+            <div class="info grid-item">
+                <div class="type">${this.type}</div>
+                <div class="title">${this.title}</div>
+                <div class="version">${this.version}</div>
+                <div class="details">
+                </div>           
+            </div>
+            
+        </div>
+        
+        `;
+    }
+
+    /*
                 <existdb-package-install-action
                         id="install"
                         url="${this.url}"
@@ -163,57 +139,32 @@ class PackagemanagerApp extends LitElement {
 
                 <existdb-package-remove-action id="remove" url="${this.url}" abbrev="${this.abbrev}" package-title="${this.packageTitle}" no-remove="${this.readonly}"></existdb-package-remove-action>
                 <paper-icon-button id="info" icon="info" @click="${this._showInfo}"></paper-icon-button>
-            </div>
-        </div>
-        
-        `;
-    }
+*/
 
     static get properties() {
         return {
-            type: {
-                type: String,
-                reflect: true
-            },
             abbrev: {
                 type: String,
                 reflect: true
             },
-            version: {
-                type: String,
-                reflect: true
-            },
-            action: {
-                type: String,
-                reflect: true
-            },
-            status: {
-                type: String,
-                reflect: true,
-                notify: true,
-                observer: '_handleStatus'
-            },
-            installed: {
-                type: String
+            authors:{
+                type:Array
             },
             available: {
                 type: String
             },
-            url: {
-                type: String,
-                reflect: true
+            description:{
+                type: String
             },
-            packageTitle: {
-                type: String,
-                reflect: true,
-                notify: true
+            icon:{
+                type:String
             },
-            /*
-                                showAll: {
-                                    type: Boolean,
-                                    reflect: true
-                                },
-            */
+            installed: {
+                type: String
+            },
+            name:{
+                type: String
+            },
             path: {
                 type: String,
                 reflect: true
@@ -221,6 +172,28 @@ class PackagemanagerApp extends LitElement {
             readonly:{
                 type: String,
                 reflect:true
+            },
+            status: {
+                type: String,
+                reflect: true
+            },
+            title:{
+                type: String
+            },
+            type: {
+                type: String,
+                reflect: true
+            },
+            url: {
+                type: String,
+                reflect: true
+            },
+            version: {
+                type: String,
+                reflect: true
+            },
+            website:{
+                type:Array
             }
         };
     }
@@ -239,7 +212,8 @@ class PackagemanagerApp extends LitElement {
     }
 
     firstUpdated(changedProperties) {
-
+        this.tabIndex = 0;
+/*
         this.addEventListener('keyup',this._handleEnter);
 
         this.install = this.shadowRoot.getElementById('install');
@@ -252,6 +226,7 @@ class PackagemanagerApp extends LitElement {
         this.remove.addEventListener('package-remove-started',e => this._onRemove(e));
         this.addEventListener('click',e => this._handleTap(e));
         this.addEventListener('requestInstall', this._installOtherVersion);
+*/
 
     }
 
@@ -366,4 +341,4 @@ class PackagemanagerApp extends LitElement {
 
 
 }
-customElements.define('packagemanager-app', PackagemanagerApp);
+customElements.define('existdb-package', ExistdbPackage);

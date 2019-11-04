@@ -87,6 +87,9 @@ class LaunchButton extends LitElement {
             status: {
                 type: String
             },
+            /*
+            @deprecated
+             */
             packageTitle: {
                 type: String
             },

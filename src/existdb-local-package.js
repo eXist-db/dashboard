@@ -295,7 +295,8 @@ class ExistdbLocalPackage extends LitElement {
         e.stopPropagation();
 
 
-
+//todo
+/*
         const removeAction = this.shadowRoot.getElementById('removePackage');
         removeAction.params = {
             "package-url":this.url,
@@ -303,6 +304,7 @@ class ExistdbLocalPackage extends LitElement {
         };
         removeAction.url = new URL(settings.packageActionPath , document.baseURI).href;
         removeAction.generateRequest();
+*/
     }
 
 

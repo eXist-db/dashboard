@@ -40,7 +40,8 @@ class ExistdbPackageloader extends LitElement {
              * - 'remote' will request all remotely available packages
              */
             scope:{
-                type: String
+                type: String,
+                reflect:true
             },
             packages:{
                 type:Array

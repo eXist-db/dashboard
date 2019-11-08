@@ -51,6 +51,7 @@
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/paper-tabs": "^3.1.0",
     "@polymer/paper-toast": "^3.0.1",
+    "@polymer/paper-toggle-button": "^3.0.1",
     "@vaadin/router": "^1.5.1",
     "@vaadin/vaadin-upload": "^4.2.2",
     "@webcomponents/webcomponentsjs": "^2.3.0",

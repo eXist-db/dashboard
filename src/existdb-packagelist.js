@@ -168,7 +168,8 @@ class ExistdbPackagelist extends LitElement {
                 reflect:true
             },
             type:{
-                type: String
+                type: String,
+                reflect:true
             },
             packages:{
                 type:Array
@@ -225,11 +226,16 @@ class ExistdbPackagelist extends LitElement {
     }
 
 
-    loadPackages(){
+    async loadPackages(type){
         // this.$.spinner.hidden=false;
         // this._toggleSpinner();
+        if(type){
+            this.type = type;
+        }
+        this.loader.scope = this.type;
         this.loader.generateRequest();
     }
+
 
 
     getPackages(){

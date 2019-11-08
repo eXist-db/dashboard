@@ -22,6 +22,7 @@ import '../assets/@polymer/paper-tabs/paper-tabs.js';
 import '../assets/@polymer/paper-tabs/paper-tab.js';
 import '../assets/@polymer/paper-toast/paper-toast.js';
 import '../assets/@polymer/paper-icon-button/paper-icon-button.js';
+import '../assets/@polymer/paper-toggle-button/paper-toggle-button.js';
 
 import './existdb-packagelist.js';
 
@@ -50,7 +51,9 @@ class ExistdbPackages extends ExistdbDashboardBase {
 
                 };
                 
-                
+                --paper-toggle-button-checked-button-color:var(--existdb-header-bg-color);
+                --paper-toggle-button-label-color:var(--existdb-header-color);
+                --paper-toggle-button-label-spacing:6px;
             }
 
 
@@ -82,6 +85,9 @@ class ExistdbPackages extends ExistdbDashboardBase {
                 padding:0;               
             }
             
+            paper-toggle-button{
+                margin-left:10px;
+            }
             
             .filter{
                 display: inline-block;
@@ -308,13 +314,15 @@ class ExistdbPackages extends ExistdbDashboardBase {
                         </iron-input>
                     </paper-input-container>
 
+                    <paper-toggle-button id="toggle" @click="${this._showLibs}">libs</paper-toggle-button>
+
 
                 </app-toolbar>
             </app-header>
 
 
             <div class="page">
-                <existdb-packagelist type="local" autoLoad scroll-target="document"></existdb-packagelist>
+                <existdb-packagelist id="list" type="${this.type}" autoLoad scroll-target="document"></existdb-packagelist>
             </div>
         </app-header-layout>
         
@@ -334,9 +342,6 @@ class ExistdbPackages extends ExistdbDashboardBase {
             filter: {
                 type: String,
                 reflect: true,
-            },
-            selected: {
-                type: Number
             },
             target: {
                 type: Object
@@ -366,7 +371,8 @@ class ExistdbPackages extends ExistdbDashboardBase {
                 reflect: true
             },
             type:{
-                type:String
+                type:String,
+                reflect:true
             }
 
         };
@@ -375,14 +381,48 @@ class ExistdbPackages extends ExistdbDashboardBase {
     constructor(){
         super();
         this.viewName = 'Packages';
-        this.selected = 0;
-        this.type = 'apps'
+        this.type = 'apps';
+    }
+
+    attributeChangedCallback(name, oldval, newval) {
+        // console.log('attribute change: ', name, newval);
+        super.attributeChangedCallback(name, oldval, newval);
+
+        if(name == 'type'){
+            console.log('attribute change for type: ', name, newval);
+            console.log('property for type: ', this.type);
+            console.log('loader type ', this.shadowRoot.getElementById('list'));
+
+            // this.shadowRoot.getElementById('list').loadPackages(this.type);
+
+        }
     }
 
     firstUpdated(changedProperties) {
         super.firstUpdated(changedProperties);
+        console.log('firstUpdated ', changedProperties);
+        console.log('this type ', this.type);
     }
 
+    updated(changedProperties){
+        console.log('changedProps ', changedProperties);
+    }
+
+    _showLibs(e){
+        console.log('libs ', this.type);
+
+        const toggle = this.shadowRoot.getElementById('toggle');
+        if(toggle.checked){
+            this.type = 'local';
+        }else{
+            this.type = 'apps';
+        }
+
+        console.log('libs ', this.type);
+        console.log('loader type ', this.shadowRoot.getElementById('list').type);
+
+        this.shadowRoot.getElementById('list').loadPackages(this.type);
+    }
 
 
 

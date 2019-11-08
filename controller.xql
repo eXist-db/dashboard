@@ -57,7 +57,12 @@ else if ($exist:path = "/launcher") then(
         <forward url="index.html"/>
     </dispatch>
 )
-else if ($exist:path = "/packagemanager") then(
+else if ($exist:path = "/packages") then(
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <forward url="index.html"/>
+    </dispatch>
+)
+else if ($exist:path = "/repository") then(
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <forward url="index.html"/>
     </dispatch>
@@ -80,8 +85,10 @@ else if ($exist:path = "/settings") then(
 (:
     ### these rules additionally assert that a specific submodule can be loaded if user has required permission
 :)
-)else if (ends-with($exist:path,"existdb-packagemanager.js")) then(
-     local:checkAuth('packagemanager',$permissions)
+)else if (ends-with($exist:path,"existdb-packages.js")) then(
+     local:checkAuth('packages',$permissions)
+)else if (ends-with($exist:path,"existdb-repository.js")) then(
+     local:checkAuth('repository',$permissions)
 )else if (ends-with($exist:path,"existdb-usermanager.js")) then(
      local:checkAuth('usermanager',$permissions)
 )else if (ends-with($exist:path,"existdb-backup.js")) then(

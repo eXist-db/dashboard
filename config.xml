@@ -2,13 +2,15 @@
     <!-- this is reserved for later-->
     <auth>
         <group name="dba">
-            <permission>packagemanager</permission>
+            <permission>packages</permission>
+            <permission>repository</permission>
             <permission>usermanager</permission>
             <permission>backup</permission>
             <permission>settings</permission>
         </group>
         <group name="packagemanager">
-            <permission>packagemanager</permission>
+            <permission>packages</permission>
+            <permission>repository</permission>
         </group>
         <group name="usermanager">
             <permission>usermanager</permission>

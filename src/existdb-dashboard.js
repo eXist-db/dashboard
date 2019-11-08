@@ -123,7 +123,6 @@ class ExistdbDashboard extends LitElement {
             
             app-header{
                 background:var(--existdb-header-bg-color);
-                height:60px;
             }
 
             [main-title]{
@@ -283,12 +282,25 @@ class ExistdbDashboard extends LitElement {
                             </paper-item>
                         </a>
                         
-                        ${this.permissions.includes('packagemanager') ?
+                        ${this.permissions.includes('packages') ?
                             html`
-                            <a href="./packagemanager" tabindex="-1">
-                                <paper-item id="packagemanager" role="menuitem">
+                            <a href="./packages" tabindex="-1">
+                                <paper-item class="subNav" role="menuitem">
                                     <iron-icon icon="apps"></iron-icon>
-                                    <span class="menuitem">Package Manager</span>
+                                    <span class="menuitem">Packages</span>
+                                    <paper-ripple></paper-ripple>
+                                </paper-item>
+                            </a>
+                            `:''
+                        }
+                            
+                            
+                        ${this.permissions.includes('repository') ?
+                            html`
+                            <a href="./repository">
+                                <paper-item class="subNav" role="menuitem">
+                                    <iron-icon icon="cloud-download"></iron-icon>
+                                    <span class="menuitem">Repository</span>
                                     <paper-ripple></paper-ripple>
                                 </paper-item>
                             </a>
@@ -299,8 +311,13 @@ class ExistdbDashboard extends LitElement {
                             html`
                             <a href="./usermanager" tabindex="-1">
                                 <paper-item id="usermanager" role="menuitem">
+                                    <iron-icon icon="social:person"></iron-icon>
+                                    <span class="menuitem">Users</span>
+                                    <paper-ripple></paper-ripple>
+                                </paper-item>
+                                <paper-item id="usermanager" role="menuitem">
                                     <iron-icon icon="social:people"></iron-icon>
-                                    <span class="menuitem">User Manager</span>
+                                    <span class="menuitem">Groups</span>
                                     <paper-ripple></paper-ripple>
                                 </paper-item>
                             </a>
@@ -345,13 +362,13 @@ class ExistdbDashboard extends LitElement {
            <app-drawer-layout id="layout" fullbleed>
                 ${drawer}
                 <app-header-layout fullbleed>
-                    <app-header id="header" slot="header" fixed>
-                    <app-toolbar>
-                        <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-                        <div main-title>${this.currentView}</div>
-                        <slot name="login"></slot>
-                    </app-toolbar>
-                </app-header>
+                    <app-header id="header" slot="header" fixed condenses>
+                        <app-toolbar>
+                            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+                            <div main-title>${this.currentView}</div>
+                            <slot name="login"></slot>
+                        </app-toolbar>
+                    </app-header>
                     
                     <slot></slot>
 
@@ -386,9 +403,18 @@ class ExistdbDashboard extends LitElement {
     initRouter(){
         const router = new Router(document.querySelector('main'));
 
+        const loadPackages = (context, commands) => {
+            return import('./existdb-packages.js');
+        };
+        const loadRepository = (context, commands) => {
+            return import('./existdb-repository.js');
+        };
         const loadPackagemanager = (context, commands) => {
             // this._lazyImport('existdb-packagemanager');
-            return import('./existdb-packagemanager.js');
+            import('./existdb-packagemanager.js');
+            console.log('comp ', commands.component('existdb-packagemanager'));
+            commands.component('existdb-packagemanager').setAttribute('type','local');
+            // return import('./existdb-packagemanager.js');
         };
         const loadUsermanager = (context, commands) => {
             // this._lazyImport('existdb-usermanager');
@@ -410,6 +436,16 @@ class ExistdbDashboard extends LitElement {
             {
                 path: '/launcher',
                 component: 'existdb-launcher'
+            },
+            {
+                path: '/packages',
+                component: 'existdb-packages',
+                action: loadPackages
+            },
+            {
+                path: '/repository',
+                component: 'existdb-repository',
+                action: loadRepository
             },
             {
                 path: '/packagemanager',

@@ -85,7 +85,8 @@ class ExistdbPackageloader extends LitElement {
             return !this.ignores.includes(pkg.abbrev);
         });
 
-        this.lastResponse = filtered;
+        // this.lastResponse = filtered;
+        this.lastResponse = response;
         this.dispatchEvent(new CustomEvent(
             'reponse',
             {

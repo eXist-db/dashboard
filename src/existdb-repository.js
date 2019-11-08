@@ -17,22 +17,17 @@ import '../assets/@polymer/paper-menu-button/paper-menu-button.js';
 import '../assets/@polymer/paper-icon-button/paper-icon-button.js';
 import '../assets/@polymer/paper-listbox/paper-listbox.js';
 import '../assets/@polymer/paper-item/paper-item.js';
-import '../assets/@vaadin/vaadin-upload/vaadin-upload.js';
 import '../assets/@polymer/paper-button/paper-button.js';
 import '../assets/@polymer/paper-tabs/paper-tabs.js';
 import '../assets/@polymer/paper-tabs/paper-tab.js';
-import '../assets/@polymer/iron-pages/iron-pages.js';
 import '../assets/@polymer/paper-toast/paper-toast.js';
 import '../assets/@polymer/paper-icon-button/paper-icon-button.js';
-
-import '../assets/@polymer/paper-fab/paper-fab.js';
-import './existdb-switchpage.js';
 
 import './existdb-packagelist.js';
 
 
 // Extend the LitElement base class
-class ExistdbPackagemanager extends ExistdbDashboardBase {
+class ExistdbRepository extends ExistdbDashboardBase {
 
     static get styles() {
         return css`
@@ -44,8 +39,7 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
                 padding: 0;
                 margin: 0;
                 width: 100%;
-                height:100%;
-                overflow:auto;
+                height:100vh;
                 position: relative;
                 color:var(--existdb-content-color);
 
@@ -74,41 +68,22 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
             app-header {
                 background: var(--existdb-header-bg-color);
                 color:var(--existdb-subheader-color);
+                height:64px;
             }
             
             app-toolbar{
                 height:64px;
             }
-
-            #pages{
-                margin-top:-63px;
-            }
-            #pages, existdb-packagelist, iron-list{
-                display: block;
-                width:100%;
-                height:100vh;
-            }
-            #pages > div{
-                width: 100%;
-                height:100%;
-            }
-            
             .page{
                 position:relative;
+                height:100%;
+                padding:0; 
             }
             
-          
 
             [icon="apps"],[icon="search"],[icon="more-vert"]{
                 --iron-icon-fill-color:white;
                 --iron-icon-stroke-color:white;
-            }
-            [icon="chevron-left"]{
-                --iron-icon-fill-color:var(--paper-blue-100);
-                --paper-icon-button:{
-                    width: 64px;
-                    height:52px;
-                }
             }
             [icon="apps"]{
                 width:36px;
@@ -155,42 +130,6 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
                 z-index: 10;
                 background: var(--existdb-subheader-bg-color);
                 color:white;
-            }
-
-            vaadin-upload{
-                background: var(--existdb-subheader-bg-color);
-                padding:4px;
-                color: var(--existdb-subheader-color);
-                display:block;
-                whitespace:nowrap;
-                height:42px;
-                font-size:16px;
-            }
-            vaadin-upload:not([nodrop]){
-                border:none;
-            }
-            
-            vaadin-upload .drop-icon{
-                display:none;
-            }
-
-            [slot="drop-label"] {
-                padding:11px 0;
-                color:var(--existdb-subheader-color);
-                font-weight:300;
-                display: inline-block;
-            }
-            [slot="drop-label-icon"] {
-                margin: 0 1em;
-                width: 40px;
-                color:var(--paper-blue-500);
-                height:36px;
-            }
-
-            [slot="add-button"] {
-                background: var(--existdb-control-bg);
-                color:var(--existdb-control-color);
-                margin: 0 ;
             }
 
             #toast {
@@ -279,24 +218,6 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
 
             }
 
-            paper-listbox{
-                z-index:10;
-            }
-            paper-card{
-                position:fixed;
-                z-index:101;
-                width:340px;
-                padding:10px;
-                top:10px;
-                right:30px;
-                --paper-card-background-color:var(--paper-orange-500);
-            }
-            .card-content{
-                background:var(--paper-orange-300);
-            }
-            paper-card td:first-child{
-                padding:10px 10px 10px 0;
-            }
             [main-title]{
                 color:white;
                 font-weight: 300;
@@ -331,51 +252,23 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
             }
 
             #maintool{
-                margin-top:64px;
                 border-bottom: solid 1px var(--existdb-header-bg-color);
-            }
-            
-            existdb-switchpage{
-                position:absolute;
-                bottom:50px;
-                right:80px;
             }
             
         `;
     }
 
-    get page(){
-        if(this.selected == 0){
-            return html`<div id="localPage" class="local page">
-                            <existdb-packagelist id="localService" type="apps" autoLoad></existdb-packagelist>
-                        </div>`;
-
-        } else{
-            return html`<div id="repoPage" class="repo page">
-                            <existdb-packagelist id="remoteService" type="remote"></existdb-packagelist>
-                        </div>`;
-        }
-    }
-
     render() {
         return html`
 
-        <app-header-layout id="layout" fullbleed>
+        <app-header-layout id="layout" fullbleed has-scrolling-region>
             <app-header slot="header" class="app-header" fixed>
 
                 <app-toolbar id="maintool" static fixed>
                     <!--<iron-icon icon="apps"></iron-icon>-->
                     <slot name="toggleIcon"></slot>
                     
-                    <vaadin-upload id="uploader" accept=".xar" method="post" target="${this.targetUrl}">
-                        <iron-icon class="drop-icon" slot="drop-label-icon" icon="image:adjust"></iron-icon>
-                        <div slot="drop-label">DROPZONE - put your package(s) here.</div>
-                        <paper-button id="uploadBtn" slot="add-button">upload</paper-button>
-                    </vaadin-upload>
-
-
                     <div main-title></div>
-
 
                     <paper-input-container no-label-float>
                         <iron-input slot="input">
@@ -389,10 +282,11 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
             </app-header>
 
 
-            <exis   tdb-packagelist id="localService" type="apps" autoLoad></existdb-packagelist>
+            <div class="page">
+                <existdb-packagelist type="remote" autoLoad scroll-target="document"></existdb-packagelist>
+            </div>
         </app-header-layout>
         
-        <existdb-switchpage></existdb-switchpage>
         `;
     }
 
@@ -449,7 +343,7 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
 
     constructor(){
         super();
-        this.viewName = 'Packagemanager';
+        this.viewName = 'Repository';
         this.selected = 0;
         this.type = 'apps'
     }
@@ -457,29 +351,11 @@ class ExistdbPackagemanager extends ExistdbDashboardBase {
     firstUpdated(changedProperties) {
         super.firstUpdated(changedProperties);
 
-        this.pages = this.shadowRoot.getElementById('pages');
-        this.addEventListener('toggle-page',(e) => {this._togglePages(e)});
 
     }
 
-
-
-    _togglePages(e){
-        console.log('_togglePages e ', e.detail);
-        console.log('_togglePages e index ', e.detail.index);
-        console.log('_togglePages e index ', this.pages);
-
-        if(this.selected == 0){
-            this.pages.selected=1;
-            // this.shadowRoot.getElementById('remoteService').loadPackages();
-        }else{
-            this.pages.selected=0;
-            // this.shadowRoot.getElementById('localService').loadPackages();
-        }
-        this.render();
-    }
 
 
 }
 
-customElements.define('existdb-packagemanager', ExistdbPackagemanager);
+customElements.define('existdb-repository', ExistdbRepository);

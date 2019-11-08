@@ -2,8 +2,10 @@
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 import '../assets/@polymer/paper-spinner/paper-spinner.js';
 
+
 import('./existdb-packageloader.js');
-import('./existdb-package.js');
+import('./existdb-local-package.js');
+import('./existdb-remote-package.js');
 
 // Extend the LitElement base class
 class ExistdbPackagelist extends LitElement {
@@ -13,9 +15,11 @@ class ExistdbPackagelist extends LitElement {
             :host {
                 position: relative;
                 background: whitesmoke;
-                height: 100%;
+                height: 100vh;
                 width: 100%;
-                overflow:auto;
+                
+                display:flex;
+                flex-direction:column;
 
                 --paper-icon-button: {
                     color: var(--paper-blue-300);
@@ -24,8 +28,10 @@ class ExistdbPackagelist extends LitElement {
             }
             
             .wrapper{
+                flex:1 1 auto;
                 width:100%;
-                overflow:auto;
+                height:100%;
+                overflowX:auto;
             }
             #localItemList{
                 /*width:100%;*/
@@ -79,8 +85,58 @@ class ExistdbPackagelist extends LitElement {
                 0 1px 10px 0 rgba(0, 0, 0, 0.12),
                 0 2px 4px -1px rgba(0, 0, 0, 0.4);
             }
-
+            iron-icon{
+                width:80px;
+                height:80px;
+            }
         `;
+    }
+
+    _getPackage(item){
+        if(this.type === 'local'){
+            return html`
+                <existdb-local-package    
+                    abbrev="${item.abbrev}"
+                    authors='${item.authors}'
+                    available="${item.available}"
+                    description="${item.description}"
+                    icon="${item.icon}"
+                    installed="${item.installed}"
+                    name="${name}"
+                    path="${item.path}"
+                    readonly="${item.readonly}"
+                    status="${item.status}"
+                    title="${item.title}"
+                    type="${item.type}"
+                    url="${item.url}"
+                    version="${item.version}"
+                    website='{item.website}'>
+                </existdb-local-package>
+            `;
+        }else{
+            return html`
+                <existdb-remote-package
+                    abbrev="${item.abbrev}"
+                    authors='${item.authors}'
+                    available="${item.available}"
+                    changes="${item.changes}"
+                    description="${item.description}"
+                    icon="${item.icon}"
+                    installed="${item.installed}"
+                    name="${item.name}"
+                    note="${item.note}"
+                    path="${item.path}"
+                    readonly="${item.readonly}"
+                    requires="${item.requires}"
+                    status="${item.status}"
+                    title="${item.title}"
+                    type="${item.type}"
+                    url="${item.url}"
+                    version="${item.version}"
+                    website='{item.website}'>
+                </existdb-remote-package>
+            `;
+        }
     }
 
     render(){
@@ -89,25 +145,10 @@ class ExistdbPackagelist extends LitElement {
         <existdb-packageloader  id="loader"
                                 scope="${this.type}"
                                 @response="${this._handleList}"></existdb-packageloader>
-                                
         <div class="wrapper">
                  ${this.packages.map((item) =>
                     html`
-                        <existdb-package    abbrev="${item.abbrev}"
-                                            authors="${item.authors}"
-                                            available="${item.available}"
-                                            description="${item.description}"
-                                            icon="${item.icon}"
-                                            installed="${item.installed}"
-                                            name="${name}"
-                                            path="${item.path}"
-                                            readonly="${item.readonly}"
-                                            status="${item.status}"
-                                            title="${item.title}"
-                                            type="${item.type}"
-                                            url="${item.url}"
-                                            version="${item.version}"
-                                            website="${item.website}"></existdb-package>
+                        ${this._getPackage(item)}
                     `)}
          </div>
         `;
@@ -146,7 +187,7 @@ class ExistdbPackagelist extends LitElement {
     firstUpdated(changedProperties) {
         // super.firstUpdated(changedProperties);
 
-        console.log('firstUpdated ', this);
+        // console.log('firstUpdated ', this);
 
         this.spinner = this.shadowRoot.getElementById('spinner');
         this.loader = this.shadowRoot.getElementById('loader');
@@ -206,9 +247,16 @@ class ExistdbPackagelist extends LitElement {
     }
 
     async _animate(){
-        var apps = this.shadowRoot.querySelectorAll('existdb-package');
 
-        console.log('apps ', apps);
+        let packages;
+        if(this.type === 'local'){
+            packages =  this.shadowRoot.querySelectorAll('existdb-local-package');
+        }else {
+            packages =  this.shadowRoot.querySelectorAll('existdb-remote-package');
+        }
+        // var apps = this.shadowRoot.querySelectorAll('existdb-local-package');
+
+        console.log('packages to animate ', packages);
 /*
         anime({
             targets: this.shadowRoot.querySelector('.wrapper'),
@@ -221,7 +269,7 @@ class ExistdbPackagelist extends LitElement {
         });
 */
         anime({
-            targets: apps,
+            targets: packages,
             opacity: [0,1],
             translateY:[-100,0],
             scaleY:[0.5,1],

@@ -7,7 +7,11 @@ import {ExistdbDashboardBase} from './existdb-dashboard-base.js'
 class ExistdbUsermanager extends ExistdbDashboardBase {
 
     static get styles(){
-        return css``;
+        return css`
+            :host{
+                background:orange;
+            }
+        `;
     }
     constructor() {
         super();
@@ -17,7 +21,7 @@ class ExistdbUsermanager extends ExistdbDashboardBase {
 
     render(){
         return html`
-        
+            <div style="height: 4000px;">foo</div>
         `;
     }
 

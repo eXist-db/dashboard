@@ -10,16 +10,12 @@ import {settings} from './settings.js';
 
 // Extend the LitElement base class
 // @deprecated
-
-class ExistdbPackageinstall extends LitElement {
+class ExistdbRemovePackage extends LitElement {
 
     static get styles(){
         return css`
             :host{
                 display: inline-block;
-                text-align:center;
-                width:64px;
-                height:64px;
                 
             }
             :host ::slotted(*){
@@ -53,14 +49,7 @@ class ExistdbPackageinstall extends LitElement {
                    @error="${this._handleError}"></iron-ajax>
 
 
-        <paper-icon-button id="install" class="install" icon="file-download" title="download and install latest version" @click="${this.submit}"></paper-icon-button>
-        <form id="installform" is="iron-form" method="post" action="">
-            <input type="hidden" name="package-url" value="${this.url}"/>
-            <input type="hidden" name="abbrev" value="${this.abbrev}"/>
-            <input type="hidden" name="version" value="${this.version}"/>
-            <input type="hidden" name="action" value="install"/>
-            <input type="hidden" name="type" value="${this.type}"/>
-        </form>        
+        <paper-icon-button id="button" tabindex="0" style="color:var(--paper-grey-700);width:48px;height:48px;" class="install" icon="delete-forever" title="download and install latest version" @click="${this.submit}"></paper-icon-button>
         `;
     }
 
@@ -101,6 +90,11 @@ class ExistdbPackageinstall extends LitElement {
 
         this.addEventListener('iron-form-response', e => this.handleResponse);
         this.addEventListener('iron-form-error', e => this.handleError);
+        this.addEventListener('focus', function(e){
+            console.log('move focus to icon button');
+            const btn = this.shadowRoot.getElementById('button');
+            btn.focus();
+        });
     }
 
     submit (e) {
@@ -134,20 +128,24 @@ class ExistdbPackageinstall extends LitElement {
 //                console.log("_handleResponse ", error);
 
         if(error != undefined){
-            this.dispatchEvent(new CustomEvent('package-install-error', {bubbles: true, composed: true, detail: {error:error}}));
+            this.dispatchEvent(new CustomEvent('package-remove-error', {bubbles: true, composed: true, detail: {error:error}}));
         }else{
-            this.dispatchEvent(new CustomEvent('package-installed', {bubbles: true, composed: true, detail: {abbrev:this.abbrev}}));
+            this.dispatchEvent(new CustomEvent('package-removed', {bubbles: true, composed: true, detail: {abbrev:this.abbrev}}));
         }
     }
 
     _handleError (e) {
 //                console.log("error: ", e)
         //todo: this seems to be never triggered since we get 200 even in case of errors
-        this.dispatchEvent(new CustomEvent('package-install-error', {bubbles: true, composed: true, detail: {error:e.detail}}));
+        this.dispatchEvent(new CustomEvent('package-remove-error', {bubbles: true, composed: true, detail: {error:e.detail}}));
 
+    }
+
+    _moveFocus(e){
+        console.log('moveFocus');
     }
 
 
 
 }
-customElements.define('existdb-packageinstall', ExistdbPackageinstall);
+customElements.define('existdb-remove-package', ExistdbRemovePackage);

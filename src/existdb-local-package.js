@@ -2,10 +2,16 @@
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 import '../assets/@polymer/paper-ripple/paper-ripple.js';
 
-import './existdb-packageinstall.js';
+import '../assets/@polymer/iron-icons/iron-icons.js';
+import '../assets/@polymer/paper-icon-button/paper-icon-button.js';
+import '../assets/@polymer/paper-ripple/paper-ripple.js';
+
+
+import './existdb-remove-package.js';
+import {settings} from "./settings.js";
 
 // todo
-class ExistdbPackage extends LitElement {
+class ExistdbLocalPackage extends LitElement {
 
     static get styles(){
         return css`
@@ -32,7 +38,7 @@ class ExistdbPackage extends LitElement {
             
             .wrapper{
                 display: grid;
-                grid-template-columns:128px auto;
+                grid-template-columns:128px auto 100px;
             }
             
             .icon{
@@ -67,6 +73,9 @@ class ExistdbPackage extends LitElement {
             paper-icon-button {
                 min-height: 36px;
                 min-width: 36px;
+                color:var(--existdb-drawer-icon-color);
+                width:48px;
+                height:48px;
             }
 
             #info{
@@ -84,37 +93,43 @@ class ExistdbPackage extends LitElement {
                 right:40px;
                 display: inline-block;
             }
-
+            
             .actions{
-                position: absolute;
-                right:0;
-                top:0;
-                padding:10px;
+                align-self:center;
+                text-align:center;
             }
 
-
-
-            [hidden]{
-                display: none;
+            .actions > *{
+                display:inline-block;
+                text-align:center;
+               
             }
-
+            
             @media only screen and (min-width: 768px) {
                 :host{
                     min-width:300px;
                 }
             }
+            
         `;
     }
 
     render(){
         return html`
-        <paper-progress id="progress" class="slow"></paper-progress>
 
+        <iron-ajax id="removePackage"
+                   verbose with-credentials
+                   method="post" 
+                   handle-as="text"
+                   @response="${this._handleDeleteResponse}"
+                   @error="${this._handleDeleteError}"></iron-ajax>
+
+        <paper-progress id="progress" class="slow"></paper-progress>
         <paper-ripple></paper-ripple>
+
         <div id="wrapper" class="wrapper" url="${this.url}">
             
             <img class="icon grid-item" src="${this.icon}">
-            
             <div class="info grid-item">
                 <div class="type">${this.type}</div>
                 <div class="title">${this.title}</div>
@@ -122,33 +137,27 @@ class ExistdbPackage extends LitElement {
                 <div class="details">
                 </div>           
             </div>
+            <div class="actions">
+                <paper-icon-button icon="delete-forever" @click="${this._deletePackage}"></paper-icon-button>
+                <paper-icon-button icon="info-outline" @click="${this._showDetails}"></paper-icon-button>
+            </div>
             
         </div>
         
         `;
     }
 
-    /*
-                <existdb-package-install-action
-                        id="install"
-                        url="${this.url}"
-                        abbrev="${this.abbrev}"
-                        type="${this.type}"
-                        version="${this.version}"
-                        hidden></existdb-package-install-action>
-
-                <existdb-package-remove-action id="remove" url="${this.url}" abbrev="${this.abbrev}" package-title="${this.packageTitle}" no-remove="${this.readonly}"></existdb-package-remove-action>
-                <paper-icon-button id="info" icon="info" @click="${this._showInfo}"></paper-icon-button>
-*/
-
     static get properties() {
         return {
+            item:{
+                type:Object
+            },
             abbrev: {
                 type: String,
                 reflect: true
             },
             authors:{
-                type:Array
+                type:String
             },
             available: {
                 type: String
@@ -170,12 +179,10 @@ class ExistdbPackage extends LitElement {
                 reflect: true
             },
             readonly:{
-                type: String,
-                reflect:true
+                type: String
             },
             status: {
-                type: String,
-                reflect: true
+                type: String
             },
             title:{
                 type: String
@@ -189,11 +196,10 @@ class ExistdbPackage extends LitElement {
                 reflect: true
             },
             version: {
-                type: String,
-                reflect: true
+                type: String
             },
             website:{
-                type:Array
+                type:String
             }
         };
     }
@@ -201,7 +207,7 @@ class ExistdbPackage extends LitElement {
     constructor() {
 //                console.log('constructor Packagemanager-app')
         super();
-
+        this.item = {};
 
     }
 
@@ -213,20 +219,26 @@ class ExistdbPackage extends LitElement {
 
     firstUpdated(changedProperties) {
         this.tabIndex = 0;
-/*
+
+        // console.log('this.item is ', this.item);
+
+        this.addEventListener('click',this._openApp);
         this.addEventListener('keyup',this._handleEnter);
 
-        this.install = this.shadowRoot.getElementById('install');
-        this.remove = this.shadowRoot.getElementById('remove');
-        this.progress = this.shadowRoot.getElementById('progress');
-        this.wrapper = this.shadowRoot.getElementById('wrapper');
+        /*
+                this.addEventListener('keyup',this._handleEnter);
 
-        this.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
-        this.install.addEventListener('package-installed',e => this._onInstalled(e));
-        this.remove.addEventListener('package-remove-started',e => this._onRemove(e));
-        this.addEventListener('click',e => this._handleTap(e));
-        this.addEventListener('requestInstall', this._installOtherVersion);
-*/
+                this.install = this.shadowRoot.getElementById('install');
+                this.remove = this.shadowRoot.getElementById('remove');
+                this.progress = this.shadowRoot.getElementById('progress');
+                this.wrapper = this.shadowRoot.getElementById('wrapper');
+
+                this.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
+                this.install.addEventListener('package-installed',e => this._onInstalled(e));
+                this.remove.addEventListener('package-remove-started',e => this._onRemove(e));
+                this.addEventListener('click',e => this._handleTap(e));
+                this.addEventListener('requestInstall', this._installOtherVersion);
+        */
 
     }
 
@@ -253,28 +265,53 @@ class ExistdbPackage extends LitElement {
     }
 
     _handleEnter(e) {
-//                console.log("_handleEnter key ", e);
+               console.log("_handleEnter key ", e);
 //                console.log("_handleEnter key original", e.composedPath()[0]);
         var originalTarget = e.composedPath()[0];
 
 //                console.log("node ", originalTarget.nodeName);
 
         if(originalTarget.nodeName == 'PAPER-ICON-BUTTON') return;
-        if (e.target.nodeName.toLowerCase() == "packagemanager-app" && e.keyCode == 13) {
+        if (e.target.nodeName.toLowerCase() == "existdb-package" && (e.keyCode == 13 )) {
 //                    console.log('_handleEnter key enter fired');
             this._openApp()
         }
     }
 
-    _openApp () {
+    _openApp (e) {
+
         var isApp = this.type == 'application';
-//                console.log("######## is App: ", isApp);
+               console.log("######## is App: ", isApp);
 
         if(isApp && this.status == "installed"){
             var targetUrl = this.path;
             window.open(targetUrl)
         }
     }
+
+    async _deletePackage(e){
+        console.log('delete package');
+        e.preventDefault();
+        e.stopPropagation();
+
+
+
+        const removeAction = this.shadowRoot.getElementById('removePackage');
+        removeAction.params = {
+            "package-url":this.url,
+            "action":"remove"
+        };
+        removeAction.url = new URL(settings.packageActionPath , document.baseURI).href;
+        removeAction.generateRequest();
+    }
+
+
+    _showDetails(e){
+        console.log('show details');
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
 
     _handleStatus () {
 //                console.log("_handleStatus ",this.status);
@@ -309,6 +346,15 @@ class ExistdbPackage extends LitElement {
 
     }
 
+    _handleDeleteResponse(e){
+        console.error('not implemented yet');
+        this.dispatchEvent(new CustomEvent('package-removed', {bubbles: true, composed: true, detail: {abbrev:this.abbrev}}));
+    }
+
+    _handleDeleteError(e){
+        console.error('Error while deleting package: ', e.message);
+    }
+
     _onInstalled (e) {
 //                console.log('_onInstalled ', e);
         this.progress.indeterminate=false;
@@ -340,5 +386,6 @@ class ExistdbPackage extends LitElement {
 
 
 
+
 }
-customElements.define('existdb-package', ExistdbPackage);
+customElements.define('existdb-local-package', ExistdbLocalPackage);

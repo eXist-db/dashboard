@@ -143,7 +143,7 @@ class ExistdbPackagelist extends LitElement {
         return html`
 
         <existdb-packageloader  id="loader"
-                                scope="${this.type}"
+                                scope="${this.scope}"
                                 @response="${this._handleList}"></existdb-packageloader>
         <div class="wrapper">
                  ${this.packages.map((item) =>
@@ -167,7 +167,7 @@ class ExistdbPackagelist extends LitElement {
                 type:Number,
                 reflect:true
             },
-            type:{
+            scope:{
                 type: String,
                 reflect:true
             },
@@ -183,6 +183,7 @@ class ExistdbPackagelist extends LitElement {
         this.autoLoad = false;
         this.count = 0;
         this.packages = [];
+        this.scope= 'apps';
     }
 
     firstUpdated(changedProperties) {
@@ -226,13 +227,13 @@ class ExistdbPackagelist extends LitElement {
     }
 
 
-    async loadPackages(type){
+    loadPackages(scope){
         // this.$.spinner.hidden=false;
         // this._toggleSpinner();
-        if(type){
-            this.type = type;
+        if(scope){
+            this.scope = scope;
         }
-        this.loader.scope = this.type;
+        this.loader.scope = this.scope;
         this.loader.generateRequest();
     }
 
@@ -245,10 +246,22 @@ class ExistdbPackagelist extends LitElement {
     async _handleList(e){
         console.log('handleList ',e);
         this.packages = this.loader.lastResponse;
-
-        console.log('handleList items ', this.packages);
+        this.count = this.packages.length;
+        console.log('handleList items ', this.packages, this.count);
 
         this.updateComplete.then(() => { this._animate() });
+
+        this.dispatchEvent(new CustomEvent('packages-loaded',
+            {
+                bubbles: true,
+                composed: true,
+                detail:
+                    {
+                        scope:this.scope,
+                        count:this.count
+                    }
+            }));
+
 
     }
 
@@ -287,21 +300,6 @@ class ExistdbPackagelist extends LitElement {
 
     }
 
-    _handlePackages (data) {
-//                console.log('existdb-packages._handlePackages');
-
-        // this.appList = this.loader.lastResponse;
-
-        // this.innerHTML = this.loader.lastResponse
-
-
-//                console.log('repo-packages ', this.shadowRoot.querySelector('repo-packages'));
-        this.packages = this.querySelectorAll('existdb-package')
-        this.count = this.packages.length;
-
-        this.dispatchEvent(new CustomEvent('packages-loaded', {bubbles: true, composed: true, detail: {type:this.id}}));
-        this._toggleSpinner();
-    }
 
     _handleLocalError(e) {
 //                console.log("loading of available packages failed", e.detail.error)

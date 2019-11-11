@@ -45,6 +45,10 @@ class ExistdbPackageloader extends LitElement {
             },
             packages:{
                 type:Array
+            },
+            count:{
+                type:Number,
+                reflect:true
             }
         };
     }
@@ -86,8 +90,9 @@ class ExistdbPackageloader extends LitElement {
             return !this.ignores.includes(pkg.abbrev);
         });
 
-        // this.lastResponse = filtered;
-        this.lastResponse = response;
+        this.count = filtered.length;
+        this.lastResponse = filtered;
+        // this.lastResponse = response;
         this.dispatchEvent(new CustomEvent(
             'reponse',
             {

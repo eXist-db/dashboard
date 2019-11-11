@@ -65,6 +65,7 @@ class ExistdbDashboard extends LitElement {
                 --paper-item-focused-before: {
                     background: white;
                 }
+                position:relative;
             }
 
             app-toolbar {
@@ -127,6 +128,10 @@ class ExistdbDashboard extends LitElement {
 
             [main-title]{
                 color:var(--existdb-header-color);
+            }
+            
+            #title{
+                display:inline-block;
             }
           
             
@@ -220,6 +225,22 @@ class ExistdbDashboard extends LitElement {
                 margin-right: 20px;
 
             }
+            
+            
+            .badge{
+                border-radius:10px;
+                background:var(--existdb-header-bg-color);
+                color:var(--existdb-header-color);
+                padding:0 4px;
+                height:20px;
+                font-size:14px;
+                padding-bottom:2px;
+                font-weight:bold;
+                margin-left:4px;
+                display:inline-block;
+                position:absolute;
+                right:10px;                
+            }
         `;
     }
 
@@ -237,6 +258,12 @@ class ExistdbDashboard extends LitElement {
             },
             permissions:{
                 type:Array
+            },
+            localcount:{
+                type:Number
+            },
+            remotecount:{
+                type:Number
             }
         };
     }
@@ -245,6 +272,7 @@ class ExistdbDashboard extends LitElement {
         super();
         this.loggedIn = false;
         this.permissions = [];
+        this.localcount=0;
     }
 
 
@@ -287,7 +315,10 @@ class ExistdbDashboard extends LitElement {
                             <a href="./packages" tabindex="-1">
                                 <paper-item class="subNav" role="menuitem">
                                     <iron-icon icon="apps"></iron-icon>
-                                    <span class="menuitem">Packages</span>
+                                    <span id="packagenav" class="menuitem">Packages</span>
+                                    
+                                    <span class="badge">${this.localcount}</span>                               
+
                                     <paper-ripple></paper-ripple>
                                 </paper-item>
                             </a>
@@ -301,6 +332,7 @@ class ExistdbDashboard extends LitElement {
                                 <paper-item class="subNav" role="menuitem">
                                     <iron-icon icon="cloud-download"></iron-icon>
                                     <span class="menuitem">Repository</span>
+                                    <span class="badge">${this.remotecount}</span>                               
                                     <paper-ripple></paper-ripple>
                                 </paper-item>
                             </a>
@@ -365,8 +397,11 @@ class ExistdbDashboard extends LitElement {
                     <app-header id="header" slot="header" fixed condenses>
                         <app-toolbar>
                             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-                            <div main-title>${this.currentView}</div>
+                            <div main-title>
+                                <span id="title">${this.currentView}</span>
+                            </div>
                             <slot name="login"></slot>
+
                         </app-toolbar>
                     </app-header>
                     
@@ -394,6 +429,7 @@ class ExistdbDashboard extends LitElement {
         this.addEventListener('logged-in', this._handleLogin);
         this.addEventListener('logged-out', this._handleLogout);
         this.addEventListener('set-title', this._setTitle);
+        this.addEventListener('packages-loaded', this._updateCount);
 
 
 
@@ -515,6 +551,17 @@ class ExistdbDashboard extends LitElement {
         if(layout.narrow){
             drawer.close();
         }
+    }
+
+    _updateCount(e){
+        console.log('updateCount ', e.detail);
+        if(e.detail.scope == 'local' || e.detail.scope == 'apps'){
+            this.localcount = e.detail.count;
+        }
+        if(e.detail.scope == 'remote'){
+            this.remotecount = e.detail.count;
+        }
+        console.log('dashbaord count ', this.count);
     }
 
 

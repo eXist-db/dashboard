@@ -256,10 +256,6 @@ class ExistdbPackages extends ExistdbDashboardBase {
                 display: none;
             }
 
-            .counter{
-                font-size:smaller;
-            }
-
             paper-input-container{
 
                 --paper-input-container-underline:{
@@ -283,7 +279,6 @@ class ExistdbPackages extends ExistdbDashboardBase {
             #maintool{
                 border-bottom: solid 1px var(--existdb-header-bg-color);
             }
-            
         `;
     }
 
@@ -314,7 +309,7 @@ class ExistdbPackages extends ExistdbDashboardBase {
                         </iron-input>
                     </paper-input-container>
 
-                    <paper-toggle-button id="toggle" @click="${this._showLibs}">libs</paper-toggle-button>
+                    <paper-toggle-button id="toggle" @click="${this._showLibs}" ?checked="${this.loadlibs}">LIBS</paper-toggle-button>
 
 
                 </app-toolbar>
@@ -322,15 +317,25 @@ class ExistdbPackages extends ExistdbDashboardBase {
 
 
             <div class="page">
-                <existdb-packagelist id="list" type="${this.type}" autoLoad scroll-target="document"></existdb-packagelist>
+                <existdb-packagelist id="list" 
+                                     scope="${this.scope}"
+                                     autoLoad
+                                     scroll-target="document"
+                                     count="${this.count}"
+                                     @packages-loaded="${this._updateCount}"></existdb-packagelist>
             </div>
         </app-header-layout>
         
         `;
     }
 
+
     static get properties() {
         return {
+            count:{
+                type:Number,
+                reflect:true
+            },
             url: {
                 type: String,
                 reflect: true
@@ -349,14 +354,6 @@ class ExistdbPackages extends ExistdbDashboardBase {
             currentFocus: {
                 type: Number
             },
-            localCount: {
-                type: Number,
-                value: 0
-            },
-            remoteCount: {
-                type: Number,
-                value: 0
-            },
             local: {
                 type: Array,
                 value: []
@@ -370,8 +367,12 @@ class ExistdbPackages extends ExistdbDashboardBase {
                 value: false,
                 reflect: true
             },
-            type:{
+            scope:{
                 type:String,
+                reflect:true
+            },
+            loadlibs:{
+                type:Boolean,
                 reflect:true
             }
 
@@ -381,27 +382,15 @@ class ExistdbPackages extends ExistdbDashboardBase {
     constructor(){
         super();
         this.viewName = 'Packages';
-        this.type = 'apps';
+        this.count=0;
+        this.scope = 'apps';
     }
 
-    attributeChangedCallback(name, oldval, newval) {
-        // console.log('attribute change: ', name, newval);
-        super.attributeChangedCallback(name, oldval, newval);
-
-        if(name == 'type'){
-            console.log('attribute change for type: ', name, newval);
-            console.log('property for type: ', this.type);
-            console.log('loader type ', this.shadowRoot.getElementById('list'));
-
-            // this.shadowRoot.getElementById('list').loadPackages(this.type);
-
-        }
-    }
 
     firstUpdated(changedProperties) {
         super.firstUpdated(changedProperties);
         console.log('firstUpdated ', changedProperties);
-        console.log('this type ', this.type);
+        console.log('this scope ', this.scope);
     }
 
     updated(changedProperties){
@@ -409,22 +398,56 @@ class ExistdbPackages extends ExistdbDashboardBase {
     }
 
     _showLibs(e){
-        console.log('libs ', this.type);
+        console.log('libs ', this.scope);
 
         const toggle = this.shadowRoot.getElementById('toggle');
         if(toggle.checked){
-            this.type = 'local';
+            this.scope = 'local';
+            this.loadlibs = true;
         }else{
-            this.type = 'apps';
+            this.scope = 'apps';
+            this.loadlibs = false;
         }
 
-        console.log('libs ', this.type);
-        console.log('loader type ', this.shadowRoot.getElementById('list').type);
+        console.log('libs ', this.scope);
+        console.log('loader scope ', this.shadowRoot.getElementById('list').scope);
 
-        this.shadowRoot.getElementById('list').loadPackages(this.type);
+        this.shadowRoot.getElementById('list').loadPackages(this.scope);
     }
 
+    _handleFilter (e) {
+//                console.log('_handleFilter', e);
 
+
+        var apps = [];
+        var filterString = this.shadowRoot.getElementById('filterLocal').value.toLowerCase();
+
+        // ### on local page
+        apps = this.local;
+        this.localCount = this._filter(apps,filterString);
+
+
+        /*
+                        this.count = apps.length;
+                        for (var i = 0; i < apps.length; ++i) {
+                            var app = apps[i]
+                            var shortTitle = app.querySelector("repo-title").textContent;
+
+                            if (!shortTitle.toLowerCase().includes(filterString)) {
+                                app.setAttribute('hidden', '')
+                                this.count--;
+                            } else if (app.hasAttribute('hidden')) {
+                                app.removeAttribute('hidden')
+                            }
+                        }
+        */
+
+
+    }
+
+    _updateCount(e){
+        this.count = e.detail.count;
+    }
 
 }
 

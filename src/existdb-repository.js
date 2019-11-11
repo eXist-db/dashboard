@@ -283,7 +283,11 @@ class ExistdbRepository extends ExistdbDashboardBase {
 
 
             <div class="page">
-                <existdb-packagelist type="remote" autoLoad scroll-target="document"></existdb-packagelist>
+                <existdb-packagelist 
+                    scope="${this.scope}"
+                    autoLoad 
+                    scroll-target="document" 
+                    @packages-loaded="${this._updateCount}"></existdb-packagelist>
             </div>
         </app-header-layout>
         
@@ -313,13 +317,9 @@ class ExistdbRepository extends ExistdbDashboardBase {
             currentFocus: {
                 type: Number
             },
-            localCount: {
+            count: {
                 type: Number,
-                value: 0
-            },
-            remoteCount: {
-                type: Number,
-                value: 0
+                reflect:true
             },
             local: {
                 type: Array,
@@ -334,7 +334,7 @@ class ExistdbRepository extends ExistdbDashboardBase {
                 value: false,
                 reflect: true
             },
-            type:{
+            scope:{
                 type:String
             }
 
@@ -345,7 +345,8 @@ class ExistdbRepository extends ExistdbDashboardBase {
         super();
         this.viewName = 'Repository';
         this.selected = 0;
-        this.type = 'apps'
+        this.scope = 'remote';
+        this.count = 0;
     }
 
     firstUpdated(changedProperties) {
@@ -353,6 +354,12 @@ class ExistdbRepository extends ExistdbDashboardBase {
 
 
     }
+
+    _updateCount(e){
+        console.log(this, '_updateCount ', e.detail.count);
+        this.count = e.detail.count;
+    }
+
 
 
 

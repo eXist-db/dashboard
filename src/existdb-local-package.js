@@ -13,7 +13,7 @@ import {settings} from "./settings.js";
 // todo
 class ExistdbLocalPackage extends LitElement {
 
-    static get styles(){
+    static get styles() {
         return css`
             :host {
                 display: block;
@@ -28,6 +28,9 @@ class ExistdbLocalPackage extends LitElement {
                 };
                 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12),0 3px 1px -2px rgba(0, 0, 0, 0.2);
                 cursor: pointer;
+                
+                --paper-progress-active-color:var(--existdb-highlight-bg);
+
 
             }
             :host:focus{
@@ -114,7 +117,7 @@ class ExistdbLocalPackage extends LitElement {
         `;
     }
 
-    render(){
+    render() {
         return html`
 
         <iron-ajax id="removePackage"
@@ -138,8 +141,8 @@ class ExistdbLocalPackage extends LitElement {
                 </div>           
             </div>
             <div class="actions">
-                <paper-icon-button icon="delete-forever" @click="${this._deletePackage}"></paper-icon-button>
-                <paper-icon-button icon="info-outline" @click="${this._showDetails}"></paper-icon-button>
+                <paper-icon-button icon="delete-forever" @click="${this._deletePackage}" title="delete package"></paper-icon-button>
+                <paper-icon-button icon="info-outline" @click="${this._showDetails}" title="show details"></paper-icon-button>
             </div>
             
         </div>
@@ -149,42 +152,42 @@ class ExistdbLocalPackage extends LitElement {
 
     static get properties() {
         return {
-            item:{
-                type:Object
+            item: {
+                type: Object
             },
             abbrev: {
                 type: String,
                 reflect: true
             },
-            authors:{
-                type:String
+            authors: {
+                type: String
             },
             available: {
                 type: String
             },
-            description:{
+            description: {
                 type: String
             },
-            icon:{
-                type:String
+            icon: {
+                type: String
             },
             installed: {
                 type: String
             },
-            name:{
+            name: {
                 type: String
             },
             path: {
                 type: String,
                 reflect: true
             },
-            readonly:{
+            readonly: {
                 type: String
             },
             status: {
                 type: String
             },
-            title:{
+            title: {
                 type: String
             },
             type: {
@@ -198,8 +201,8 @@ class ExistdbLocalPackage extends LitElement {
             version: {
                 type: String
             },
-            website:{
-                type:String
+            website: {
+                type: String
             }
         };
     }
@@ -212,7 +215,6 @@ class ExistdbLocalPackage extends LitElement {
     }
 
 
-
     connectedCallback() {
         super.connectedCallback();
     }
@@ -222,8 +224,10 @@ class ExistdbLocalPackage extends LitElement {
 
         // console.log('this.item is ', this.item);
 
-        this.addEventListener('click',this._openApp);
-        this.addEventListener('keyup',this._handleEnter);
+        this.addEventListener('click', this._openApp);
+        this.addEventListener('keyup', this._handleEnter);
+
+        this.progress = this.shadowRoot.getElementById('progress');
 
         /*
                 this.addEventListener('keyup',this._handleEnter);
@@ -242,7 +246,7 @@ class ExistdbLocalPackage extends LitElement {
 
     }
 
-    _handleTap (e) {
+    _handleTap(e) {
         e.stopPropagation();
 
         var t = e.target.nodeName.toLowerCase();
@@ -251,94 +255,93 @@ class ExistdbLocalPackage extends LitElement {
 //                console.log('_handleTap ',e.path);
 
         // ugly special case handling for Chrome and FF but don't know how to solve better yet.
-        if(e.path != undefined){
-            console.log('########',e.path[0].nodeName);
-            if(e.path[0].nodeName == 'EXISTDB-PACKAGE-REMOVE-ACTION') return;
+        if (e.path != undefined) {
+            console.log('########', e.path[0].nodeName);
+            if (e.path[0].nodeName == 'EXISTDB-PACKAGE-REMOVE-ACTION') return;
         }
-        if(e.b != undefined && e.b[0].id == 'remove') return;
+        if (e.b != undefined && e.b[0].id == 'remove') return;
 
-        if(t == 'existdb-package-remove') return;
-        if(t == "paper-icon-button") return;
-        if(t == "iron-icon") return;
+        if (t == 'existdb-package-remove') return;
+        if (t == "paper-icon-button") return;
+        if (t == "iron-icon") return;
 
         this._openApp();
     }
 
     _handleEnter(e) {
-               console.log("_handleEnter key ", e);
+        console.log("_handleEnter key ", e);
 //                console.log("_handleEnter key original", e.composedPath()[0]);
         var originalTarget = e.composedPath()[0];
 
 //                console.log("node ", originalTarget.nodeName);
 
-        if(originalTarget.nodeName == 'PAPER-ICON-BUTTON') return;
-        if (e.target.nodeName.toLowerCase() == "existdb-package" && (e.keyCode == 13 )) {
+        if (originalTarget.nodeName == 'PAPER-ICON-BUTTON') return;
+        if (e.target.nodeName.toLowerCase() == "existdb-package" && (e.keyCode == 13)) {
 //                    console.log('_handleEnter key enter fired');
             this._openApp()
         }
     }
 
-    _openApp (e) {
+    _openApp(e) {
 
         var isApp = this.type == 'application';
-               console.log("######## is App: ", isApp);
+        console.log("######## is App: ", isApp);
 
-        if(isApp && this.status == "installed"){
+        if (isApp && this.status == "installed") {
             var targetUrl = this.path;
             window.open(targetUrl)
         }
     }
 
-    async _deletePackage(e){
+    async _deletePackage(e) {
         console.log('delete package');
         e.preventDefault();
         e.stopPropagation();
 
+        this.progress.hidden = false;
+        this.progress.indeterminate = true;
 
-//todo
-/*
         const removeAction = this.shadowRoot.getElementById('removePackage');
         removeAction.params = {
-            "package-url":this.url,
-            "action":"remove"
+            "package-url": this.url,
+            "action": "remove"
         };
-        removeAction.url = new URL(settings.packageActionPath , document.baseURI).href;
+        removeAction.url = new URL(settings.packageActionPath, document.baseURI).href;
         removeAction.generateRequest();
-*/
     }
 
 
-    _showDetails(e){
+    _showDetails(e) {
         console.log('show details');
         e.preventDefault();
         e.stopPropagation();
     }
 
 
-    _handleStatus () {
+    _handleStatus() {
 //                console.log("_handleStatus ",this.status);
 
-        if(this.status == 'installed'){
+        if (this.status == 'installed') {
             this.install.hidden = true;
             this.remove.hidden = false;
-        }else{
+        } else {
             this.remove.hidden = true;
             this.install.hidden = false;
         }
     }
 
-    _showInfo(e){
+    _showInfo(e) {
 //                console.log('_showInfo ', e);
         e.stopPropagation();
 //                e.preventDefault();
         var showsAll = this.wrapper.getAttribute('show-all');
 
-        if(!showsAll){
-            this.wrapper.setAttribute('show-all','true');
+        if (!showsAll) {
+            this.wrapper.setAttribute('show-all', 'true');
 //                    this.$.wrapper.classList.add('show');
             this.updateStyles({'--app-details': 'table-row'});
 
-        }else{
+        } else {
             this.wrapper.removeAttribute('show-all');
 //                    this.$.wrapper.classList.remove('show');
             this.updateStyles({'--app-details': 'none'});
@@ -348,46 +351,80 @@ class ExistdbLocalPackage extends LitElement {
 
     }
 
-    _handleDeleteResponse(e){
-        console.error('not implemented yet');
-        this.dispatchEvent(new CustomEvent('package-removed', {bubbles: true, composed: true, detail: {abbrev:this.abbrev}}));
+    _handleDeleteResponse(e) {
+        this.progress.hidden = true;
+
+        const remove = this.shadowRoot.getElementById('removePackage');
+        const resp = JSON.parse(remove.lastResponse);
+
+        if (Reflect.has(resp, 'error')) {
+            this.dispatchEvent(new CustomEvent('package-remove-error', {
+                bubbles: true,
+                composed: true,
+                detail: {error: error}
+            }));
+        } else {
+
+/*
+            anime({
+                targets:this,
+                duration:300,
+                opacity:[1,0],
+                display:'none'
+            });
+*/
+
+            this.hidden=true;
+
+            this.dispatchEvent(new CustomEvent('package-removed', {
+                bubbles: true,
+                composed: true,
+                detail: {abbrev: this.abbrev}
+            }));
+        }
+
+
     }
 
-    _handleDeleteError(e){
+    _handleDeleteError(e) {
         console.error('Error while deleting package: ', e.message);
+        this.dispatchEvent(new CustomEvent('package-remove-error', {
+            bubbles: true,
+            composed: true,
+            detail: {error: e.message}
+        }));
+
     }
 
-    _onInstalled (e) {
+    _onInstalled(e) {
 //                console.log('_onInstalled ', e);
-        this.progress.indeterminate=false;
-        this.progress.value=100;
+        this.progress.indeterminate = false;
+        this.progress.value = 100;
 //                this.dispatchEvent(new CustomEvent('package-installed', {detail: {packageUrl:e.detail.package}}));
 
     }
 
-    _onInstallStarted (e) {
+    _onInstallStarted(e) {
 //                console.log('_onInstallStarted ', e);
-        this.progress.hidden=false;
-        this.progress.indeterminate=true;
+        this.progress.hidden = false;
+        this.progress.indeterminate = true;
         this.install.install();
     }
 
-    _onRemove (e){
+    _onRemove(e) {
 //                console.log('_onRemoveStarted ', e);
-        this.progress.hidden=false;
-        this.progress.indeterminate=true;
+        this.progress.hidden = false;
+        this.progress.indeterminate = true;
         this.remove.removeIt();
     }
 
-    _installOtherVersion (e) {
+    _installOtherVersion(e) {
 //                console.log("###################### install other version", e.detail.version);
         this.install.version = e.detail.version;
         this.install.submit(e);
     }
 
 
-
-
-
 }
+
 customElements.define('existdb-local-package', ExistdbLocalPackage);

@@ -16,6 +16,9 @@ import '../assets/@polymer/paper-item/paper-item.js';
 import '../assets/@polymer/paper-ripple/paper-ripple.js';
 import {Router} from '../assets/@vaadin/router/dist/vaadin-router.js';
 import '../assets/@polymer/paper-icon-button/paper-icon-button.js';
+import '../assets/@polymer/paper-toast/paper-toast.js';
+import '../assets/@polymer/paper-dialog/paper-dialog.js';
+import '../assets/@polymer/paper-button/paper-button.js';
 
 import './existdb-login.js';
 import './existdb-launcher.js';
@@ -52,6 +55,11 @@ class ExistdbDashboard extends LitElement {
                 --app-drawer-content-container:{
                     background:green;
                 };
+                
+                --paper-badge:{
+                    font-size:14px;
+                };
+
 
             }
 
@@ -241,6 +249,30 @@ class ExistdbDashboard extends LitElement {
                 position:absolute;
                 right:10px;                
             }
+            
+            paper-toast{
+                --paper-toast-background-color:var(--existdb-highlight-bg);
+                --paper-toast-color:var(--existdb-highlight-color);
+                font-weight:bold;
+                
+            }
+            
+            paper-dialog{
+                background:red;
+                color:white;
+            }
+            paper-dialog iron-icon{
+                width:50px;
+                --iron-icon-width:50px;
+                --iron-icon-height:50px;
+                --iron-icon-stroke-color:white;
+                --iron-icon-fill-color:white;
+            }
+            paper-dialog .error{
+                font-size:18px;
+                font-weight:bold;
+            }
+            
         `;
     }
 
@@ -264,6 +296,18 @@ class ExistdbDashboard extends LitElement {
             },
             remotecount:{
                 type:Number
+            },
+            message:{
+                type:String,
+                reflect:true
+            },
+            error:{
+                type:String,
+                reflect:true
+            },
+            trace:{
+                type:String,
+                reflect:true
             }
         };
     }
@@ -273,6 +317,10 @@ class ExistdbDashboard extends LitElement {
         this.loggedIn = false;
         this.permissions = [];
         this.localcount=0;
+        this.remotecount=0;
+        this.message="";
+        this.error="an error popped up";
+        this.trace=""
     }
 
 
@@ -317,7 +365,11 @@ class ExistdbDashboard extends LitElement {
                                     <iron-icon icon="apps"></iron-icon>
                                     <span id="packagenav" class="menuitem">Packages</span>
                                     
-                                    <span class="badge">${this.localcount}</span>                               
+                                    ${this.localcount !== 0?
+                                        html`
+                                            <span id="localcounter" class="badge">${this.localcount}</span>                               
+                                        `:''
+                                    }
 
                                     <paper-ripple></paper-ripple>
                                 </paper-item>
@@ -332,7 +384,12 @@ class ExistdbDashboard extends LitElement {
                                 <paper-item class="subNav" role="menuitem">
                                     <iron-icon icon="cloud-download"></iron-icon>
                                     <span class="menuitem">Repository</span>
-                                    <span class="badge">${this.remotecount}</span>                               
+                                    ${this.remotecount !== 0?
+                                        html`
+                                            <span id="remotecounter" class="badge">${this.remotecount}</span>
+                                        `:''
+                                    }
+                                            
                                     <paper-ripple></paper-ripple>
                                 </paper-item>
                             </a>
@@ -409,7 +466,19 @@ class ExistdbDashboard extends LitElement {
 
                 </app-header-layout>
     
-            </app-drawer-layout>    
+            </app-drawer-layout>   
+            
+            <paper-toast id="messages" duration="4000" text="${this.message}"></paper-toast>
+            <paper-dialog id="errordlg" modal>
+                <iron-icon icon="error-outline"></iron-icon>
+                <div class="error">${this.error}</div>
+                <details class="trace">
+                    <summary>Trace</summary>
+                    <p>${this.trace}</p>
+                </details>
+                <paper-button dialog-confirm autofocus>close</paper-button>
+            </paper-dialog>
+            
         `;
     }
 
@@ -423,6 +492,11 @@ class ExistdbDashboard extends LitElement {
         // console.log("drawer ", drawer);
 
         // drawer.close();
+
+        this.notifier = this.shadowRoot.getElementById('messages');
+        this.errordlg = this.shadowRoot.getElementById('errordlg');
+        this.errordlg.open();
+
         window.addEventListener('load',() => {
            this.initRouter();
         });
@@ -430,6 +504,32 @@ class ExistdbDashboard extends LitElement {
         this.addEventListener('logged-out', this._handleLogout);
         this.addEventListener('set-title', this._setTitle);
         this.addEventListener('packages-loaded', this._updateCount);
+        this.addEventListener('package-installed', function(e){
+            console.log('package-installed ', e.detail);
+            this.message = 'Package ' + e.detail.abbrev + ' was installed';
+            this.notifier.open();
+            // if(this.localcount !== 0){
+            //     this.localcount +=1;
+            // }
+        });
+        this.addEventListener('package-install-error', function(e){
+            console.error('package-install-error ', e.detail);
+            this.error = 'an package-install-error occurred: ' + e.detail.error;
+            this.trace = e.detail.trace
+            this.errordlg.open();
+
+        });
+        this.addEventListener('package-removed', function(e){
+            console.log('package-removed ', e.detail);
+            this.message = 'Package ' + e.detail.abbrev + ' was removed';
+            this.notifier.open();
+            // this.remotecount +=1;
+        });
+        this.addEventListener('package-remove-error', function(e){
+            console.error('package-remove-error ', e.detail);
+            this.error = 'an package-remove-error occurred';
+            this.error.open();
+        });
 
 
 
@@ -557,13 +657,36 @@ class ExistdbDashboard extends LitElement {
         console.log('updateCount ', e.detail);
         if(e.detail.scope == 'local' || e.detail.scope == 'apps'){
             this.localcount = e.detail.count;
+            this._animateCounter('localcounter');
+
         }
         if(e.detail.scope == 'remote'){
             this.remotecount = e.detail.count;
+            this._animateCounter('remotecounter');
+
         }
         console.log('dashbaord count ', this.count);
     }
 
+    _animateCounter(id){
 
+        const target = this.shadowRoot.getElementById(id);
+        const anim = anime.timeline({
+            easing:'easeInOutCirc',
+            duration:800
+        });
+
+        anim.add({
+            targets:target,
+            duration:400,
+            scale:[1,1.5]
+        });
+        anim.add({
+            targets:target,
+            duration:400,
+            scale:[1.5,1]
+        });
+
+    }
 }
 customElements.define('existdb-dashboard', ExistdbDashboard);

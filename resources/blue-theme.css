@@ -14,4 +14,7 @@ body{
 
     font-family: var(--existdb-font-family);
 
+    --existdb-highlight-bg: var(--paper-pink-500);
+    --existdb-highlight-color: white;
+
 }

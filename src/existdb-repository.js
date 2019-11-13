@@ -283,7 +283,7 @@ class ExistdbRepository extends ExistdbDashboardBase {
 
 
             <div class="page">
-                <existdb-packagelist 
+                <existdb-packagelist id="list" 
                     scope="${this.scope}"
                     autoLoad 
                     scroll-target="document" 
@@ -352,8 +352,16 @@ class ExistdbRepository extends ExistdbDashboardBase {
     firstUpdated(changedProperties) {
         super.firstUpdated(changedProperties);
 
+        this.addEventListener('package-installed', function(e){
+            this.reload();
+        });
 
     }
+
+    reload(){
+        this.shadowRoot.getElementById('list').loadPackages(this.scope);
+    }
+
 
     _updateCount(e){
         console.log(this, '_updateCount ', e.detail.count);

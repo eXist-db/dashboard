@@ -1,18 +1,19 @@
 // Import the LitElement base class and html helper function
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 import '../assets/@polymer/paper-ripple/paper-ripple.js';
+import '../assets/@polymer/iron-ajax/iron-ajax.js';
 
 import '../assets/@polymer/iron-icons/iron-icons.js';
 import '../assets/@polymer/paper-icon-button/paper-icon-button.js';
+import '../assets/@polymer/paper-progress/paper-progress.js';
 
 
-import './existdb-packageinstall.js';
 import {settings} from "./settings.js";
 
 // todo
 class ExistdbRemotePackage extends LitElement {
 
-    static get styles(){
+    static get styles() {
         return css`
             :host {
                 display: block;
@@ -27,6 +28,10 @@ class ExistdbRemotePackage extends LitElement {
                 };
                 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12),0 3px 1px -2px rgba(0, 0, 0, 0.2);
                 cursor: pointer;
+                
+                --paper-progress-active-color:var(--existdb-highlight-bg);
+
+
 
             }
             :host:focus{
@@ -113,8 +118,16 @@ class ExistdbRemotePackage extends LitElement {
         `;
     }
 
-    render(){
+    render() {
         return html`
+
+        <iron-ajax id="installPackage"
+                   verbose with-credentials
+                   method="post" 
+                   handle-as="text"
+                   @response="${this._handleResponse}"
+                   @error="${this._handleError}"></iron-ajax>
+
         <paper-progress id="progress" class="slow"></paper-progress>
 
         <div id="wrapper" class="wrapper" url="${this.url}">
@@ -137,69 +150,57 @@ class ExistdbRemotePackage extends LitElement {
         `;
     }
 
-    /*
-                <existdb-package-install-action
-                        id="install"
-                        url="${this.url}"
-                        abbrev="${this.abbrev}"
-                        type="${this.type}"
-                        version="${this.version}"
-                        hidden></existdb-package-install-action>
-
-                <existdb-package-remove-action id="remove" url="${this.url}" abbrev="${this.abbrev}" package-title="${this.packageTitle}" no-remove="${this.readonly}"></existdb-package-remove-action>
-                <paper-icon-button id="info" icon="info" @click="${this._showInfo}"></paper-icon-button>
-*/
 
     static get properties() {
         return {
-            item:{
-                type:Object
+            item: {
+                type: Object
             },
             abbrev: {
                 type: String,
                 reflect: true
             },
-            authors:{
-                type:String
+            authors: {
+                type: String
             },
             available: {
                 type: String
             },
-            changes:{
+            changes: {
                 type: String
             },
-            description:{
+            description: {
                 type: String
             },
-            icon:{
-                type:String
+            icon: {
+                type: String
             },
             installed: {
                 type: String
             },
-            license:{
-                type:String
-            },
-            name:{
+            license: {
                 type: String
             },
-            note:{
+            name: {
+                type: String
+            },
+            note: {
                 type: String
             },
             path: {
                 type: String,
                 reflect: true
             },
-            readonly:{
+            readonly: {
                 type: String
             },
-            requires:{
+            requires: {
                 type: String
             },
             status: {
                 type: String
             },
-            title:{
+            title: {
                 type: String
             },
             type: {
@@ -213,8 +214,8 @@ class ExistdbRemotePackage extends LitElement {
             version: {
                 type: String
             },
-            website:{
-                type:String
+            website: {
+                type: String
             }
         };
     }
@@ -223,9 +224,9 @@ class ExistdbRemotePackage extends LitElement {
 //                console.log('constructor Packagemanager-app')
         super();
         this.item = {};
+        this.running = false;
 
     }
-
 
 
     connectedCallback() {
@@ -237,136 +238,138 @@ class ExistdbRemotePackage extends LitElement {
 
         // console.log('this.item is ', this.item);
 
-        this.addEventListener('click',this._openApp);
-        this.addEventListener('keyup',this._handleEnter);
+        this.addEventListener('click', this._openApp);
+        this.addEventListener('keyup', this._handleEnter);
 
+        this.progress = this.shadowRoot.getElementById('progress');
+
+    }
+
+    async _install() {
         /*
-                this.addEventListener('keyup',this._handleEnter);
-
-                this.install = this.shadowRoot.getElementById('install');
-                this.remove = this.shadowRoot.getElementById('remove');
-                this.progress = this.shadowRoot.getElementById('progress');
-                this.wrapper = this.shadowRoot.getElementById('wrapper');
-
-                this.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
-                this.install.addEventListener('package-installed',e => this._onInstalled(e));
-                this.remove.addEventListener('package-remove-started',e => this._onRemove(e));
-                this.addEventListener('click',e => this._handleTap(e));
-                this.addEventListener('requestInstall', this._installOtherVersion);
+                        console.log('install action install');
+                        console.log('install action install url ', this.url);
+                        console.log('install action install version ', this.version);
         */
 
+        this.progress.hidden = false;
+        this.progress.indeterminate = true;
+
+
+        const installPackage = this.shadowRoot.getElementById('installPackage');
+        installPackage.params = {
+            "package-url": this.url,
+            "action": "install",
+            "abbrev": this.abbrev,
+            "version": this.version
+        };
+        installPackage.url = new URL(settings.packageActionPath, document.baseURI).href;
+        installPackage.generateRequest();
     }
 
-    _handleTap (e) {
+    _hide() {
+        this.hidden = true;
+    }
+
+    _handleResponse(data) {
+//                console.log("response: ", data);
+//                console.log("install response: ", JSON.parse(this.$.installPackage.lastResponse).err);
+
+        const install = this.shadowRoot.getElementById('installPackage');
+        const resp = JSON.parse(install.lastResponse);
+        // var error = resp.error;
+//                console.log("_handleResponse ", error);
+
+        this.progress.hidden = true;
+
+        /*
+                const anim = anime.timeline({
+                    easing:'easeInOutCirc',
+                    duration:300
+                });
+
+                anim.add({
+                   targets:this,
+                   height:['80px','0px'],
+                   padding:0,
+                    margin:0,
+                    border:0,
+                    opacity:0,
+                    translateX:-3000,
+                   duration:300
+                });
+
+                anim.finished.then(this._hide(this));
+        */
+
+
+        if (Reflect.has(resp, 'error')) {
+            this.dispatchEvent(new CustomEvent('package-install-error', {
+                bubbles: true,
+                composed: true,
+                detail: {error: resp.error, trace: resp.trace}
+            }));
+        } else {
+            this.dispatchEvent(new CustomEvent('package-installed', {
+                bubbles: true,
+                composed: true,
+                detail: {abbrev: this.abbrev}
+            }));
+            this.hidden = true;
+        }
+
+
+
+    }
+
+    _handleError(e) {
+        //does fire only in case there's a real server error
+        this.dispatchEvent(new CustomEvent('package-install-error', {
+            bubbles: true,
+            composed: true,
+            detail: {error: e.detail}
+        }));
+    }
+
+
+    _showDetails(e) {
+        e.preventDefault();
         e.stopPropagation();
 
-        var t = e.target.nodeName.toLowerCase();
-//                console.log('_handleTap ',e);
-//                console.log('_handleTap ',e.b[0].id);
-//                console.log('_handleTap ',e.path);
+        console.error('todo');
+        this.progress.hidden = true;
 
-        // ugly special case handling for Chrome and FF but don't know how to solve better yet.
-        if(e.path != undefined){
-            console.log('########',e.path[0].nodeName);
-            if(e.path[0].nodeName == 'EXISTDB-PACKAGE-REMOVE-ACTION') return;
-        }
-        if(e.b != undefined && e.b[0].id == 'remove') return;
-
-        if(t == 'existdb-package-remove') return;
-        if(t == "paper-icon-button") return;
-        if(t == "iron-icon") return;
-
-        this._openApp();
     }
 
-    _handleEnter(e) {
-               console.log("_handleEnter key ", e);
-//                console.log("_handleEnter key original", e.composedPath()[0]);
-        var originalTarget = e.composedPath()[0];
 
-//                console.log("node ", originalTarget.nodeName);
-
-        if(originalTarget.nodeName == 'PAPER-ICON-BUTTON') return;
-        if (e.target.nodeName.toLowerCase() == "existdb-package" && (e.keyCode == 13 )) {
-//                    console.log('_handleEnter key enter fired');
-            this._openApp()
-        }
-    }
-
-    _openApp (e) {
-
-        var isApp = this.type == 'application';
-               console.log("######## is App: ", isApp);
-
-        if(isApp && this.status == "installed"){
-            var targetUrl = this.path;
-            window.open(targetUrl)
-        }
-    }
-
-    _handleStatus () {
-//                console.log("_handleStatus ",this.status);
-
-        if(this.status == 'installed'){
+    _handleStatus() {
+        if (this.status == 'installed') {
             this.install.hidden = true;
             this.remove.hidden = false;
-        }else{
+        } else {
             this.remove.hidden = true;
             this.install.hidden = false;
         }
     }
 
-    _showInfo(e){
+    _showInfo(e) {
 //                console.log('_showInfo ', e);
         e.stopPropagation();
-//                e.preventDefault();
-        var showsAll = this.wrapper.getAttribute('show-all');
+        //    todo
 
-        if(!showsAll){
-            this.wrapper.setAttribute('show-all','true');
-//                    this.$.wrapper.classList.add('show');
-            this.updateStyles({'--app-details': 'table-row'});
+    }
 
-        }else{
-            this.wrapper.removeAttribute('show-all');
-//                    this.$.wrapper.classList.remove('show');
-            this.updateStyles({'--app-details': 'none'});
+
+    /*
+        _installOtherVersion(e) {
+            //todo
+            this.install.version = e.detail.version;
+            this.install.submit(e);
+
         }
-
-//                this.updateStyles();
-
-    }
-
-    _onInstalled (e) {
-//                console.log('_onInstalled ', e);
-        this.progress.indeterminate=false;
-        this.progress.value=100;
-//                this.dispatchEvent(new CustomEvent('package-installed', {detail: {packageUrl:e.detail.package}}));
-
-    }
-
-    _onInstallStarted (e) {
-//                console.log('_onInstallStarted ', e);
-        this.progress.hidden=false;
-        this.progress.indeterminate=true;
-        this.install.install();
-    }
-
-    _onRemove (e){
-//                console.log('_onRemoveStarted ', e);
-        this.progress.hidden=false;
-        this.progress.indeterminate=true;
-        this.remove.removeIt();
-    }
-
-    _installOtherVersion (e) {
-//                console.log("###################### install other version", e.detail.version);
-        this.install.version = e.detail.version;
-        this.install.submit(e);
-    }
-
-
+    */
 
 
 }
+
 customElements.define('existdb-remote-package', ExistdbRemotePackage);

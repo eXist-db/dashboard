@@ -25,5 +25,8 @@ body{
     --existdb-control-bg:var(--paper-orange-500);
     --existdb-control-color:white;
 
+    --existdb-highlight-bg: var(--paper-pink-500);
+    --existdb-highlight-color: white;
+
 
 }

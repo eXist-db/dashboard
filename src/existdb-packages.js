@@ -391,6 +391,11 @@ class ExistdbPackages extends ExistdbDashboardBase {
         super.firstUpdated(changedProperties);
         console.log('firstUpdated ', changedProperties);
         console.log('this scope ', this.scope);
+        this.addEventListener('package-removed', function(e){
+            console.log(this, ' package-removed ', e.detail);
+            this.reload();
+        });
+
     }
 
     updated(changedProperties){
@@ -412,6 +417,11 @@ class ExistdbPackages extends ExistdbDashboardBase {
         console.log('libs ', this.scope);
         console.log('loader scope ', this.shadowRoot.getElementById('list').scope);
 
+        // this.shadowRoot.getElementById('list').loadPackages(this.scope);
+        this.reload();
+    }
+
+    reload(){
         this.shadowRoot.getElementById('list').loadPackages(this.scope);
     }
 
@@ -424,7 +434,7 @@ class ExistdbPackages extends ExistdbDashboardBase {
 
         // ### on local page
         apps = this.local;
-        this.localCount = this._filter(apps,filterString);
+        // this.localCount = this._filter(apps,filterString);
 
 
         /*

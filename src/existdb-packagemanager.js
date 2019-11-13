@@ -32,6 +32,7 @@ import './existdb-packagelist.js';
 
 
 // Extend the LitElement base class
+//@deprecated
 class ExistdbPackagemanager extends ExistdbDashboardBase {
 
     static get styles() {

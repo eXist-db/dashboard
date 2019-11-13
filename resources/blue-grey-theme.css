@@ -25,5 +25,11 @@ body{
     --existdb-control-bg:var(--paper-blue-grey-500);
     --existdb-control-color:white;
 
+    --existdb-drawer-bg: var(--paper-amber-700);
+    --existdb-drawer-color:white;
+
+    --existdb-highlight-bg: var(--paper-pink-500);
+    --existdb-highlight-color: white;
+
 
 }

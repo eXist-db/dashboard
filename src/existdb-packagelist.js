@@ -93,7 +93,7 @@ class ExistdbPackagelist extends LitElement {
     }
 
     _getPackage(item){
-        if(this.type === 'local'){
+        if(this.scope === 'local' || this.scope === 'apps'){
             return html`
                 <existdb-local-package    
                     abbrev="${item.abbrev}"

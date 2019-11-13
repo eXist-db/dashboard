@@ -1,7 +1,11 @@
 body{
     --existdb-font-family: 'Roboto', 'Noto', sans-serif;
+    font-family: var(--existdb-font-family);
 
     --existdb-text-color: var(--paper-grey-900);
+
+    --existdb-drawer-bg: var(--paper-amber-700);
+    --existdb-drawer-color:white;
 
     --existdb-header-bg-color: var(--paper-amber-700);
     --existdb-header-color: white;
@@ -11,11 +15,10 @@ body{
     --existdb-content-bg: var(--paper-amber-100);
     --existdb-content-color: var(--paper-grey-900);
 
-    --existdb-drawer-bg: var(--paper-amber-700);
-    --existdb-drawer-color:white;
-
     --existdb-highlight-color:var(--paper-grey-900);
 
     font-family: var(--existdb-font-family);
 
+    --existdb-highlight-bg: var(--paper-pink-500);
+    --existdb-highlight-color: white;
 }

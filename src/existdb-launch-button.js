@@ -3,7 +3,7 @@ import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 import '../assets/@polymer/paper-card/paper-card.js';
 
 // todo
-class LaunchButton extends LitElement {
+class ExistdbLaunchButton extends LitElement {
 
     static get styles(){
         return css`
@@ -69,7 +69,7 @@ class LaunchButton extends LitElement {
             <paper-ripple class="circle" recenters></paper-ripple> 
             <div id="wrapper" class="wrapper">
                 <div class="card-content">
-                    <img class="appIcon" src="${this.icon}"/>
+                    <img class="appIcon" src="${this.icon}" draggable="true"/>
                     <div class="abbrev">${this.abbrev}</div>
                 </div>
             </div>        
@@ -115,6 +115,16 @@ class LaunchButton extends LitElement {
     firstUpdated(changedProperties) {
         this.addEventListener('click',this._openApp);
         this.addEventListener('keyup',this._handleEnter);
+        this.addEventListener('dragstart',  function(e){
+            console.log('dragstart ',e, this);
+            e.dataTransfer.dropEffect = "link";
+            e.dataTransfer.setData("text/plain ", this.abbrev);
+            // e.dataTransfer.setData("text/plain ", this.icon);
+            e.dataTransfer.setData("application/x-bookmark", this.path);
+            console.log('the icon ', this.icon);
+            e.dataTransfer.setData("application/x-icon", this.icon);
+
+        }.bind(this));
         // this.shadowRoot.getElementById('wrapper').tabIndex=0;
     }
 
@@ -143,6 +153,14 @@ class LaunchButton extends LitElement {
         }
     }
 
+    _dragstart(e){
+        console.log('dragstart ',e, this);
+        e.dataTransfer.dropEffect = "link";
+        e.dataTransfer.setData("text/plain ", this.abbrev);
+        // e.dataTransfer.setData("text/plain ", this.icon);
+        e.dataTransfer.setData("text/uri-list", this.path);
+    }
+
 
 }
-customElements.define('launch-button', LaunchButton);
+customElements.define('existdb-launch-button', ExistdbLaunchButton);

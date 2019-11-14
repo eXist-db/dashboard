@@ -11,6 +11,8 @@ export const settings = {
     localPackagePath:"../packageservice/packages/local/json",
     remotePackagePath:"../packageservice/packages/remote/json",
     packageActionPath:"../packageservice/packages/action",
+    userPath:"api/user/",
+    groupPath:"api/group/",
 
     loginUrl:"login"
 

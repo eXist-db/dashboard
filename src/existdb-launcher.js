@@ -3,7 +3,7 @@ import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 import {ExistdbDashboardBase} from './existdb-dashboard-base.js'
 import {settings} from './settings.js';
 import './existdb-branding.js';
-import './launch-button.js';
+import './existdb-launch-button.js';
 import './existdb-packageloader.js';
 
 /**
@@ -35,7 +35,7 @@ class ExistdbLauncher extends ExistdbDashboardBase {
             repo-packages{
                 height:100%;
             }
-            launch-button{
+            existdb-launch-button{
                 width:150px;
                 height:150px;
                 position:relative;
@@ -97,12 +97,13 @@ class ExistdbLauncher extends ExistdbDashboardBase {
                     <div id="logo"></div>
                  ${this.packages.map((item) => 
                     html`
-                        <launch-button  path="${item.path}"
+                        <existdb-launch-button  path="${item.path}"
                                         type="${item.type}" 
                                         status="${item.status}" 
                                         icon="${item.icon}"
                                         abbrev="${item.abbrev}"
-                                        tabindex="-1"></launch-button>
+                                        tabindex="-1"
+                                        ></existdb-launch-button>
                     `)}
                  </repo-packages>
             </div>
@@ -142,6 +143,8 @@ class ExistdbLauncher extends ExistdbDashboardBase {
 
     firstUpdated(changedProperties) {
         super.firstUpdated(changedProperties);
+
+
         this.shadowRoot.getElementById('loader').generateRequest();
         this.focus();
     }
@@ -198,7 +201,6 @@ class ExistdbLauncher extends ExistdbDashboardBase {
     _isLoggedIn(){
         return document.querySelector('existdb-dashboard').loggedIn;
     }
-
 
 
 

@@ -4,7 +4,8 @@
         <group name="dba">
             <permission>packages</permission>
             <permission>repository</permission>
-            <permission>usermanager</permission>
+            <permission>users</permission>
+            <permission>groups</permission>
             <permission>backup</permission>
             <permission>settings</permission>
         </group>
@@ -13,7 +14,10 @@
             <permission>repository</permission>
         </group>
         <group name="usermanager">
-            <permission>usermanager</permission>
+            <permission>users</permission>
+        </group>
+        <group name="groupsmanager">
+            <permission>groups</permission>
         </group>
         <group name="backup">
             <permission>backup</permission>

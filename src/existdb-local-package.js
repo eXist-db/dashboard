@@ -7,7 +7,6 @@ import '../assets/@polymer/paper-icon-button/paper-icon-button.js';
 import '../assets/@polymer/paper-ripple/paper-ripple.js';
 
 
-import './existdb-remove-package.js';
 import {settings} from "./settings.js";
 
 // todo

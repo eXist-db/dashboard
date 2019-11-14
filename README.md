@@ -11,11 +11,22 @@ Mostly Dashboard provides a
 
 ## what's new in 3.0
 
+### improved Url handling
+Proxying should not be an issue any more. All internal Urls (used by ajax) are relative and 
+will be resolved against the document baseURL now.
+
 ### Role-based View
 
 What a given user sees in Dashboard can be configured based upon the users roles (groups).
 
 E.g. an admin sees all dashboard components  
+
+## Flattened navigation
+
+Local and remote packages as well as user and groups now have their own top-level
+navigation entries and are directly accessible. Further promotes lazy-loading of 
+resources as well as simplifies overall application structure. Also allows to apply
+finer-grained permissions to each of these views.
 
 ## Dev Requirements
 

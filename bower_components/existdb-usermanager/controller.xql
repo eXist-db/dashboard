@@ -311,14 +311,14 @@ else if(starts-with($exist:path, "/api/"))then(
                                     response:set-status-code($local:HTTP_BAD_REQUEST),
                                     <error>user name is missing</error>
                                 )
-                    else if(request:get-method() eq "GET") then (
-                            local:get-user($user)
-                        )
-                        else
-                            (
-                                response:set-status-code($local:HTTP_METHOD_NOT_ALLOWED),
-                                <error>Unsupported method: {request:get-method()}</error>
-                            )
+                else if(request:get-method() eq "GET") then (
+                        local:get-user($user)
+                    )
+                else
+                    (
+                        response:set-status-code($local:HTTP_METHOD_NOT_ALLOWED),
+                        <error>Unsupported method: {request:get-method()}</error>
+                    )
 
 
         else if($exist:path eq "/api/group/")then (

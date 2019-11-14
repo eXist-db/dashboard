@@ -22,6 +22,7 @@ import '../assets/@polymer/paper-button/paper-button.js';
 
 import './existdb-login.js';
 import './existdb-launcher.js';
+import './existdb-favorite.js';
 
 /*
 import { connect } from '../assets/pwa-helpers/connect-mixin.js';
@@ -41,6 +42,7 @@ class ExistdbDashboard extends LitElement {
                 margin: 0;
                 padding: 0;
                 font-family: var(--existdb-font-family);
+                overflow:auto;
 
                 color: var(--existdb-text-color);
                 --app-drawer-scrim-background: rgba(0, 0, 0, 0.3);
@@ -92,6 +94,7 @@ class ExistdbDashboard extends LitElement {
                 text-align: center;
                 color: black;
                 background: white;
+                overflow:auto;
                 
             }
             app-drawer .wrapper{
@@ -107,7 +110,7 @@ class ExistdbDashboard extends LitElement {
             }
             
             .nav{
-                height:100%;
+                // height:100%;
                 // background:linear-gradient(180deg, rgba(245,245,245,1) 0%, rgba(245,245,245,1) 11%, rgba(255,255,255,1) 33%);
                 background:transparent;
             }
@@ -272,7 +275,18 @@ class ExistdbDashboard extends LitElement {
                 font-size:18px;
                 font-weight:bold;
             }
+            .favorites{
+                height:100%;
+                text-align:left;
+                padding-left:0px;
+            }
+            .fav-header{
+                border-bottom:thin solid  var(--existdb-drawer-icon-color);
+                margin-bottom:3px;
+            }
             
+
+
         `;
     }
 
@@ -297,6 +311,12 @@ class ExistdbDashboard extends LitElement {
             remotecount:{
                 type:Number
             },
+            usercount:{
+                type:Number
+            },
+            groupcount:{
+                type:Number
+            },
             message:{
                 type:String,
                 reflect:true
@@ -308,6 +328,9 @@ class ExistdbDashboard extends LitElement {
             trace:{
                 type:String,
                 reflect:true
+            },
+            favorites:{
+                type:Array
             }
         };
     }
@@ -318,9 +341,11 @@ class ExistdbDashboard extends LitElement {
         this.permissions = [];
         this.localcount=0;
         this.remotecount=0;
+        this.usercount=0;
         this.message="";
         this.error="an error popped up";
-        this.trace=""
+        this.trace="";
+        this.favorites = [];
     }
 
 
@@ -350,94 +375,125 @@ class ExistdbDashboard extends LitElement {
                         </div>
                         <div class="nav">
                         
-                        <a href="./" tabindex="-1">
-                            <paper-item id="launcher" role="menuitem">
-                                <iron-icon icon="inline:launcher"></iron-icon>                           
-                                <span class="menuitem">Launcher</span>
-                                <paper-ripple></paper-ripple>
-                            </paper-item>
-                        </a>
-                        
-                        ${this.permissions.includes('packages') ?
-                            html`
-                            <a href="./packages" tabindex="-1">
-                                <paper-item class="subNav" role="menuitem">
-                                    <iron-icon icon="apps"></iron-icon>
-                                    <span id="packagenav" class="menuitem">Packages</span>
-                                    
-                                    ${this.localcount !== 0?
-                                        html`
-                                            <span id="localcounter" class="badge">${this.localcount}</span>                               
-                                        `:''
-                                    }
-
+                            <a href="./" tabindex="-1">
+                                <paper-item id="launcher" role="menuitem">
+                                    <iron-icon icon="inline:launcher"></iron-icon>                           
+                                    <span class="menuitem">Launcher</span>
                                     <paper-ripple></paper-ripple>
                                 </paper-item>
                             </a>
-                            `:''
-                        }
                             
-                            
-                        ${this.permissions.includes('repository') ?
-                            html`
-                            <a href="./repository">
-                                <paper-item class="subNav" role="menuitem">
-                                    <iron-icon icon="cloud-download"></iron-icon>
-                                    <span class="menuitem">Repository</span>
-                                    ${this.remotecount !== 0?
-                                        html`
-                                            <span id="remotecounter" class="badge">${this.remotecount}</span>
-                                        `:''
-                                    }
-                                            
-                                    <paper-ripple></paper-ripple>
-                                </paper-item>
-                            </a>
-                            `:''
-                        }
-                        
-                        ${this.permissions.includes('usermanager') ?
-                            html`
-                            <a href="./usermanager" tabindex="-1">
-                                <paper-item id="usermanager" role="menuitem">
-                                    <iron-icon icon="social:person"></iron-icon>
-                                    <span class="menuitem">Users</span>
-                                    <paper-ripple></paper-ripple>
-                                </paper-item>
-                                <paper-item id="usermanager" role="menuitem">
-                                    <iron-icon icon="social:people"></iron-icon>
-                                    <span class="menuitem">Groups</span>
-                                    <paper-ripple></paper-ripple>
-                                </paper-item>
-                            </a>
-                            `:''
-                        }
+                            ${this.permissions.includes('packages') ?
+                                html`
+                                <a href="./packages" tabindex="-1">
+                                    <paper-item class="subNav" role="menuitem">
+                                        <iron-icon icon="apps"></iron-icon>
+                                        <span id="packagenav" class="menuitem">Packages</span>
+                                        
+                                        ${this.localcount !== 0?
+                                            html`
+                                                <span id="localcounter" class="badge">${this.localcount}</span>                               
+                                            `:''
+                                        }
     
-                        ${this.permissions.includes('backup') ?
-                            html`
-                            <a href="./backup" tabindex="-1">
-                                <paper-item id="backup" role="menuitem">
-                                    <iron-icon icon="restore"></iron-icon>
-                                    <span class="menuitem">Backup</span>
-                                    <paper-ripple></paper-ripple>
-                                </paper-item>
-                            </a>
-                            `:''
-                        }
-                        
-                        ${this.permissions.includes('settings') ?
-                            html`
-                                <a href="./settings" tabindex="-1">
-                                    <paper-item id="settings" role="menuitem">
-                                        <iron-icon icon="settings"></iron-icon>
-                                        <span class="menuitem">Settings</span>
                                         <paper-ripple></paper-ripple>
                                     </paper-item>
                                 </a>
+                                `:''
+                            }
+                                
+                                
+                            ${this.permissions.includes('repository') ?
+                                html`
+                                <a href="./repository">
+                                    <paper-item class="subNav" role="menuitem">
+                                        <iron-icon icon="cloud-download"></iron-icon>
+                                        <span class="menuitem">Repository</span>
+                                        ${this.remotecount !== 0?
+                                            html`
+                                                <span id="remotecounter" class="badge">${this.remotecount}</span>
+                                            `:''
+                                        }
+                                                
+                                        <paper-ripple></paper-ripple>
+                                    </paper-item>
+                                </a>
+                                `:''
+                            }
+                            
+                            ${this.permissions.includes('users') ?
+                                html`
+                                <a href="./users" tabindex="-1">
+                                    <paper-item id="users" role="menuitem">
+                                        <iron-icon icon="social:person"></iron-icon>
+                                        <span class="menuitem">Users</span>
+                                        ${this.usercount !== 0?
+                                            html`
+                                                <span id="usercounter" class="badge">${this.usercount}</span>
+                                            `:''
+                                        }
+
+                                        <paper-ripple></paper-ripple>
+                                    </paper-item>
+                                </a>
+                                `:''
+                            }
+                            
+                            ${this.permissions.includes('groups') ?
+                                html`
+                                <a href="./groups" tabindex="-1">
+                                    <paper-item id="groups" role="menuitem">
+                                        <iron-icon icon="social:people"></iron-icon>
+                                        <span class="menuitem">Groups</span>
+                                        ${this.groupcount !== 0?
+                                        html`
+                                            <span id="groupcounter" class="badge">${this.groupcount}</span>
+                                            `:''
+                                        }
+                                        <paper-ripple></paper-ripple>
+                                    </paper-item>
+                                </a>
+                                `:''
+                            }
+        
+                            ${this.permissions.includes('backup') ?
+                                html`
+                                <a href="./backup" tabindex="-1">
+                                    <paper-item id="backup" role="menuitem">
+                                        <iron-icon icon="restore"></iron-icon>
+                                        <span class="menuitem">Backup</span>
+                                        <paper-ripple></paper-ripple>
+                                    </paper-item>
+                                </a>
+                                `:''
+                            }
+                            
+                            ${this.permissions.includes('settings') ?
+                                html`
+                                    <a href="./settings" tabindex="-1">
+                                        <paper-item id="settings" role="menuitem">
+                                            <iron-icon icon="settings"></iron-icon>
+                                            <span class="menuitem">Settings</span>
+                                            <paper-ripple></paper-ripple>
+                                        </paper-item>
+                                    </a>
+                                `:''
+                            }
+                        </div>
+                        ${this.favorites.length !== 0 ?
+                            html`
+                                <paper-item class="fav-header" role="menuitem" disabled>
+                                    <iron-icon icon="star-border"></iron-icon>
+                                    <span class="menuitem">Favorites</span>
+                                </paper-item>
                             `:''
                         }
                         
-                        
+                        <div id="favorites" class="favorites">
+                             ${this.favorites.map((item) =>
+                                html`
+                                    ${this._getFav(item)}
+                                `)}
                         </div>
                     </div>
                 </app-drawer>`
@@ -483,19 +539,25 @@ class ExistdbDashboard extends LitElement {
     }
 
 
+    _getFav(item){
+        return html`
+            <existdb-favorite abbrev="${item.abbrev}" icon="${item.icon}" link="${item.link}"></existdb-favorite>
+        `;
+    }
+
+
     connectedCallback() {
         super.connectedCallback();
     }
 
     firstUpdated(changedProperties) {
-        // const drawer = this.shadowRoot.getElementById('drawer');
-        // console.log("drawer ", drawer);
-
-        // drawer.close();
-
         this.notifier = this.shadowRoot.getElementById('messages');
         this.errordlg = this.shadowRoot.getElementById('errordlg');
-        this.errordlg.open();
+
+        // ### load favorites
+        if(localStorage.getItem('favorites')){
+            this.favorites = JSON.parse(localStorage.getItem('favorites'));
+        }
 
         window.addEventListener('load',() => {
            this.initRouter();
@@ -503,6 +565,8 @@ class ExistdbDashboard extends LitElement {
         this.addEventListener('logged-in', this._handleLogin);
         this.addEventListener('logged-out', this._handleLogout);
         this.addEventListener('set-title', this._setTitle);
+        this.addEventListener('users-loaded', this._updateCount);
+        this.addEventListener('groups-loaded', this._updateCount);
         this.addEventListener('packages-loaded', this._updateCount);
         this.addEventListener('package-installed', function(e){
             console.log('package-installed ', e.detail);
@@ -531,7 +595,57 @@ class ExistdbDashboard extends LitElement {
             this.error.open();
         });
 
+        const favs = this.shadowRoot.getElementById('favorites');
+        document.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "copy";
+        });
+        document.addEventListener('drop', function (e) {
+            // e.preventDefault();
+            // Get the id of the target and add the moved element to the target's DOM
+            const abbrev = e.dataTransfer.getData("text/plain");
+            const link = e.dataTransfer.getData("application/x-bookmark");
+            const iconsrc = e.dataTransfer.getData("application/x-icon");
 
+            const fav = {
+                icon:iconsrc,
+                abbrev:abbrev,
+                link:link
+            };
+/*
+            fav[icon] = iconsrc;
+            fav[link] = link;
+            fav[abbrev] = abbrev;
+*/
+
+            this.favorites.push(fav);
+            console.log('favs ', this.favorites);
+
+            if(localStorage){
+                localStorage.setItem('favorites',JSON.stringify(this.favorites));
+            }
+
+            this.requestUpdate();
+
+/*
+            const favs = this.shadowRoot.getElementById('favorites');
+            const icon = document.createElement('img');
+            icon.src = iconsrc;
+            favs.appendChild(icon);
+*/
+        }.bind(this));
+
+        this.addEventListener('remove-favorite', (e) => {
+            const abbrev = e.detail.abbrev;
+            const idx = this.favorites.findIndex(fav => fav.abbrev == abbrev);
+            console.log('fav idx ',idx);
+            this.favorites.splice(idx,1);
+            console.log('favs ',this.favorites);
+            this.requestUpdate();
+            if(localStorage){
+                localStorage.setItem('favorites',JSON.stringify(this.favorites));
+            }
+        });
 
     }
 
@@ -552,9 +666,13 @@ class ExistdbDashboard extends LitElement {
             commands.component('existdb-packagemanager').setAttribute('type','local');
             // return import('./existdb-packagemanager.js');
         };
-        const loadUsermanager = (context, commands) => {
+        const loadUsers = (context, commands) => {
             // this._lazyImport('existdb-usermanager');
-            return import('./existdb-usermanager.js');
+            return import('./existdb-users.js');
+        };
+        const loadGroups = (context, commands) => {
+            // this._lazyImport('existdb-usermanager');
+            return import('./existdb-groups.js');
         };
         const loadBackup = (context, commands) => {
             // this._lazyImport('existdb-backup');
@@ -589,9 +707,14 @@ class ExistdbDashboard extends LitElement {
                 action: loadPackagemanager
             },
             {
-                path: '/usermanager',
-                component: 'existdb-usermanager',
-                action: loadUsermanager
+                path: '/users',
+                component: 'existdb-users',
+                action: loadUsers
+            },
+            {
+                path: '/groups',
+                component: 'existdb-groups',
+                action: loadGroups
             },
             {
                 path: '/backup',
@@ -665,7 +788,16 @@ class ExistdbDashboard extends LitElement {
             this._animateCounter('remotecounter');
 
         }
-        console.log('dashbaord count ', this.count);
+        if(e.detail.scope == 'users'){
+            this.usercount = e.detail.count;
+            this._animateCounter('usercounter');
+
+        }
+        if(e.detail.scope == 'groups'){
+            this.groupcount = e.detail.count;
+            this._animateCounter('groupcounter');
+
+        }
     }
 
     _animateCounter(id){

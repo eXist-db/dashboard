@@ -154,8 +154,8 @@ class ExistdbLauncher extends ExistdbDashboardBase {
             this.branding.hidden = true;
         }
     }
-    async _animate(){
-        var apps = this.shadowRoot.querySelectorAll('launch-button');
+    _animate(){
+        var apps = this.shadowRoot.querySelectorAll('existdb-launch-button');
         // show branding unless we're embedded in dashboard
 
         if(!this._isLoggedIn()){
@@ -191,8 +191,7 @@ class ExistdbLauncher extends ExistdbDashboardBase {
 
     }
 
-    async _display(e){
-        console.log('_display');
+    _display(e){
         this.packages = this.shadowRoot.getElementById('loader').lastResponse;
         this.updateComplete.then(() => { this._animate() });
     }

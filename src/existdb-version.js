@@ -47,7 +47,6 @@ class ExistdbVersion extends LitElement {
 
 
     _handleVersion(){
-        console.log('handleVersion called');
         const version =  this.shadowRoot.getElementById('getVersion').lastResponse;
         this.fullVersion = version;
         const tokens = version.split(' ');

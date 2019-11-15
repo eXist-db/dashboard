@@ -6,7 +6,8 @@
   "scripts": {
     "start": "es-dev-server --app-index index.html --node-resolve --watch --open",
     "start:compatibility": "es-dev-server --compatibility all --app-index index.html --node-resolve --watch --open",
-    "postinstall": "./node_modules/@0xcda7a/empathy/bin/empathy install"
+    "postinstall": "./node_modules/@0xcda7a/empathy/bin/empathy install",
+    "empathy": "./node_modules/@0xcda7a/empathy/bin/empathy install"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,7 @@
     "gulp-watch": "^5.0.1"
   },
   "dependencies": {
-    "@material/mwc-fab": "^0.10.0",
+    "@cwmr/paper-password-input": "^3.0.1",
     "@polymer/app-layout": "^3.1.0",
     "@polymer/app-route": "^3.0.2",
     "@polymer/app-storage": "^3.0.2",
@@ -32,7 +33,6 @@
     "@polymer/iron-icon": "^3.0.1",
     "@polymer/iron-icons": "^3.0.1",
     "@polymer/iron-iconset-svg": "^3.0.1",
-    "@polymer/iron-list": "^3.0.2",
     "@polymer/iron-pages": "^3.0.1",
     "@polymer/paper-badge": "^3.1.0",
     "@polymer/paper-button": "^3.0.1",
@@ -54,13 +54,13 @@
     "@polymer/paper-toast": "^3.0.1",
     "@polymer/paper-toggle-button": "^3.0.1",
     "@vaadin/router": "^1.5.1",
-    "@vaadin/vaadin-grid": "^5.4.12",
     "@vaadin/vaadin-notification": "^1.4.0",
     "@vaadin/vaadin-upload": "^4.2.2",
     "@webcomponents/webcomponentsjs": "^2.3.0",
     "animejs": "^3.1.0",
     "lit-element": "^2.2.1",
     "nanoid": "^2.1.4",
+    "polymer-password-strength": "^1.0.0",
     "polymer-toggle-icon": "^3.0.0",
     "pwa-helpers": "^0.9.1",
     "redux": "^4.0.4",

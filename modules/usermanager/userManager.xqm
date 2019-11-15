@@ -74,7 +74,6 @@ declare function usermanager:get-user($user) as element(json:value) {
         <user>{$user}</user>
         <fullName>{secman:get-account-metadata($user, $usermanager:METADATA_FULLNAME_KEY)}</fullName>
         <description>{secman:get-account-metadata($user, $usermanager:METADATA_DESCRIPTION_KEY)}</description>
-        <password/>
         <disabled json:literal="true">{not(secman:is-account-enabled($user))}</disabled>
         <umask>{secman:get-umask($user)}</umask>
         {

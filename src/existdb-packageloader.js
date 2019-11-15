@@ -20,7 +20,7 @@ class ExistdbPackageloader extends LitElement {
                        method="get"
                        handle-as="json"
                        @response="${this._handleResponse}"
-                       @error="_handleError">
+                       @error="${this._handleError}">
             </iron-ajax>
         `;
     }
@@ -93,13 +93,15 @@ class ExistdbPackageloader extends LitElement {
         this.count = filtered.length;
         this.lastResponse = filtered;
         // this.lastResponse = response;
+/*
         this.dispatchEvent(new CustomEvent(
-            'reponse',
+            'response',
             {
                 composed: true,
                 bubbles: true,
                 detail: {}
             }));
+*/
 
     }
 

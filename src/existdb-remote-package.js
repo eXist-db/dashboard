@@ -1,7 +1,6 @@
 // Import the LitElement base class and html helper function
 import {LitElement, html, css} from '../assets/lit-element/lit-element.js';
 import '../assets/@polymer/paper-ripple/paper-ripple.js';
-import '../assets/@polymer/iron-ajax/iron-ajax.js';
 
 import '../assets/@polymer/iron-icons/iron-icons.js';
 import '../assets/@polymer/paper-icon-button/paper-icon-button.js';

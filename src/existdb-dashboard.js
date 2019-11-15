@@ -342,6 +342,7 @@ class ExistdbDashboard extends LitElement {
         this.localcount=0;
         this.remotecount=0;
         this.usercount=0;
+        this.groupcount=0;
         this.message="";
         this.error="an error popped up";
         this.trace="";
@@ -647,6 +648,11 @@ class ExistdbDashboard extends LitElement {
             }
         });
 
+        this.addEventListener('response-error', (e) => {
+            this.error = 'an package-install-error occurred: ' + e.detail.error;
+            this.errordlg.open();
+        });
+
     }
 
 
@@ -777,7 +783,6 @@ class ExistdbDashboard extends LitElement {
     }
 
     _updateCount(e){
-        console.log('updateCount ', e.detail);
         if(e.detail.scope == 'local' || e.detail.scope == 'apps'){
             this.localcount = e.detail.count;
             this._animateCounter('localcounter');

@@ -268,7 +268,7 @@ class ExistdbPackagelist extends LitElement {
     async _animate(){
 
         let packages;
-        if(this.type === 'local'){
+        if(this.scope === 'local' || this.scope === 'apps'){
             packages =  this.shadowRoot.querySelectorAll('existdb-local-package');
         }else {
             packages =  this.shadowRoot.querySelectorAll('existdb-remote-package');

@@ -36,7 +36,7 @@ class ExistdbPackages extends ExistdbDashboardBase {
                 display: block;
 
                 position: relative;
-                background: whitesmoke;
+                background: var(--existdb-content-bg);
                 padding: 0;
                 margin: 0;
                 width: 100%;

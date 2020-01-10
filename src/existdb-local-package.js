@@ -53,6 +53,13 @@ class ExistdbLocalPackage extends LitElement {
             
             .info .type{
                 text-transform:uppercase;
+                border:thin solid var(--existdb-drawer-icon-color);
+                border-radius:14px;
+                width:100px;
+                padding:2px;
+                text-align:center;
+                font-size:12px;
+                color:var(--existdb-drawer-icon-color);
             }
             .info .title{
                 font-size:22px;
@@ -136,8 +143,9 @@ class ExistdbLocalPackage extends LitElement {
                 <div class="type">${this.type}</div>
                 <div class="title">${this.title}</div>
                 <div class="version">${this.version}</div>
-                <div class="details">
-                </div>           
+                <details class="details">
+                    <summary>foobar</summary>
+                </details>           
             </div>
             <div class="actions">
                 <paper-icon-button icon="delete-forever" @click="${this._deletePackage}" title="delete package"></paper-icon-button>
@@ -351,7 +359,7 @@ class ExistdbLocalPackage extends LitElement {
     }
 
     _handleDeleteResponse(e) {
-        this.progress.hidden = true;
+        // this.progress.hidden = true;
 
         const remove = this.shadowRoot.getElementById('removePackage');
         const resp = JSON.parse(remove.lastResponse);
@@ -381,6 +389,12 @@ class ExistdbLocalPackage extends LitElement {
                 detail: {abbrev: this.abbrev}
             }));
         }
+
+        this.progress.value = 100;
+        this.progress.indeterminate = false;
+        setTimeout(function () {
+            this.progress.hidden = true;
+        },500);
 
 
     }

@@ -54,6 +54,13 @@ class ExistdbRemotePackage extends LitElement {
             
             .info .type{
                 text-transform:uppercase;
+                border:thin solid var(--existdb-drawer-icon-color);
+                border-radius:14px;
+                width:100px;
+                padding:2px;
+                text-align:center;
+                font-size:12px;
+                color:var(--existdb-drawer-icon-color);
             }
             .info .title{
                 font-size:22px;

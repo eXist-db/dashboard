@@ -176,6 +176,13 @@
                         this.$.checkLogin.generateRequest();
                     }
                 });
+                document.addEventListener('checkUser', (ev) => {
+                    console.log('checkUser event received: %o', ev.detail);
+                    if (ev.detail.user === this.user) {
+                        this.password = ev.detail.password;
+                        this._confirmLogin();
+                    }
+                });
             }
 
             ready(){

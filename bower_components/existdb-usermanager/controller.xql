@@ -139,8 +139,8 @@ declare function local:delete-group($group as xs:string) as element(deleted) {
 declare function local:update-user($user as xs:string, $request-body as xs:string) as element() {
     if(usermanager:update-user($user, jsjson:parse-json($request-body)))then
         (
-            response:set-header("Location", local:get-user-location($user)),
-            response:set-status-code($local:HTTP_OK),
+            (: response:set-header("Location", local:get-user-location($user)),
+            response:set-status-code($local:HTTP_OK), :)
 
             (: TODO ideally would like to set 204 above and not return and content in the body
     however the controller.xql is not capable of doing that, as there is no dispatch/ignore
@@ -158,8 +158,8 @@ declare function local:update-user($user as xs:string, $request-body as xs:strin
 declare function local:update-group($group as xs:string, $request-body) as element() {
     if(usermanager:update-group($group, jsjson:parse-json($request-body)))then
         (
-            response:set-header("Location", local:get-group-location($group)),
-            response:set-status-code($local:HTTP_OK),
+            (: response:set-header("Location", local:get-group-location($group)),
+            response:set-status-code($local:HTTP_OK), :)
 
             (: TODO ideally would like to set 204 above and not return and content in the body
         however the controller.xql is not capable of doing that, as there is no dispatch/ignore
@@ -180,8 +180,8 @@ declare function local:create-user($user as xs:string, $request-body) as element
 
         if($user)then
             (
-                response:set-header("Location", local:get-user-location($user)),
-                response:set-status-code($local:HTTP_CREATED),
+                (: response:set-header("Location", local:get-user-location($user)),
+                response:set-status-code($local:HTTP_CREATED), :)
 
                 (: send back updated user json :)
                 usermanager:get-user($user)
@@ -195,8 +195,8 @@ declare function local:create-group($user as xs:string, $request-body) as elemen
     let $group := usermanager:create-group(jsjson:parse-json($request-body)) return
         if($group)then
             (
-                response:set-header("Location", local:get-group-location($group)),
-                response:set-status-code($local:HTTP_CREATED),
+                (: response:set-header("Location", local:get-group-location($group)),
+                response:set-status-code($local:HTTP_CREATED), :)
 
                 (: send back updated group json :)
                 usermanager:get-group($group)
@@ -226,13 +226,10 @@ declare function local:get-group($group as xs:string) as element() {
         )
 };
 
-(:
 let $log := util:log("info", "exist path: " || $exist:path)
 let $log := util:log("info", "request URI: " || request:get-uri())
 let $log := util:log("info", "resource: " || $exist:resource)
 return
-:)
-
 if ($exist:path eq '') then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <redirect url="{request:get-uri()}/"/>

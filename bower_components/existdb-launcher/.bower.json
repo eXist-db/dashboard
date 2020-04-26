@@ -41,14 +41,14 @@
   ],
   "private": true,
   "homepage": "https://github.com/eXist-db/launcher",
-  "version": "1.2.2",
-  "_release": "1.2.2",
+  "version": "1.2.4",
+  "_release": "1.2.4",
   "_resolution": {
     "type": "version",
-    "tag": "v1.2.2",
-    "commit": "780d30183d78736cac060622cc18a8fd50ad8351"
+    "tag": "v1.2.4",
+    "commit": "b9b0e574d7026b5ca836b019599fc098f4116129"
   },
   "_source": "https://github.com/eXist-db/launcher.git",
-  "_target": "^1.2.2",
+  "_target": "^1.2.4",
   "_originalSource": "https://github.com/eXist-db/launcher.git"
 }

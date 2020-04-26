@@ -165,10 +165,23 @@ declare function usermanager:update-user($user-name as xs:string, $user-json as 
                 if(secman:get-umask($user) ne $umask)then
                     secman:set-umask($user, $umask)
                 else(),
-
+                if (exists($groups)) then (
+                    (: Check if primary group would be removed - if yes, change it to the first passed in group :)
+                    let $primaryGroup := secman:get-user-primary-group($user)
+                    return
+                        if (not($primaryGroup = $groups)) then
+                            secman:set-user-primary-group($user, $groups[1])
+                        else
+                            (),
+                    (: Remove group members, except for the primary group :)
+                    let $primaryGroup := secman:get-user-primary-group($user)
+                    for $group in secman:get-user-groups($user)[. != $primaryGroup]
+                    return 
+                        secman:remove-group-member($group, $user),
+                    for $group in $groups return if(secman:group-exists($group)) then secman:add-group-member($group, $user) else ()
+                ) else
+                    (),
                 (: if a password is provided, we always change the password, as we dont know what the original password was :)
-                for $group in secman:get-user-groups($user) return secman:remove-group-member($group, $user),
-                for $group in $groups return if(secman:group-exists($group)) then secman:add-group-member($group, $user) else (),
                 if($password) then secman:passwd($user, $password) else (),
 
                 (: success :)

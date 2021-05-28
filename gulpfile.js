@@ -6,7 +6,6 @@ var gulp = require('gulp'),
     less = require('gulp-less'),
     del = require('del'),
     path = require('path'),
-    LessPluginCleanCSS = require('less-plugin-clean-css'),
     LessAutoprefix = require('less-plugin-autoprefix')
 
 var PRODUCTION = (!!process.env.NODE_ENV || process.env.NODE_ENV === 'production')
@@ -41,12 +40,11 @@ gulp.task('clean', function () {
 
 var lessPath = './resources/css/style.less'
 var stylesPath = 'resources/css/*'
-var cleanCSSPlugin = new LessPluginCleanCSS({advanced: true})
 var autoprefix = new LessAutoprefix({browsers: ['last 2 versions']})
 
 gulp.task('styles', function () {
     return gulp.src(lessPath)
-        .pipe(less({plugins: [cleanCSSPlugin, autoprefix]}))
+        .pipe(less({plugins: [autoprefix]}))
         .pipe(gulp.dest('./resources/css'))
 })
 

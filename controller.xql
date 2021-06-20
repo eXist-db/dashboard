@@ -85,20 +85,7 @@ else if ($exist:path = "/admin") then (
                 <set-header name="Cache-Control" value="no-cache"/>
             </forward>
         </dispatch>
-    )
-    else(
-(:
-        let $log := util:log("info", "user is not logged in")
-        return
-:)
-        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-            (:<forward url="{$exist:controller}/index.html"></forward>:)
-            <redirect url="login.html">
-                <cache-control cache="no"/>
-                <set-header name="Cache-Control" value="no-cache"/>
-            </redirect>
-        </dispatch>
-        )
+    ) else ()
 )
 else
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

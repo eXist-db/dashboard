@@ -1,8 +1,6 @@
 xquery version "3.1";
 
 import module namespace login="http://exist-db.org/xquery/login" at "resource:org/exist/xquery/modules/persistentlogin/login.xql";
-import module namespace functx = "http://www.functx.com";
-
 
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare option output:method "html5";
@@ -85,7 +83,11 @@ else if ($exist:path = "/admin") then (
                 <set-header name="Cache-Control" value="no-cache"/>
             </forward>
         </dispatch>
-    ) else ()
+    ) else (
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+          <redirect url="index.html"/>
+        </dispatch>
+    )
 )
 else
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

@@ -26,6 +26,5 @@
     "gulp-watch": "^5.0.1",
     "jquery": "^3.6.0",
     "less-plugin-autoprefix": "^2.0.0"
-  },
-  "dependencies": {}
+  }
 }

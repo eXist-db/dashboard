@@ -203,12 +203,6 @@ an application bundling all admin apps in one place.
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
                     </existdb-packagemanager>
                 </template>
-                <template is="dom-if" name="usermanager" data-path="bower_components/existdb-usermanager/dependencies.html" restamp>
-                    <existdb-usermanager-app logout="false">
-                        <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
-                    </existdb-usermanager-app>
-                </template>
-
                 <template is="dom-if" name="backup" data-path="bower_components/existdb-backup/dependencies.html" restamp>
                     <existdb-backup-app logout="false">
                         <paper-icon-button icon="menu" slot="toggleIcon" drawer-toggle></paper-icon-button>
@@ -315,8 +309,10 @@ an application bundling all admin apps in one place.
             }
 
             _showUserManager(e) {
-                this.$.pages.select('usermanager');
-//                this.$.drawerLayout.resetLayout();
+                // UserManager 2 is a standalone app (own login/session, Lit-based
+                // web components), no longer a bower-vendored Polymer element that
+                // can be lazy-loaded into this page -- open it directly instead.
+                window.open('../usermanager/index.html', '_blank', 'noopener');
             }
 
             _showBackup(e) {
